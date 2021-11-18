@@ -4,18 +4,8 @@ public class Constants {
     /** =========================================================
      *  CONFIGURATION
      *  ========================================================== */
-    // public static final String API_URL = "https://www.sang-intec.tk/api/notifications/confirm";
-    // public static final String API_URL = "http://localhost:8015/notifications/confirm";
-
-    //  Configuration: PRODUCTION
-    //public static final String API_URL = "http://163.43.108.188/bm/api/v1.1/devices";
-    //public static final String API_URL_MESSAGES = "http://163.43.108.188/bm/api/v1.1/messages";
-    //public static final String API_URL_MAPPING = "http://163.43.108.188/map-user-token";
-
     //  Configuration: LOCAL
-    public static final String API_BOLTZ = "http://163.43.108.188/bm/api/v1.1";             // For Cloud: devices, messages
-    //public static final String API_PHP = "http://172.25.129.73:1234";                            // For Real Device: device-login (For Emulator: http://10.0.2.2:1234/)
-    public static final String API_PHP = "http://163.43.108.188";                         // For Real Device: device-login (For Emulator: http://10.0.2.2:1234/)
+    public static final String API_NET = "https://localhost:44331";                         // For Real Device: device-login (For Emulator: http://10.0.2.2:1234/)
 
     // Common
     public static final String PUSH_TYPE_SERVICE = "2";          // 1: APNs, 2: FCM, 4: WebPush, 5: ADM

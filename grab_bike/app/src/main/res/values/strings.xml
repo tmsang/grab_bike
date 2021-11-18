@@ -8,6 +8,7 @@
     <string name="btn_subscribe_news">Subscribe (News)</string>
     <string name="btn_unsubscribe_news">Unsubscribe (News)</string>
     <string name="btn_login">Login</string>
+    <string name="btn_register">Register</string>
     <string name="notification_channel_id">default</string>
     <string name="result">Log will write here&#8230;</string>
     <string name="subscribed">Subscribed to news topic</string>

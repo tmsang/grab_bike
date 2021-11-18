@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.intec.grab.bike.configs.Constants;
 import com.intec.grab.bike.login.LoginApi;
-import com.intec.grab.bike.messages.MessageApi;
+import com.intec.grab.bike.register.RegisterApi;
 import com.intec.grab.bike.utils.api.ClientFactory;
 import com.intec.grab.bike.utils.helper.SQLiteHelper;
 import com.intec.grab.bike.utils.helper.CommonHelper;
@@ -56,13 +56,13 @@ public class SharedService {
     //    return ClientFactory.unauthorized(baseUrl, sslSettings).createService(VersionApi.class);
     //}
 
-    public static LoginApi loginApi(String baseUrl, SSLSettings sslSettings) {
+    public static LoginApi LoginApi(String baseUrl, SSLSettings sslSettings) {
         return ClientFactory.unauthorized(baseUrl, sslSettings).createService(LoginApi.class);
     }
-
-    public static MessageApi messageApi(String baseUrl, SSLSettings sslSettings) {
-        return ClientFactory.unauthorized(baseUrl, sslSettings).createService(MessageApi.class);
+    public static RegisterApi GuestRegisterApi(String baseUrl, SSLSettings sslSettings) {
+        return ClientFactory.unauthorized(baseUrl, sslSettings).createService(RegisterApi.class);
     }
+
 
 
 
