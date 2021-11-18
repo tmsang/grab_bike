@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "24579714619",
+    "project_id": "intec-push-notification",
+    "storage_bucket": "intec-push-notification.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:24579714619:android:293528b0ac2500ac42361e",
+        "android_client_info": {
+          "package_name": "com.intec.pushnotification"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "24579714619-c9bpsa476dtdilj8avih5v9gbtu0sost.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmWEDfPwNFMI3g-zI_0vpRj8prZs1Mbg8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "24579714619-c9bpsa476dtdilj8avih5v9gbtu0sost.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
