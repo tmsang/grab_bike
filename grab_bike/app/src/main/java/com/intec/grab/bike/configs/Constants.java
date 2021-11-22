@@ -5,7 +5,7 @@ public class Constants {
      *  CONFIGURATION
      *  ========================================================== */
     //  Configuration: LOCAL
-    public static final String API_NET = "https://localhost:44331";                         // For Real Device: device-login (For Emulator: http://10.0.2.2:1234/)
+    public static final String API_NET = "https://172.25.129.73:44331";                         // For Real Device: device-login (For Emulator: http://10.0.2.2:1234/)
 
     // Common
     public static final String PUSH_TYPE_SERVICE = "2";          // 1: APNs, 2: FCM, 4: WebPush, 5: ADM

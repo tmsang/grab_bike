@@ -5,6 +5,7 @@ import android.content.Context;
 import com.intec.grab.bike.configs.Constants;
 import com.intec.grab.bike.login.LoginApi;
 import com.intec.grab.bike.register.RegisterApi;
+import com.intec.grab.bike.utils.api.ApiClient;
 import com.intec.grab.bike.utils.api.ClientFactory;
 import com.intec.grab.bike.utils.helper.SQLiteHelper;
 import com.intec.grab.bike.utils.helper.CommonHelper;

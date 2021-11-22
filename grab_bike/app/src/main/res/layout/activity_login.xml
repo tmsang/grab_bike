@@ -22,13 +22,13 @@
         tools:context=".MainActivity">
 
         <EditText
-            android:id="@+id/username"
+            android:id="@+id/email"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:background="@drawable/tp_edittext_bg"
             android:focusable="true"
-            android:hint="Username"
+            android:hint="Email"
             android:inputType="textCapWords"
             android:padding="10dp"
             android:singleLine="true" />
@@ -37,7 +37,7 @@
             android:id="@+id/password"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/username"
+            android:layout_below="@+id/email"
             android:layout_marginBottom="10dp"
             android:background="@drawable/tp_edittext_bg"
             android:hint="Password"
@@ -46,7 +46,7 @@
             android:singleLine="true" />
 
         <Button
-            android:id="@+id/btnlogin"
+            android:id="@+id/btnLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/password"
@@ -58,10 +58,10 @@
             android:textSize="18dp" />
 
         <Button
-            android:id="@+id/btnregister"
+            android:id="@+id/btnRegister"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/btnlogin"
+            android:layout_below="@id/btnLogin"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="40dip"
             android:background="@null"
@@ -74,7 +74,7 @@
             android:id="@+id/txtLogo"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:layout_above="@id/username"
+            android:layout_above="@id/email"
             android:layout_centerInParent="true"
             android:layout_marginBottom="50dp"
             android:gravity="center"
