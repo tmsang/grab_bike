@@ -35,6 +35,21 @@
             android:label="Login"
             android:windowSoftInputMode="adjustResize"
             />
+        <activity
+            android:name=".register.RegisterActivity"
+            android:label="Register"
+            android:windowSoftInputMode="adjustResize"
+            />
+        <activity
+            android:name=".forgot_password.ForgotPasswordActivity"
+            android:label="Forgot Password"
+            android:windowSoftInputMode="adjustResize"
+            />
+        <activity
+            android:name=".reset_password.ResetPasswordActivity"
+            android:label="Reset Password"
+            android:windowSoftInputMode="adjustResize"
+            />
     </application>
 
 </manifest>

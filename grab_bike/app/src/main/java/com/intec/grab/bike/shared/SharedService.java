@@ -3,8 +3,10 @@ package com.intec.grab.bike.shared;
 import android.content.Context;
 
 import com.intec.grab.bike.configs.Constants;
+import com.intec.grab.bike.forgot_password.ForgotPasswordApi;
 import com.intec.grab.bike.login.LoginApi;
 import com.intec.grab.bike.register.RegisterApi;
+import com.intec.grab.bike.reset_password.ResetPasswordApi;
 import com.intec.grab.bike.utils.api.ApiClient;
 import com.intec.grab.bike.utils.api.ClientFactory;
 import com.intec.grab.bike.utils.helper.SQLiteHelper;
@@ -60,11 +62,15 @@ public class SharedService {
     public static LoginApi LoginApi(String baseUrl, SSLSettings sslSettings) {
         return ClientFactory.unauthorized(baseUrl, sslSettings).createService(LoginApi.class);
     }
-    public static RegisterApi GuestRegisterApi(String baseUrl, SSLSettings sslSettings) {
+    public static RegisterApi RegisterApi(String baseUrl, SSLSettings sslSettings) {
         return ClientFactory.unauthorized(baseUrl, sslSettings).createService(RegisterApi.class);
     }
-
-
+    public static ForgotPasswordApi ForgotPasswordApi(String baseUrl, SSLSettings sslSettings) {
+        return ClientFactory.unauthorized(baseUrl, sslSettings).createService(ForgotPasswordApi.class);
+    }
+    public static ResetPasswordApi ResetPasswordApi(String baseUrl, SSLSettings sslSettings) {
+        return ClientFactory.unauthorized(baseUrl, sslSettings).createService(ResetPasswordApi.class);
+    }
 
 
     /*

@@ -7,13 +7,18 @@
     <string name="btn_show_token">Show Token</string>
     <string name="btn_subscribe_news">Subscribe (News)</string>
     <string name="btn_unsubscribe_news">Unsubscribe (News)</string>
-    <string name="btn_login">Login</string>
+    <string name="btn_login"><b>Login</b></string>
     <string name="btn_register">Register</string>
+    <string name="btn_forgot_password"><b>Submit</b></string>
     <string name="notification_channel_id">default</string>
     <string name="result">Log will write here&#8230;</string>
     <string name="subscribed">Subscribed to news topic</string>
     <string name="unsubscribed">Unsubscribed from news topic</string>
     <string name="list_screen">List of Messages</string>
+
+    <string name="login_lbl_register"><u>Not a member yet? Register now...</u></string>
+    <string name="login_lbl_forgot_password"><u>Or Forgot password - Click here...</u></string>
+    <string name="register_msg_active_account">Registration is successful\n<b>Please login your email to active account</b></string>
 
     <string name="action_leave">Leave</string>
     <string name="action_send">Send</string>

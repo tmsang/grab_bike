@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,7 +24,7 @@ import butterknife.ButterKnife;
 
 public class RegisterActivity extends AppCompatActivity {
     SETTING settings;
-    SSLSettings sslSettings = new SSLSettings(true, null);
+    SSLSettings sslSettings = new SSLSettings(false, null);
 
     @BindView(R.id.fullName) EditText txtFullName;
     @BindView(R.id.email) EditText txtEmail;
@@ -35,10 +36,12 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register);
 
         ButterKnife.bind(this);
         settings = new SETTING(this);
+        // set init
+        btnRegister.setEnabled(true);
 
         // trigger event
         btnRegister.setOnClickListener(new View.OnClickListener() {
@@ -77,23 +80,16 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        SharedService.GuestRegisterApi(Constants.API_NET, sslSettings)
-            .Register(new RegisterDto(fullName, email, phone, password, code))
+        SharedService.RegisterApi(Constants.API_NET, sslSettings)
+            .Register(fullName, email, phone, password, code)
             .enqueue(Callback.callInUI(RegisterActivity.this, (json) -> {
-                if (json.MessageText.equals("0")) {
-                    CommonHelper.showToast(RegisterActivity.this, "This email existed - please input another email");
-                } else if(json.MessageText.equals("-1")) {
-                    CommonHelper.showToast(RegisterActivity.this, "This password is invalid");
-                }
-
-                String jwtToken = json.MessageText;
-                settings.jwtToken(jwtToken);
-
-                // redirect MESSAGE
-                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                startActivity(intent);
+                // show message
+                TextView lblMessage = findViewById(R.id.lblMessage);
+                lblMessage.setText(R.string.register_msg_active_account);
+                // disable button - register
+                btnRegister.setEnabled(false);
             }, (error) -> {
-                CommonHelper.showToast(RegisterActivity.this, "API cannot reach", error.body());
+                CommonHelper.showToast(RegisterActivity.this, error.getMessage(), error.body());
             }));
     }
 }

@@ -51,6 +51,14 @@ public class SETTING {
         sharedPreferences.edit().putString("userKey", userKey).apply();
     }
 
+    public String email() {
+        return sharedPreferences.getString("email", null);
+    }
+
+    public void email(String email) {
+        sharedPreferences.edit().putString("email", email).apply();
+    }
+
     public void clear() {
         jwtToken(null);
         fcmToken(null);
