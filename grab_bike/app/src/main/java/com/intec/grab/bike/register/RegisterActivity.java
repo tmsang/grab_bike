@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +33,7 @@ public class RegisterActivity extends AppCompatActivity {
     @BindView(R.id.password) EditText txtPassword;
     @BindView(R.id.smsCode) EditText txtSMSCode;
     @BindView(R.id.btnRegister) Button btnRegister;
+    @BindView(R.id.btnSmsCode) ImageButton btnSmsCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,14 +44,39 @@ public class RegisterActivity extends AppCompatActivity {
         settings = new SETTING(this);
         // set init
         btnRegister.setEnabled(true);
+        txtSMSCode.setEnabled(false);
 
         // trigger event
+        btnSmsCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GetSmsCode();
+            }
+        });
+
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Register();
             }
         });
+    }
+
+    private void GetSmsCode() {
+        String phone = txtPhone.getText().toString();
+        if (StringHelper.isNullOrEmpty(phone)) {
+            CommonHelper.showToast(RegisterActivity.this, "Phone is empty");
+            return;
+        }
+
+        SharedService.RegisterApi(Constants.API_NET, sslSettings)
+            .GetSmsCode(phone)
+            .enqueue(Callback.callInUI(RegisterActivity.this, (json) -> {
+                // enable txtSMSCode
+                txtSMSCode.setEnabled(true);
+            }, (error) -> {
+                CommonHelper.showToast(RegisterActivity.this, error.body(), error.body());
+            }));
     }
 
     private void Register() {
@@ -89,7 +116,7 @@ public class RegisterActivity extends AppCompatActivity {
                 // disable button - register
                 btnRegister.setEnabled(false);
             }, (error) -> {
-                CommonHelper.showToast(RegisterActivity.this, error.getMessage(), error.body());
+                CommonHelper.showToast(RegisterActivity.this, error.body(), error.body());
             }));
     }
 }

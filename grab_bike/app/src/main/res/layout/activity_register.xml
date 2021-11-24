@@ -50,17 +50,37 @@
                 android:padding="10dp"
                 android:singleLine="true" />
 
-            <EditText
-                android:id="@+id/phone"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:background="@drawable/tp_edittext_bg"
-                android:focusable="true"
-                android:hint="Phone"
-                android:inputType="textCapWords"
-                android:padding="10dp"
-                android:singleLine="true" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:weightSum="10"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:layout_weight="9"
+                    android:id="@+id/phone"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/tp_edittext_bg"
+                    android:focusable="true"
+                    android:hint="Phone"
+                    android:inputType="textCapWords"
+                    android:padding="10dp"
+                    android:singleLine="true" />
+
+                <ImageButton
+                    android:layout_weight="1"
+                    android:id="@+id/btnSmsCode"
+                    android:src="@drawable/ic_authentication_sms_30"
+                    android:background="@drawable/tp_background_icon"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
 
             <EditText
                 android:id="@+id/password"

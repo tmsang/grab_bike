@@ -18,6 +18,7 @@ public interface RegisterApi {
             @retrofit2.http.Body RegisterDto body
     );
     */
+
     @FormUrlEncoded
     @POST("api/guest/register/")
     Call<ResponseBody> Register(
@@ -26,5 +27,11 @@ public interface RegisterApi {
             @Field("Phone") String phone,
             @Field("Password") String password,
             @Field("SmsCode") String code
+    );
+
+    @FormUrlEncoded
+    @POST("api/guest/smscode/")
+    Call<ResponseBody> GetSmsCode(
+            @Field("phone") String phone
     );
 }
