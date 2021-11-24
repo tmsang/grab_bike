@@ -153,7 +153,9 @@ public class ApiClient {
 
     public void createDefaultAdapter() {
         json = new JSON();
-        okBuilder = new OkHttpClient.Builder();
+        okBuilder = new OkHttpClient.Builder()
+            .readTimeout(60, TimeUnit.SECONDS)
+            .connectTimeout(60, TimeUnit.SECONDS);
 
         String baseUrl = Constants.BASE_URL;
         if (!baseUrl.endsWith("/")) {
