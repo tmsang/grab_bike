@@ -11,9 +11,17 @@
 		<item name="colorPrimary">@color/colorNavPrimary</item>
 	</style>
 
-	<style name="AppTheme.NoActionBar">
+	<style name="AppTheme.NoActionBar" parent="AppTheme">
 		<item name="windowActionBar">false</item>
 		<item name="windowNoTitle">true</item>
+		<item name="android:windowAnimationStyle">@style/CustomActivityAnimation</item>
+	</style>
+
+	<style name="CustomActivityAnimation" parent="@android:style/Animation.Activity">
+		<item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>
+		<item name="android:activityOpenExitAnimation">@anim/slide_out_left</item>
+		<item name="android:activityCloseEnterAnimation">@anim/slide_in_left</item>
+		<item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>
 	</style>
 
 	<style name="AppTheme.PopupOverlay" parent="AppTheme" />

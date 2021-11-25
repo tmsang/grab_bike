@@ -1,31 +1,21 @@
 package com.intec.grab.bike.register;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.intec.grab.bike.R;
 import com.intec.grab.bike.configs.Constants;
-import com.intec.grab.bike.login.LoginActivity;
 import com.intec.grab.bike.shared.SharedService;
 import com.intec.grab.bike.utils.api.Callback;
-import com.intec.grab.bike.utils.api.SSLSettings;
-import com.intec.grab.bike.utils.base.SETTING;
-import com.intec.grab.bike.utils.helper.CommonHelper;
+import com.intec.grab.bike.utils.helper.BaseActivity;
 import com.intec.grab.bike.utils.helper.StringHelper;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
-public class RegisterActivity extends AppCompatActivity {
-    SETTING settings;
-    SSLSettings sslSettings = new SSLSettings(false, null);
+public class RegisterActivity extends BaseActivity {
 
     @BindView(R.id.fullName) EditText txtFullName;
     @BindView(R.id.email) EditText txtEmail;
@@ -39,12 +29,11 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        Initialization(this);
 
-        ButterKnife.bind(this);
-        settings = new SETTING(this);
         // set init
-        btnRegister.setEnabled(true);
-        txtSMSCode.setEnabled(false);
+        this.EnableButton(R.id.btnRegister);
+        this.DisableEditText(R.id.smsCode);
 
         // trigger event
         btnSmsCode.setOnClickListener(new View.OnClickListener() {
@@ -62,61 +51,65 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    private void GetSmsCode() {
+    private void GetSmsCode()
+    {
         String phone = txtPhone.getText().toString();
         if (StringHelper.isNullOrEmpty(phone)) {
-            CommonHelper.showToast(RegisterActivity.this, "Phone is empty");
+            this.Toast("Phone is empty");
             return;
         }
 
+        this.Loading(R.id.loading, true);
         SharedService.RegisterApi(Constants.API_NET, sslSettings)
             .GetSmsCode(phone)
             .enqueue(Callback.callInUI(RegisterActivity.this, (json) -> {
-                // enable txtSMSCode
-                txtSMSCode.setEnabled(true);
+                this.EnableEditText(R.id.smsCode);
+                this.Loading(R.id.loading, false);
             }, (error) -> {
-                CommonHelper.showToast(RegisterActivity.this, error.body(), error.body());
+                this.Toast(error.body(), error.body());
+                this.Loading(R.id.loading, false);
             }));
     }
 
-    private void Register() {
-        String fullName = txtFullName.getText().toString();
-        String email = txtEmail.getText().toString();
-        String phone = txtPhone.getText().toString();
-        String password = txtPassword.getText().toString();
-        String code = txtSMSCode.getText().toString();
+    private void Register()
+    {
+        String fullName = this.EditText(R.id.fullName);
+        String email = this.EditText(R.id.email);
+        String phone = this.EditText(R.id.phone);
+        String password = this.EditText(R.id.password);
+        String code = this.EditText(R.id.smsCode);
 
         if (StringHelper.isNullOrEmpty(fullName)) {
-            CommonHelper.showToast(RegisterActivity.this, "Full Name is empty");
+            this.Toast("Full Name is empty");
             return;
         }
         if (StringHelper.isNullOrEmpty(email)) {
-            CommonHelper.showToast(RegisterActivity.this, "Email is empty");
+            this.Toast("Email is empty");
             return;
         }
         if (StringHelper.isNullOrEmpty(phone)) {
-            CommonHelper.showToast(RegisterActivity.this, "Phone is empty");
+            this.Toast("Phone is empty");
             return;
         }
         if (StringHelper.isNullOrEmpty(password)) {
-            CommonHelper.showToast(RegisterActivity.this, "Password is empty");
+            this.Toast("Password is empty");
             return;
         }
         if (StringHelper.isNullOrEmpty(code)) {
-            CommonHelper.showToast(RegisterActivity.this, "SMS Code is empty");
+            this.Toast("SMS Code is empty");
             return;
         }
 
+        this.Loading(R.id.loading, true);
         SharedService.RegisterApi(Constants.API_NET, sslSettings)
             .Register(fullName, email, phone, password, code)
             .enqueue(Callback.callInUI(RegisterActivity.this, (json) -> {
-                // show message
-                TextView lblMessage = findViewById(R.id.lblMessage);
-                lblMessage.setText(R.string.register_msg_active_account);
-                // disable button - register
-                btnRegister.setEnabled(false);
+                this.SetTextView(R.id.lblMessage, R.string.register_msg_active_account);
+                this.DisableButton(R.id.btnRegister);
+                this.Loading(R.id.loading, false);
             }, (error) -> {
-                CommonHelper.showToast(RegisterActivity.this, error.body(), error.body());
+                this.Toast(error.body(), error.body());
+                this.Loading(R.id.loading, false);
             }));
     }
 }
