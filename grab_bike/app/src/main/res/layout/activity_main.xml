@@ -98,7 +98,7 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:theme="@style/AppTheme.Nav"
-        app:headerLayout="@menu/nav_header_drawer"
-        app:menu="@menu/messages_menu" />
+        app:headerLayout="@menu/menu_start_header"
+        app:menu="@menu/menu_start" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
