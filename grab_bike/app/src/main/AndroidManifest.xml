@@ -50,6 +50,7 @@
             android:label="Reset Password"
             android:windowSoftInputMode="adjustResize"
             />
+
     </application>
 
 </manifest>
