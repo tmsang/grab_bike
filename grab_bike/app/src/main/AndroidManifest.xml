@@ -50,6 +50,11 @@
             android:label="Reset Password"
             android:windowSoftInputMode="adjustResize"
             />
+        <activity
+            android:name=".guest_map.GuestMapActivity"
+            android:label="Map for Guest"
+            android:windowSoftInputMode="adjustResize"
+            />
 
     </application>
 

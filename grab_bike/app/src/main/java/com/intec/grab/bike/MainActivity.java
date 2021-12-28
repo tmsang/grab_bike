@@ -14,6 +14,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
+import com.intec.grab.bike.guest_map.GuestMapActivity;
 import com.intec.grab.bike.login.LoginActivity;
 import com.intec.grab.bike.utils.base.SETTING;
 import com.intec.grab.bike.utils.log.Log;
@@ -82,6 +83,9 @@ public class MainActivity extends AppCompatActivity
 
         ImageButton leftMenuRefresh = headerView.findViewById(R.id.left_menu_refresh);
         leftMenuRefresh.setOnClickListener(this::onLeftMenuRefresh);
+
+        Intent intent = new Intent(this, GuestMapActivity.class);
+        startActivity(intent);
     }
 
     @Override
