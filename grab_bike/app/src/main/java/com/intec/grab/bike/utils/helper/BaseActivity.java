@@ -7,6 +7,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,8 +18,6 @@ import com.intec.grab.bike.R;
 import com.intec.grab.bike.utils.api.SSLSettings;
 import com.intec.grab.bike.utils.base.SETTING;
 import com.intec.grab.bike.utils.log.Log;
-
-import butterknife.ButterKnife;
 
 public class BaseActivity extends AppCompatActivity {
     public SETTING settings;
@@ -104,6 +103,19 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     // ============================================================
+    // Image Button
+    // ============================================================
+    public void ImageButtonClickEvent(int rId, MyEventCallback callback) {
+        ImageButton imgButton = this.activity.findViewById(rId);
+        imgButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callback.execute(imgButton);
+            }
+        });
+    }
+
+    // ============================================================
     // TextView
     // ============================================================
     public void SetTextView(int rId, int rString)
@@ -156,7 +168,6 @@ public class BaseActivity extends AppCompatActivity {
         }
         return false;
     }
-
 
 
 
