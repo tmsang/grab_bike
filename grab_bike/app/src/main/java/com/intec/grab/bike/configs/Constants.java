@@ -7,6 +7,8 @@ public class Constants {
     //  Configuration: LOCAL
     public static final String API_NET = "https://172.25.129.73:44331";                         // For Real Device: device-login (For Emulator: http://10.0.2.2:1234/)
 
+    public static final String BING_MAP_KEY = "AuZD1lfJajlhr_Cx6GVG9uR4jzS5Y-PF3EWWGrM0SgdGBUh_8D3fvER4D-Xxco2r";
+
     // Common
     public static final String PUSH_TYPE_SERVICE = "2";          // 1: APNs, 2: FCM, 4: WebPush, 5: ADM
     public static final int DATABASE_VERSION = 1;

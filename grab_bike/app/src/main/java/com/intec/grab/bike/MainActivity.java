@@ -55,10 +55,14 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
+        // EX: Redirect to BingMap Guest
+        Intent intent = new Intent(this, GuestMapActivity.class);
+        startActivity(intent);
+
         // =============================================
         // Draw Listener
         // =============================================
-        initDrawer();
+        // initDrawer();
     }
 
     private void initDrawer() {
@@ -83,9 +87,6 @@ public class MainActivity extends AppCompatActivity
 
         ImageButton leftMenuRefresh = headerView.findViewById(R.id.left_menu_refresh);
         leftMenuRefresh.setOnClickListener(this::onLeftMenuRefresh);
-
-        Intent intent = new Intent(this, GuestMapActivity.class);
-        startActivity(intent);
     }
 
     @Override
