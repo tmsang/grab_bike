@@ -1,32 +1,21 @@
 package com.intec.grab.bike.forgot_password;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.KeyEvent;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.intec.grab.bike.R;
 import com.intec.grab.bike.configs.Constants;
 import com.intec.grab.bike.reset_password.ResetPasswordActivity;
 import com.intec.grab.bike.shared.SharedService;
 import com.intec.grab.bike.utils.api.Callback;
-import com.intec.grab.bike.utils.api.SSLSettings;
-import com.intec.grab.bike.utils.base.SETTING;
-import com.intec.grab.bike.utils.helper.CommonHelper;
-import com.intec.grab.bike.utils.helper.StringHelper;
+import com.intec.grab.bike.utils.helper.BaseActivity;
+import com.intec.grab.bike.utils.helper.MyEventCallback;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
-public class ForgotPasswordActivity extends AppCompatActivity {
-
-    SETTING settings;
-    SSLSettings sslSettings = new SSLSettings(false, "");
-
+public class ForgotPasswordActivity extends BaseActivity
+{
     @BindView(R.id.email) EditText txtEmail;
     @BindView(R.id.btnForgot) Button btnForgot;
 
@@ -34,38 +23,16 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
+        Initialization(this);
 
-        ButterKnife.bind(this);
-        settings = new SETTING(this);
-
-        // trigger event
-        btnForgot.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Forgot();
-            }
-        });
-
-        txtEmail.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
-                    Forgot();
-                    return true;
-                }
-                return false;
-            }
-        });
+        this.ButtonClickEvent(R.id.btnForgot, Forgot);
+        this.EditTextOnKeyPress(R.id.email, Forgot);
     }
 
-    private void Forgot()
+    MyEventCallback Forgot = (v ->
     {
         String email = txtEmail.getText().toString();
-
-        if (StringHelper.isNullOrEmpty(email)) {
-            CommonHelper.showToast(ForgotPasswordActivity.this, "Email is empty");
-            return;
-        }
+        if (this.IsNullOrEmpty(email, "Email")) return;
 
         SharedService.ForgotPasswordApi(Constants.API_NET, sslSettings)
                 .ForgotPassword(email)
@@ -74,10 +41,9 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                     // store email in ShareReferences
                     settings.email(email);
                     // redirect to Reset Password
-                    Intent intent = new Intent(ForgotPasswordActivity.this, ResetPasswordActivity.class);
-                    startActivity(intent);
+                    this.Redirect(ResetPasswordActivity.class);
                 }, (error) -> {
-                    CommonHelper.showToast(ForgotPasswordActivity.this, error.getMessage(), error.body());
+                    this.Toast(error.getMessage(), error.body());
                 }));
-    }
+    });
 }

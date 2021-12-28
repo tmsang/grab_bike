@@ -1,6 +1,7 @@
-plugins {
-    id 'com.android.application'
-}
+apply plugin: 'com.android.application'
+// Add the following line:
+apply plugin: 'com.google.gms.google-services'  // Google Services plugin
+
 
 android {
     compileSdk 31
@@ -47,8 +48,9 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment:$nav_version"
     implementation "androidx.navigation:navigation-ui:$nav_version"
 
-    implementation 'com.google.firebase:firebase-analytics:17.2.2'
-    implementation 'com.google.firebase:firebase-messaging:20.1.0'
+    implementation platform('com.google.firebase:firebase-bom:29.0.0')
+    implementation 'com.google.firebase:firebase-messaging'
+    implementation 'com.google.firebase:firebase-analytics'
 
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"				// API
     implementation "com.squareup.retrofit2:converter-scalars:$retrofit_version"		// API
@@ -71,6 +73,14 @@ dependencies {
     implementation ("org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:$oltu_version") {		// AUTH (apache)
         exclude group:'org.apache.oltu.oauth2' , module: 'org.apache.oltu.oauth2.common'
     }
+
+    // =========================================
+    // 3rd libraries
+    // =========================================
+    // Import the BoM for the Firebase platform
+    implementation platform('com.google.firebase:firebase-bom:29.0.3')
+    // Declare the dependency for the Firebase Authentication library, When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-auth'
 
     implementation "io.gsonfire:gson-fire:$json_fire_version"
     implementation "org.threeten:threetenbp:$threetenbp_version"

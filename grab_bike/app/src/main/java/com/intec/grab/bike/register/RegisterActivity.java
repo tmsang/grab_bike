@@ -1,30 +1,16 @@
 package com.intec.grab.bike.register;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
 
 import com.intec.grab.bike.R;
 import com.intec.grab.bike.configs.Constants;
 import com.intec.grab.bike.shared.SharedService;
 import com.intec.grab.bike.utils.api.Callback;
 import com.intec.grab.bike.utils.helper.BaseActivity;
-import com.intec.grab.bike.utils.helper.StringHelper;
+import com.intec.grab.bike.utils.helper.MyEventCallback;
 
-import butterknife.BindView;
-
-public class RegisterActivity extends BaseActivity {
-
-    @BindView(R.id.fullName) EditText txtFullName;
-    @BindView(R.id.email) EditText txtEmail;
-    @BindView(R.id.phone) EditText txtPhone;
-    @BindView(R.id.password) EditText txtPassword;
-    @BindView(R.id.smsCode) EditText txtSMSCode;
-    @BindView(R.id.btnRegister) Button btnRegister;
-    @BindView(R.id.btnSmsCode) ImageButton btnSmsCode;
-
+public class RegisterActivity extends BaseActivity
+{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,28 +22,14 @@ public class RegisterActivity extends BaseActivity {
         this.DisableEditText(R.id.smsCode);
 
         // trigger event
-        btnSmsCode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                GetSmsCode();
-            }
-        });
-
-        btnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Register();
-            }
-        });
+        this.ButtonClickEvent(R.id.smsCode, GetSmsCode);
+        this.ButtonClickEvent(R.id.btnRegister, Register);
     }
 
-    private void GetSmsCode()
+    MyEventCallback GetSmsCode = (v ->
     {
-        String phone = txtPhone.getText().toString();
-        if (StringHelper.isNullOrEmpty(phone)) {
-            this.Toast("Phone is empty");
-            return;
-        }
+        String phone = this.EditText(R.id.phone);
+        if (this.IsNullOrEmpty(phone, "Phone")) return;
 
         this.Loading(R.id.loading, true);
         SharedService.RegisterApi(Constants.API_NET, sslSettings)
@@ -69,9 +41,9 @@ public class RegisterActivity extends BaseActivity {
                 this.Toast(error.body(), error.body());
                 this.Loading(R.id.loading, false);
             }));
-    }
+    });
 
-    private void Register()
+    MyEventCallback Register = (v ->
     {
         String fullName = this.EditText(R.id.fullName);
         String email = this.EditText(R.id.email);
@@ -79,26 +51,11 @@ public class RegisterActivity extends BaseActivity {
         String password = this.EditText(R.id.password);
         String code = this.EditText(R.id.smsCode);
 
-        if (StringHelper.isNullOrEmpty(fullName)) {
-            this.Toast("Full Name is empty");
-            return;
-        }
-        if (StringHelper.isNullOrEmpty(email)) {
-            this.Toast("Email is empty");
-            return;
-        }
-        if (StringHelper.isNullOrEmpty(phone)) {
-            this.Toast("Phone is empty");
-            return;
-        }
-        if (StringHelper.isNullOrEmpty(password)) {
-            this.Toast("Password is empty");
-            return;
-        }
-        if (StringHelper.isNullOrEmpty(code)) {
-            this.Toast("SMS Code is empty");
-            return;
-        }
+        if (this.IsNullOrEmpty(fullName, "Full Name")) return;
+        if (this.IsNullOrEmpty(email, "Email")) return;
+        if (this.IsNullOrEmpty(phone, "Phone")) return;
+        if (this.IsNullOrEmpty(password, "Password")) return;
+        if (this.IsNullOrEmpty(code, "SMS Code")) return;
 
         this.Loading(R.id.loading, true);
         SharedService.RegisterApi(Constants.API_NET, sslSettings)
@@ -111,5 +68,5 @@ public class RegisterActivity extends BaseActivity {
                 this.Toast(error.body(), error.body());
                 this.Loading(R.id.loading, false);
             }));
-    }
+    });
 }

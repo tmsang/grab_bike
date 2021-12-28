@@ -1,11 +1,13 @@
 package com.intec.grab.bike.utils.helper;
 
 import android.app.Activity;
-import android.app.VoiceInteractor;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,8 +18,6 @@ import com.intec.grab.bike.R;
 import com.intec.grab.bike.utils.api.SSLSettings;
 import com.intec.grab.bike.utils.base.SETTING;
 import com.intec.grab.bike.utils.log.Log;
-
-import butterknife.ButterKnife;
 
 public class BaseActivity extends AppCompatActivity {
     public SETTING settings;
@@ -32,7 +32,7 @@ public class BaseActivity extends AppCompatActivity {
     public void Initialization(Activity activity) {
         this.activity = activity;
 
-        ButterKnife.bind(activity);
+        // ButterKnife.bind(activity);
         settings = new SETTING(activity);
     }
 
@@ -63,6 +63,19 @@ public class BaseActivity extends AppCompatActivity {
         EditText editText = this.activity.findViewById(rId);
         editText.setText(value);
     }
+    public void EditTextOnKeyPress(int rId, MyEventCallback callback) {
+        EditText txt = this.activity.findViewById(rId);
+        txt.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                    callback.execute(txt);
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
 
     // ============================================================
     // Button
@@ -79,6 +92,28 @@ public class BaseActivity extends AppCompatActivity {
         button.setBackgroundResource(R.drawable.tp_button_bg_disable);
         button.setEnabled(false);
     }
+    public void ButtonClickEvent(int rId, MyEventCallback callback) {
+        Button btn = this.activity.findViewById(rId);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callback.execute(btn);
+            }
+        });
+    }
+
+    // ============================================================
+    // Image Button
+    // ============================================================
+    public void ImageButtonClickEvent(int rId, MyEventCallback callback) {
+        ImageButton imgButton = this.activity.findViewById(rId);
+        imgButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callback.execute(imgButton);
+            }
+        });
+    }
 
     // ============================================================
     // TextView
@@ -92,6 +127,15 @@ public class BaseActivity extends AppCompatActivity {
     {
         TextView textView = this.activity.findViewById(rId);
         return textView.getText().toString();
+    }
+    public void TextViewClickEvent(int rId, MyEventCallback callback) {
+        TextView lbl = this.activity.findViewById(rId);
+        lbl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callback.execute(lbl);
+            }
+        });
     }
 
     // ============================================================
@@ -110,6 +154,26 @@ public class BaseActivity extends AppCompatActivity {
         ProgressBar loading = this.activity.findViewById(rId);
         loading.setVisibility(isShow ? View.VISIBLE : View.GONE);
     }
+
+    public void Redirect(Class destinationActivity) {
+        Intent intent = new Intent(this, destinationActivity);
+        startActivity(intent);
+    }
+
+    public Boolean IsNullOrEmpty(String value, String... name) {
+        if (StringHelper.isNullOrEmpty(value)) {
+            String message = name.length > 0 ? name[0] : "Value Input";
+            CommonHelper.showToast(this, message + " is null or empty");
+            return true;
+        }
+        return false;
+    }
+
+
+
+
+
+
 
 
 }
