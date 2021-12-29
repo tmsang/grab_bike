@@ -16,6 +16,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
 import com.intec.grab.bike.guest_map.GuestMapActivity;
 import com.intec.grab.bike.login.LoginActivity;
+import com.intec.grab.bike.shared.SharedIntentService;
 import com.intec.grab.bike.utils.base.SETTING;
 import com.intec.grab.bike.utils.log.Log;
 
@@ -54,6 +55,12 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
             return;
         }
+
+        // Start Background Service
+        Intent cbIntent =  new Intent();
+        cbIntent.setClass(this, SharedIntentService.class);
+        cbIntent.putExtra("param", "");
+        startService(cbIntent);
 
         // EX: Redirect to BingMap Guest
         Intent intent = new Intent(this, GuestMapActivity.class);
