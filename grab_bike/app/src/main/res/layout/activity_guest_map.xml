@@ -16,20 +16,56 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-            <AutoCompleteTextView
-                android:id="@+id/autoCompleteDestination"
-                android:layout_marginTop="10dp"
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginBottom="20dp"
-                android:background="#fff"
-                android:textColor="#000"
-                android:tooltipText="Destination"
-                android:hint="Destination"
-                android:paddingLeft="10dp"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"></AutoCompleteTextView>
-V
+                android:layout_height="wrap_content">
+
+                <AutoCompleteTextView
+                    android:id="@+id/autoCompleteDestination"
+                    android:layout_marginTop="10dp"
+                    android:background="#fff"
+                    android:textColor="#000"
+                    android:tooltipText="Destination"
+                    android:hint="Destination"
+                    android:paddingLeft="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"></AutoCompleteTextView>
+
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_weight="1"
+                        android:id="@+id/lblDistance"
+                        android:text="Distance:"
+                        android:gravity="center_vertical"
+                        android:textColor="#fff"
+                        android:textStyle="bold"
+                        android:layout_width="match_parent"
+                        android:layout_marginLeft="10dp"
+                        android:layout_height="40dp"></TextView>
+
+                    <TextView
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:textColor="#fff"
+                        android:textStyle="bold"
+                        android:id="@+id/lblAmount"
+                        android:text="Amount:"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"></TextView>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
             <FrameLayout
                 android:id="@+id/map_view"
                 android:layout_width="match_parent"

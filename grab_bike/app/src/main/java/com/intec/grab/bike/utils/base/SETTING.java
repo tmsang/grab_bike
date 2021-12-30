@@ -72,7 +72,12 @@ public class SETTING {
     public void currentLng(String _long) {
         sharedPreferences.edit().putString("currentLng", _long).apply();
     }
-
+    public String currentAddress() {
+        return sharedPreferences.getString("currentAddress", null);
+    }
+    public void currentAddress(String address) {
+        sharedPreferences.edit().putString("currentAddress", address).apply();
+    }
 
     public void clear() {
         jwtToken(null);

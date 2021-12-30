@@ -1,6 +1,7 @@
 package com.intec.grab.bike.guest_map;
 
-import android.Manifest;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -10,39 +11,38 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.FrameLayout;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+import com.intec.grab.bike.MainActivity;
 import com.intec.grab.bike.R;
 import com.intec.grab.bike.configs.Constants;
+import com.intec.grab.bike.login.LoginActivity;
+import com.intec.grab.bike.shared.SharedService;
+import com.intec.grab.bike.utils.api.Callback;
 import com.intec.grab.bike.utils.helper.BaseActivity;
 
-import com.intec.grab.bike.utils.helper.GPSTracker;
+import com.microsoft.maps.MapRenderMode;
 import com.microsoft.maps.MapView;
+import com.microsoft.maps.Geopoint;
+import com.microsoft.maps.MapElementLayer;
+import com.microsoft.maps.MapIcon;
+import com.microsoft.maps.MapImage;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 
 public class GuestMapActivity extends BaseActivity {
     private MapView mMapView;
 
+    private MapElementLayer mPinLayer;
 
     private String[] destinations = {"Vietnam","England","Canada", "France","Australia"};
     private  AutoCompleteTextView autoCompleteDestination;
@@ -60,50 +60,42 @@ public class GuestMapActivity extends BaseActivity {
         autoCompleteDestination.setAdapter(destinationAdapter);
         autoCompleteDestination.setThreshold(1);
 
-        /*
         // Show Bing-Map
         mMapView = new MapView(this, MapRenderMode.VECTOR);  // or use MapRenderMode.RASTER for 2D map
         mMapView.setCredentialsKey(Constants.BING_MAP_KEY);         // BuildConfig.CREDENTIALS_KEY
         ((FrameLayout)findViewById(R.id.map_view)).addView(mMapView);
         mMapView.onCreate(savedInstanceState);
-        */
+
+        // attach PIN
+        Geopoint location = new Geopoint(
+                Double.valueOf(settings.currentLat()),
+                Double.valueOf(settings.currentLng()));             // your pin lat-long coordinates
+        String title = "Current";                                   // title to be shown next to the pin
+        Bitmap pinBitmap = BitmapFactory
+                .decodeResource(this.getResources(),                // your pin graphic (optional)
+                R.drawable.ic_current_position);
+        MapIcon pushpin = new MapIcon();
+        pushpin.setLocation(location);
+        pushpin.setTitle(title);
+        pushpin.setImage(new MapImage(pinBitmap));
+
+        mPinLayer = new MapElementLayer();
+        mPinLayer.getElements().add(pushpin);
+        mMapView.getLayers().add(mPinLayer);
 
         // Request location permission
-        ActivityResultLauncher<String[]> locationPermissionRequest =
-                registerForActivityResult(new ActivityResultContracts
-                                .RequestMultiplePermissions(), result -> {
-                            Boolean fineLocationGranted = result.getOrDefault(
-                                    Manifest.permission.ACCESS_FINE_LOCATION, false);
-                            Boolean coarseLocationGranted = result.getOrDefault(
-                                    Manifest.permission.ACCESS_COARSE_LOCATION,false);
-                            if (fineLocationGranted != null && fineLocationGranted)
-                            {
-                                // Precise location access granted.
-                                GPSTracker gps = new GPSTracker(this);
-                                if (gps.canGetLocation()) {
-                                    double lat = gps.getLatitude();
-                                    double lng = gps.getLongitude();
-                                    settings.currentLat(lat + "");
-                                    settings.currentLng(lng + "");
-                                }
-                            } else if (coarseLocationGranted != null && coarseLocationGranted) {
-                                // Only approximate location access granted.
-                                Toast("Only approximate location access granted");
-                            } else {
-                                // No location access granted.
-                                Toast("No location access granted");
-                            }
-                        }
-                );
-
-        // Before you perform the actual permission request, check whether your app
-        // already has the permissions, and whether your app needs to show a permission
-        // rationale dialog. For more details, see Request permissions.
-        locationPermissionRequest.launch(new String[] {
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
+        this.RequestPermissionLocation((result) -> {
+            String[] items = result.split("@");
+            String lat = items[0];
+            String lng = items[1];
+            settings.currentLat(lat);
+            settings.currentLng(lng);
+            GuestBingMapApi.instance.getAddressByLocation(this, lat + "", lng + "", (address) -> {
+                settings.currentAddress(address);
+            });
         });
 
+        // AutoSuggest
         final PublishSubject<String> publisher = PublishSubject.create();
         autoCompleteDestination.addTextChangedListener(new TextWatcher() {
             @Override
@@ -120,20 +112,42 @@ public class GuestMapActivity extends BaseActivity {
             }
         });
 
-        autoCompleteDestination.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        autoCompleteDestination.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // calculate Distance
+                String address1 = settings.currentAddress();
+                String address2 = destinations[position];
+                GuestBingMapApi.instance.distanceCalculation(GuestMapActivity.this, address1, address2, (result) -> {
+                    String[] items = result.split("@");
 
+                    double distance = Math.round(Double.valueOf(items[0]));     // km
+                    double duration = Math.round(Double.valueOf(items[1]));     // second
+
+                    Map<String, String> map = new HashMap<>();
+                    map.put("Content-Type", "application/x-www-form-urlencoded");
+                    map.put("Authorization", settings.jwtToken());
+
+                    SharedService.GuestMapApi(Constants.API_NET, sslSettings)
+                            .GetPrice(map)
+                            .enqueue(Callback.callInUI(GuestMapActivity.this, (price) -> {
+                                if (IsNullOrEmpty(price, "Price")) return;
+
+                                DecimalFormat F = new DecimalFormat("#,###,###,###");
+                                Double amount = Double.valueOf(distance) * Double.valueOf(price);
+
+                                SetTextView(R.id.lblDistance, "<span style=\"color: #ffffff\"><b>Distance: </b></span><span style=\"color: #00ffff\"><b>" + F.format(Math.round(distance)) + " (km)</b></span>");
+                                SetTextView(R.id.lblAmount, "<span style=\"color: #ffffff\"><b>Amount: </b></span><span style=\"color: #00ffff\"><b>" + F.format(Math.round(amount)) + " (vnd)</b></span>");
+
+                            }, (error) -> {
+                                Toast("API cannot reach", error.body());
+                            }));
+                });
                 // calculate Amount
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
+
+
 
         publisher
                 .debounce(1000, TimeUnit.MILLISECONDS)
@@ -143,67 +157,17 @@ public class GuestMapActivity extends BaseActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(key -> {
                     Log.i("GuestMapActivity", "key: " + key);
-                    retrieveData(key);
+                    GuestBingMapApi.instance.getDestinations(this, key,
+                            settings.currentLat(), settings.currentLng(), (result) -> {
+                        String[] itemArrays = result.split("@");
+                        destinations = itemArrays;
+                        destinationAdapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, destinations);
+                        autoCompleteDestination.setAdapter(destinationAdapter);
+                        destinationAdapter.notifyDataSetChanged();
+                    });
                 });
     }
 
-    private void retrieveData(String s)
-    {
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://dev.virtualearth.net/REST/v1/Autosuggest" +
-                "?query=" + s +
-                "&userLocation=" + settings.currentLat() + "," + settings.currentLng() +
-                "&includeEntityTypes=Address" +
-                "&key=" + Constants.BING_MAP_KEY;
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-            response -> {
-                try {
-                    JSONObject jsnObject = new JSONObject(response);
-                    JSONArray jsonArray = jsnObject.getJSONArray("resourceSets");
-                    ArrayList<String> items = new ArrayList<String>();
-
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject itemI = jsonArray.getJSONObject(i);
-
-                        JSONArray jsonResources = itemI.getJSONArray("resources");
-                        for (int j = 0; j < jsonResources.length(); j++) {
-                            JSONObject itemJ = jsonResources.getJSONObject(j);
-
-                            JSONArray jsonValue = itemJ.getJSONArray("value");
-                            for (int k = 0; k < jsonValue.length(); k++) {
-                                JSONObject itemK = jsonValue.getJSONObject(k);
-
-                                JSONObject jsonAddress = itemK.getJSONObject("address");
-                                String formattedAddress = jsonAddress.getString("formattedAddress");
-                                items.add(formattedAddress);
-                            }
-                        }
-                    }
-
-                    String[] itemArrays = new String[items.size()];
-                    itemArrays = items.toArray(itemArrays);
-
-                    destinations = itemArrays;
-                    destinationAdapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, destinations);
-                    autoCompleteDestination.setAdapter(destinationAdapter);
-                    destinationAdapter.notifyDataSetChanged();
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                 }
-
-            },
-            error -> {
-                Log.i("GuestMapActivity", error.getMessage());
-            }
-        );
-        queue.add(stringRequest);
-    }
-
-
-
-/*
     @Override
     protected void onStart() {
         super.onStart();
@@ -246,5 +210,5 @@ public class GuestMapActivity extends BaseActivity {
         mMapView.onLowMemory();
     }
 
- */
+
 }

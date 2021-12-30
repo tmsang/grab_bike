@@ -18,12 +18,13 @@ import com.intec.grab.bike.guest_map.GuestMapActivity;
 import com.intec.grab.bike.login.LoginActivity;
 import com.intec.grab.bike.shared.SharedIntentService;
 import com.intec.grab.bike.utils.base.SETTING;
+import com.intec.grab.bike.utils.helper.BaseActivity;
 import com.intec.grab.bike.utils.log.Log;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
     @BindView(R.id.toolbar)
@@ -35,24 +36,20 @@ public class MainActivity extends AppCompatActivity
     @BindView(R.id.nav_view)
     NavigationView navigationView;
 
-    SETTING settings;
     String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Initialization(this);
 
         // =============================================
         // Configuration First
         // =============================================
         ButterKnife.bind(this);
-        Log.init(this);
-        settings = new SETTING(this);
-
         if (!settings.tokenExists()) {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
+            this.Redirect(LoginActivity.class);
             return;
         }
 
@@ -62,14 +59,10 @@ public class MainActivity extends AppCompatActivity
         cbIntent.putExtra("param", "");
         startService(cbIntent);
 
-        // EX: Redirect to BingMap Guest
-        Intent intent = new Intent(this, GuestMapActivity.class);
-        startActivity(intent);
-
         // =============================================
         // Draw Listener
         // =============================================
-        // initDrawer();
+        initDrawer();
     }
 
     private void initDrawer() {
@@ -110,20 +103,25 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_all_messages) {
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_logout) {
-            // clear cookie
+        if (id == R.id.nav_all_messages)
+        {
+            this.Redirect(GuestMapActivity.class);
+        }
+        else if (id == R.id.nav_logout)
+        {
             settings.clear();
-            // redirect
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_logs) {
+            this.Redirect(LoginActivity.class);
+        }
+        else if (id == R.id.nav_logs)
+        {
             Log.i("No action to logs");
-        } else if (id == R.id.nav_settings) {
+        }
+        else if (id == R.id.nav_settings)
+        {
             Log.i("No action to settings");
-        } else if (id == R.id.nav_push_message) {
+        }
+        else if (id == R.id.nav_push_message)
+        {
             Log.i("No action to push_message");
         }
 
@@ -132,8 +130,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void onGoToMessages(View v){
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
+        this.Redirect(LoginActivity.class);
     }
 
     public void onLeftMenuRefresh(View v)

@@ -1,8 +1,11 @@
 package com.intec.grab.bike.utils.helper;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +15,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.intec.grab.bike.R;
@@ -33,6 +39,7 @@ public class BaseActivity extends AppCompatActivity {
         this.activity = activity;
 
         // ButterKnife.bind(activity);
+        Log.init(this);
         settings = new SETTING(activity);
     }
 
@@ -123,6 +130,11 @@ public class BaseActivity extends AppCompatActivity {
         TextView textView = this.activity.findViewById(rId);
         textView.setText(rString);
     }
+    public void SetTextView(int rId, String rString)
+    {
+        TextView textView = this.activity.findViewById(rId);
+        textView.setText(Html.fromHtml(rString));
+    }
     public String GetTextView(int rId)
     {
         TextView textView = this.activity.findViewById(rId);
@@ -170,7 +182,43 @@ public class BaseActivity extends AppCompatActivity {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void RequestPermissionLocation(MyStringCallback callback) {
+        // Request location permission
+        ActivityResultLauncher<String[]> locationPermissionRequest =
+                registerForActivityResult(new ActivityResultContracts
+                                .RequestMultiplePermissions(), result -> {
+                            Boolean fineLocationGranted = result.getOrDefault(
+                                    Manifest.permission.ACCESS_FINE_LOCATION, false);
+                            Boolean coarseLocationGranted = result.getOrDefault(
+                                    Manifest.permission.ACCESS_COARSE_LOCATION,false);
+                            if (fineLocationGranted != null && fineLocationGranted)
+                            {
+                                // Precise location access granted.
+                                GPSTracker gps = new GPSTracker(this);
+                                if (gps.canGetLocation()) {
+                                    double lat = gps.getLatitude();
+                                    double lng = gps.getLongitude();
+                                    callback.execute(lat + "@" + lng);
+                                }
+                            } else if (coarseLocationGranted != null && coarseLocationGranted) {
+                                // Only approximate location access granted.
+                                Toast("Only approximate location access granted");
+                            } else {
+                                // No location access granted.
+                                Toast("No location access granted");
+                            }
+                        }
+                );
 
+        // Before you perform the actual permission request, check whether your app
+        // already has the permissions, and whether your app needs to show a permission
+        // rationale dialog. For more details, see Request permissions.
+        locationPermissionRequest.launch(new String[] {
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+        });
+    }
 
 
 
