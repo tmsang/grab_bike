@@ -60,25 +60,6 @@ public class SETTING {
         sharedPreferences.edit().putString("email", email).apply();
     }
 
-    public String currentLat() {
-        return sharedPreferences.getString("currentLat", null);
-    }
-    public void currentLat(String lat) {
-        sharedPreferences.edit().putString("currentLat", lat).apply();
-    }
-    public String currentLng() {
-        return sharedPreferences.getString("currentLng", null);
-    }
-    public void currentLng(String _long) {
-        sharedPreferences.edit().putString("currentLng", _long).apply();
-    }
-    public String currentAddress() {
-        return sharedPreferences.getString("currentAddress", null);
-    }
-    public void currentAddress(String address) {
-        sharedPreferences.edit().putString("currentAddress", address).apply();
-    }
-
     public void clear() {
         jwtToken(null);
         fcmToken(null);

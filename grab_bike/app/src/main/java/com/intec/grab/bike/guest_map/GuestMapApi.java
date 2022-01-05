@@ -25,4 +25,17 @@ public interface GuestMapApi
     Call<String> GetPrice(
             @HeaderMap Map<String, String> headers
     );
+
+    @FormUrlEncoded
+    @POST("api/guest/order/book")
+    Call<Void> BookATrip(
+            @HeaderMap Map<String, String> headers,
+            @Field("FromLatitude") String FromLatitude,
+            @Field("FromLongtitude") String FromLongtitude,
+            @Field("FromAddress") String FromAddress,
+
+            @Field("ToLatitude") String ToLatitude,
+            @Field("ToLongtitude") String ToLongtitude,
+            @Field("ToAddress") String ToAddress
+    );
 }

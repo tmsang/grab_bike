@@ -2,6 +2,7 @@ package com.intec.grab.bike.guest_map;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -23,7 +24,16 @@ import com.intec.grab.bike.shared.SharedService;
 import com.intec.grab.bike.utils.api.Callback;
 import com.intec.grab.bike.utils.helper.BaseActivity;
 
+import com.microsoft.maps.AltitudeReferenceSystem;
+import com.microsoft.maps.GPSMapLocationProvider;
+import com.microsoft.maps.Geopath;
+import com.microsoft.maps.Geoposition;
+import com.microsoft.maps.MapAnimationKind;
+import com.microsoft.maps.MapPolyline;
 import com.microsoft.maps.MapRenderMode;
+import com.microsoft.maps.MapScene;
+import com.microsoft.maps.MapUserLocation;
+import com.microsoft.maps.MapUserLocationTrackingState;
 import com.microsoft.maps.MapView;
 import com.microsoft.maps.Geopoint;
 import com.microsoft.maps.MapElementLayer;
@@ -31,6 +41,7 @@ import com.microsoft.maps.MapIcon;
 import com.microsoft.maps.MapImage;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -41,8 +52,11 @@ import io.reactivex.subjects.PublishSubject;
 
 public class GuestMapActivity extends BaseActivity {
     private MapView mMapView;
-
     private MapElementLayer mPinLayer;
+    private MapUserLocation userLocation;
+
+    private String fromLat = "", fromLng = "", fromAddress = "";
+    private String toLat = "", toLng = "", toAddress = "";
 
     private String[] destinations = {"Vietnam","England","Canada", "France","Australia"};
     private  AutoCompleteTextView autoCompleteDestination;
@@ -63,35 +77,53 @@ public class GuestMapActivity extends BaseActivity {
         // Show Bing-Map
         mMapView = new MapView(this, MapRenderMode.VECTOR);  // or use MapRenderMode.RASTER for 2D map
         mMapView.setCredentialsKey(Constants.BING_MAP_KEY);         // BuildConfig.CREDENTIALS_KEY
+
         ((FrameLayout)findViewById(R.id.map_view)).addView(mMapView);
         mMapView.onCreate(savedInstanceState);
+        userLocation = mMapView.getUserLocation();
 
-        // attach PIN
-        Geopoint location = new Geopoint(
-                Double.valueOf(settings.currentLat()),
-                Double.valueOf(settings.currentLng()));             // your pin lat-long coordinates
-        String title = "Current";                                   // title to be shown next to the pin
-        Bitmap pinBitmap = BitmapFactory
-                .decodeResource(this.getResources(),                // your pin graphic (optional)
-                R.drawable.ic_current_position);
-        MapIcon pushpin = new MapIcon();
-        pushpin.setLocation(location);
-        pushpin.setTitle(title);
-        pushpin.setImage(new MapImage(pinBitmap));
-
-        mPinLayer = new MapElementLayer();
-        mPinLayer.getElements().add(pushpin);
-        mMapView.getLayers().add(mPinLayer);
+        MapUserLocationTrackingState userLocationTrackingState = userLocation.startTracking(
+                new GPSMapLocationProvider.Builder(getApplicationContext()).build());
+        if (userLocationTrackingState == MapUserLocationTrackingState.PERMISSION_DENIED)
+        {
+            // request for user location permissions and then call startTracking again
+        } else if (userLocationTrackingState == MapUserLocationTrackingState.READY)
+        {
+            // handle the case where location tracking was successfully started
+        } else if (userLocationTrackingState == MapUserLocationTrackingState.DISABLED)
+        {
+            // handle the case where all location providers were disabled
+        }
 
         // Request location permission
         this.RequestPermissionLocation((result) -> {
             String[] items = result.split("@");
-            String lat = items[0];
-            String lng = items[1];
-            settings.currentLat(lat);
-            settings.currentLng(lng);
-            GuestBingMapApi.instance.getAddressByLocation(this, lat + "", lng + "", (address) -> {
-                settings.currentAddress(address);
+            fromLat = items[0];
+            fromLng = items[1];
+            GuestBingMapApi.instance.getAddressByLocation(this, fromLat + "", fromLng + "", (address) -> {
+                fromAddress = address;
+
+                Geopoint centerPoint = new Geopoint(Double.valueOf(fromLat), Double.valueOf(fromLng));
+                mMapView.setScene(
+                        MapScene.createFromLocationAndZoomLevel(centerPoint, 16),
+                        MapAnimationKind.NONE);
+
+                // attach PIN
+                Geopoint location = new Geopoint(
+                        Double.valueOf(fromLat),
+                        Double.valueOf(fromLng));                           // your pin lat-long coordinates
+                String title = "Current";                                   // title to be shown next to the pin
+                Bitmap pinBitmap = BitmapFactory
+                        .decodeResource(this.getResources(),                // your pin graphic (optional)
+                                R.drawable.ic_current_position);
+                MapIcon pushpin = new MapIcon();
+                pushpin.setLocation(location);
+                pushpin.setTitle(title);
+                pushpin.setImage(new MapImage(pinBitmap));
+
+                mPinLayer = new MapElementLayer();
+                mPinLayer.getElements().add(pushpin);
+                mMapView.getLayers().add(mPinLayer);
             });
         });
 
@@ -116,8 +148,17 @@ public class GuestMapActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // calculate Distance
-                String address1 = settings.currentAddress();
+                String address1 = fromAddress;
                 String address2 = destinations[position];
+
+                // analyze address (no need to synchonize)
+                GuestBingMapApi.instance.getLocationByAddress(GuestMapActivity.this, address2, (result) -> {
+                    String[] items = result.split("_");
+                    toLat = items[0];
+                    toLng = items[1];
+                    toAddress = address2;
+                });
+
                 GuestBingMapApi.instance.distanceCalculation(GuestMapActivity.this, address1, address2, (result) -> {
                     String[] items = result.split("@");
 
@@ -136,8 +177,12 @@ public class GuestMapActivity extends BaseActivity {
                                 DecimalFormat F = new DecimalFormat("#,###,###,###");
                                 Double amount = Double.valueOf(distance) * Double.valueOf(price);
 
+                                // set distance & amount to UI
                                 SetTextView(R.id.lblDistance, "<span style=\"color: #ffffff\"><b>Distance: </b></span><span style=\"color: #00ffff\"><b>" + F.format(Math.round(distance)) + " (km)</b></span>");
                                 SetTextView(R.id.lblAmount, "<span style=\"color: #ffffff\"><b>Amount: </b></span><span style=\"color: #00ffff\"><b>" + F.format(Math.round(amount)) + " (vnd)</b></span>");
+
+                                // set route path
+                                drawLineOnMap(mMapView, address1, address2);
 
                             }, (error) -> {
                                 Toast("API cannot reach", error.body());
@@ -147,7 +192,26 @@ public class GuestMapActivity extends BaseActivity {
             }
         });
 
+        this.ButtonClickEvent(R.id.btnBook, (btn) -> {
+            if (IsNullOrEmpty(fromLat, "From Latitude")) return;
+            if (IsNullOrEmpty(fromLng, "From Longitude")) return;
+            if (IsNullOrEmpty(fromAddress, "From Address")) return;
+            if (IsNullOrEmpty(toLat, "To Latitude")) return;
+            if (IsNullOrEmpty(toLng, "To Longitude")) return;
+            if (IsNullOrEmpty(toAddress, "To Address")) return;
 
+            Map<String, String> map = new HashMap<>();
+            map.put("Content-Type", "application/x-www-form-urlencoded");
+            map.put("Authorization", settings.jwtToken());
+
+            SharedService.GuestMapApi(Constants.API_NET, sslSettings)
+                .BookATrip(map, fromLat, fromLng, fromAddress, toLat, toLng, toAddress)
+                .enqueue(Callback.callInUI(GuestMapActivity.this, (result) -> {
+                    Log.i("", "");
+                }, (error) -> {
+                    Toast("API cannot reach", error.body());
+                }));
+        });
 
         publisher
                 .debounce(1000, TimeUnit.MILLISECONDS)
@@ -158,7 +222,7 @@ public class GuestMapActivity extends BaseActivity {
                 .subscribe(key -> {
                     Log.i("GuestMapActivity", "key: " + key);
                     GuestBingMapApi.instance.getDestinations(this, key,
-                            settings.currentLat(), settings.currentLng(), (result) -> {
+                            fromLat, fromLng, (result) -> {
                         String[] itemArrays = result.split("@");
                         destinations = itemArrays;
                         destinationAdapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, destinations);
@@ -167,6 +231,37 @@ public class GuestMapActivity extends BaseActivity {
                     });
                 });
     }
+
+    private void drawLineOnMap(MapView mapView, String address1, String address2) {
+
+        GuestBingMapApi.instance.drivingRoutePath(this, address1, address2, (result) -> {
+            ArrayList<Geoposition> geopoints = new ArrayList<>();
+            String[] items;
+            Double lat, lng;
+
+            String[] points = result.split("@");
+            for (int i = 0; i < points.length; i++) {
+                items = points[i].split("_");
+                lat = Double.valueOf(items[0]);
+                lng = Double.valueOf(items[1]);
+                geopoints.add(new Geoposition(lat, lng));
+            }
+
+            MapPolyline mapPolyline = new MapPolyline();
+            mapPolyline.setPath(new Geopath(geopoints));
+            mapPolyline.setStrokeColor(Color.RED);
+            mapPolyline.setStrokeWidth(5);
+            mapPolyline.setStrokeDashed(true);
+
+            // Add Polyline to a layer on the map control.
+            MapElementLayer linesLayer = new MapElementLayer();
+            linesLayer.setZIndex(1.0f);
+            linesLayer.getElements().add(mapPolyline);
+            mapView.getLayers().add(linesLayer);
+
+        });
+    }
+
 
     @Override
     protected void onStart() {
@@ -209,6 +304,4 @@ public class GuestMapActivity extends BaseActivity {
         super.onLowMemory();
         mMapView.onLowMemory();
     }
-
-
 }

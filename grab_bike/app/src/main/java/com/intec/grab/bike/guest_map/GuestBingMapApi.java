@@ -170,7 +170,104 @@ public class GuestBingMapApi
         queue.add(stringRequest);
     }
 
+    public void getLocationByAddress(
+            Context context,
+            String address,
+            MyStringCallback callback
+    ) {
+        RequestQueue queue = Volley.newRequestQueue(context);
+        String url = "http://dev.virtualearth.net/REST/v1/Locations" +
+                "?q=" + address +
+                "&o=json" +
+                "&key=" + Constants.BING_MAP_KEY;
 
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    try {
+                        JSONObject jsnObject = new JSONObject(response);
+                        JSONArray jsonArray = jsnObject.getJSONArray("resourceSets");
+                        String result = "";
+
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject itemI = jsonArray.getJSONObject(i);
+
+                            JSONArray jsonResources = itemI.getJSONArray("resources");
+                            for (int j = 0; j < jsonResources.length(); j++) {
+                                JSONObject itemJ = jsonResources.getJSONObject(j);
+
+                                JSONObject point = itemJ.getJSONObject("point");
+                                JSONArray coordinates = point.getJSONArray("coordinates");
+
+                                result = coordinates.getDouble(0) + "_" + coordinates.getDouble(1);
+                                callback.execute(result);
+                                return;
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                },
+                error -> {
+                    Log.i("GuestMapActivity", error.getMessage());
+                }
+        );
+        queue.add(stringRequest);
+    }
+
+    public void drivingRoutePath(
+            Context context,
+            String address1,
+            String address2,
+            MyStringCallback callback
+    ) {
+        RequestQueue queue = Volley.newRequestQueue(context);
+        String url = "http://dev.virtualearth.net/REST/V1/Routes/Driving" +
+                "?wp.0=" + address1 +
+                "&wp.1=" + address2 +
+                "&optmz=distance" +
+                "&routeAttributes=routePath" +
+                "&key=" + Constants.BING_MAP_KEY;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    try {
+                        JSONObject jsnObject = new JSONObject(response);
+                        JSONArray jsonArray = jsnObject.getJSONArray("resourceSets");
+                        String result = "";
+
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject itemI = jsonArray.getJSONObject(i);
+
+                            JSONArray jsonResources = itemI.getJSONArray("resources");
+                            for (int j = 0; j < jsonResources.length(); j++) {
+                                JSONObject itemJ = jsonResources.getJSONObject(j);
+
+                                JSONObject routePath = itemJ.getJSONObject("routePath");
+                                JSONObject line = routePath.getJSONObject("line");
+                                JSONArray coordinates = line.getJSONArray("coordinates");
+
+                                for (int k = 0; k < coordinates.length(); k++) {
+                                    JSONArray pointItem = coordinates.getJSONArray(k);
+                                    double lat = pointItem.getDouble(0);
+                                    double lng = pointItem.getDouble(1);
+                                    result += lat + "_" + lng + "@";
+                                }
+
+                                if (result.length() > 0) result = result.substring(0, result.length() - 1);
+                                callback.execute(result);
+                                return;
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                },
+                error -> {
+                    Log.i("GuestMapActivity", error.getMessage());
+                }
+        );
+        queue.add(stringRequest);
+    }
 
     
 }
