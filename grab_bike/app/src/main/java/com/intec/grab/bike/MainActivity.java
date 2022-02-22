@@ -8,7 +8,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -17,8 +16,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.intec.grab.bike.guest_map.GuestMapActivity;
 import com.intec.grab.bike.login.LoginActivity;
 import com.intec.grab.bike.shared.SharedIntentService;
-import com.intec.grab.bike.utils.base.SETTING;
-import com.intec.grab.bike.utils.helper.BaseActivity;
+import com.intec.grab.bike.utils.base.BaseActivity;
 import com.intec.grab.bike.utils.log.Log;
 
 import butterknife.BindView;
@@ -103,28 +101,27 @@ public class MainActivity extends BaseActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_all_messages)
+        if (id == R.id.nav_bookings)
         {
             this.Redirect(GuestMapActivity.class);
+        }
+        else if (id == R.id.nav_histories)
+        {
+            Log.i("No action to Histories");
+        }
+        else if (id == R.id.nav_settings)
+        {
+            Log.i("No action to settings");
+        }
+        else if (id == R.id.nav_about)
+        {
+            Log.i("No action to About");
         }
         else if (id == R.id.nav_logout)
         {
             settings.clear();
             this.Redirect(LoginActivity.class);
         }
-        else if (id == R.id.nav_logs)
-        {
-            Log.i("No action to logs");
-        }
-        else if (id == R.id.nav_settings)
-        {
-            Log.i("No action to settings");
-        }
-        else if (id == R.id.nav_push_message)
-        {
-            Log.i("No action to push_message");
-        }
-
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

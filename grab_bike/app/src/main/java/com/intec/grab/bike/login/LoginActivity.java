@@ -16,7 +16,7 @@ import com.intec.grab.bike.forgot_password.ForgotPasswordActivity;
 import com.intec.grab.bike.register.RegisterActivity;
 import com.intec.grab.bike.shared.SharedService;
 import com.intec.grab.bike.utils.api.Callback;
-import com.intec.grab.bike.utils.helper.BaseActivity;
+import com.intec.grab.bike.utils.base.BaseActivity;
 import com.intec.grab.bike.utils.helper.MyEventCallback;
 import com.intec.grab.bike.utils.helper.MyStringCallback;
 
@@ -66,7 +66,7 @@ public class LoginActivity extends BaseActivity
                     this.Redirect(MainActivity.class);
                 });
             }, (error) -> {
-                this.Toast("API cannot reach", error.body());
+                this.HandleException("Login", error.body());
             }));
     };
 

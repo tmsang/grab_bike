@@ -38,4 +38,19 @@ public interface GuestMapApi
             @Field("ToLongtitude") String ToLongtitude,
             @Field("ToAddress") String ToAddress
     );
+
+    @FormUrlEncoded
+    @POST("api/guest/push-position")
+    Call<Void> PushPosition(
+            @HeaderMap Map<String, String> headers,
+            @Field("lat") String Lat,
+            @Field("lng") String Lng
+    );
+
+    @GET("api/guest/order/driver-positions")
+    Call<String> GetDriverPositions(
+            @HeaderMap Map<String, String> headers,
+            @Field("lat") String Lat,
+            @Field("lng") String Lng
+    );
 }

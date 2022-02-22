@@ -1,8 +1,9 @@
-package com.intec.grab.bike.utils.helper;
+package com.intec.grab.bike.utils.base;
 
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
@@ -20,9 +21,16 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.intec.grab.bike.R;
+import com.intec.grab.bike.login.LoginActivity;
 import com.intec.grab.bike.utils.api.SSLSettings;
 import com.intec.grab.bike.utils.base.SETTING;
+import com.intec.grab.bike.utils.helper.CommonHelper;
+import com.intec.grab.bike.utils.helper.GPSTracker;
+import com.intec.grab.bike.utils.helper.MyEventCallback;
+import com.intec.grab.bike.utils.helper.MyStringCallback;
+import com.intec.grab.bike.utils.helper.StringHelper;
 import com.intec.grab.bike.utils.log.Log;
 
 public class BaseActivity extends AppCompatActivity {
@@ -220,8 +228,29 @@ public class BaseActivity extends AppCompatActivity {
         });
     }
 
+    // ============================================================
+    // GLOBAL EXCEPTION
+    // ============================================================
+    public void HandleException(String messageDefault, String... messages) {
+        if (messages == null) {
+            Toast("API (" + messageDefault + ") cannot reach.");
+            return;
+        }
 
-
+        String body = messages[0];
+        if (body.indexOf("user is null in JwtMiddleware") > 0)
+        {
+            Toast("Session User is expired", body);
+            this.Redirect(LoginActivity.class);
+        }
+        else if (body.indexOf("Password is invalid") > 0)
+        {
+            Toast("Password is invalid", body);
+        }
+        else {
+            Toast("API (" + messageDefault + ") cannot reach.", body);
+        }
+    }
 
 
 }

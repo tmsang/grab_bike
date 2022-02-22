@@ -3,11 +3,12 @@ package com.intec.grab.bike.guest_map;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -16,15 +17,16 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.RequiresApi;
 
-import com.intec.grab.bike.MainActivity;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.intec.grab.bike.R;
 import com.intec.grab.bike.configs.Constants;
-import com.intec.grab.bike.login.LoginActivity;
 import com.intec.grab.bike.shared.SharedService;
 import com.intec.grab.bike.utils.api.Callback;
-import com.intec.grab.bike.utils.helper.BaseActivity;
+import com.intec.grab.bike.utils.base.BaseActivity;
 
-import com.microsoft.maps.AltitudeReferenceSystem;
+import com.intec.grab.bike.utils.log.Log;
 import com.microsoft.maps.GPSMapLocationProvider;
 import com.microsoft.maps.Geopath;
 import com.microsoft.maps.Geoposition;
@@ -54,12 +56,13 @@ public class GuestMapActivity extends BaseActivity {
     private MapView mMapView;
     private MapElementLayer mPinLayer;
     private MapUserLocation userLocation;
+    private FusedLocationProviderClient fusedLocationClient;
 
     private String fromLat = "", fromLng = "", fromAddress = "";
     private String toLat = "", toLng = "", toAddress = "";
 
     private String[] destinations = {"Vietnam","England","Canada", "France","Australia"};
-    private  AutoCompleteTextView autoCompleteDestination;
+    private AutoCompleteTextView autoCompleteDestination;
     private ArrayAdapter destinationAdapter;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -69,6 +72,10 @@ public class GuestMapActivity extends BaseActivity {
         setContentView(R.layout.activity_guest_map);
         Initialization(this);
 
+        // Get the last known location of users
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        // autocomplete BingMap to input address
         autoCompleteDestination =(AutoCompleteTextView)findViewById(R.id.autoCompleteDestination);
         destinationAdapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, destinations);
         autoCompleteDestination.setAdapter(destinationAdapter);
@@ -82,6 +89,7 @@ public class GuestMapActivity extends BaseActivity {
         mMapView.onCreate(savedInstanceState);
         userLocation = mMapView.getUserLocation();
 
+        // show dialog to request permission
         MapUserLocationTrackingState userLocationTrackingState = userLocation.startTracking(
                 new GPSMapLocationProvider.Builder(getApplicationContext()).build());
         if (userLocationTrackingState == MapUserLocationTrackingState.PERMISSION_DENIED)
@@ -90,6 +98,7 @@ public class GuestMapActivity extends BaseActivity {
         } else if (userLocationTrackingState == MapUserLocationTrackingState.READY)
         {
             // handle the case where location tracking was successfully started
+
         } else if (userLocationTrackingState == MapUserLocationTrackingState.DISABLED)
         {
             // handle the case where all location providers were disabled
@@ -125,6 +134,20 @@ public class GuestMapActivity extends BaseActivity {
                 mPinLayer.getElements().add(pushpin);
                 mMapView.getLayers().add(mPinLayer);
             });
+
+            // Push current guest position
+            Map<String, String> pushPositionParam = new HashMap<>();
+            pushPositionParam.put("Content-Type", "application/x-www-form-urlencoded");
+            pushPositionParam.put("Authorization", settings.jwtToken());
+
+            SharedService.GuestMapApi(Constants.API_NET, sslSettings)
+                    .PushPosition(pushPositionParam, fromLat, fromLng)
+                    .enqueue(Callback.callInUI(GuestMapActivity.this, (res) -> {
+                        // TODO: nothing to do here
+                        Log.i("Guest position has been pushed - successfully");
+                    }, (error) -> {
+                        HandleException("Push Position", error.body());
+                    }));
         });
 
         // AutoSuggest
@@ -185,7 +208,7 @@ public class GuestMapActivity extends BaseActivity {
                                 drawLineOnMap(mMapView, address1, address2);
 
                             }, (error) -> {
-                                Toast("API cannot reach", error.body());
+                                HandleException("GetPrice", error.body());
                             }));
                 });
                 // calculate Amount
@@ -207,9 +230,30 @@ public class GuestMapActivity extends BaseActivity {
             SharedService.GuestMapApi(Constants.API_NET, sslSettings)
                 .BookATrip(map, fromLat, fromLng, fromAddress, toLat, toLng, toAddress)
                 .enqueue(Callback.callInUI(GuestMapActivity.this, (result) -> {
-                    Log.i("", "");
+                    Toast("Your Book is success. Please wait Driver response");
+
+                    // -----------------------------
+                    // view driver position
+                    new android.os.Handler(Looper.getMainLooper()).postDelayed(
+                        new Runnable() {
+                            public void run() {
+                                SharedService.GuestMapApi(Constants.API_NET, sslSettings)
+                                    .GetDriverPositions(map, fromLat, fromLng)
+                                    .enqueue(Callback.callInUI(GuestMapActivity.this, (rs) -> {
+                                        Log.i("Driver Position");
+
+                                        // list of driver position
+                                        // show pin in it
+                                    }, (err) -> {
+                                        Toast("API DriverPositions cannot reach", err.body());
+                                    }));
+                            }
+                        },
+                        1000);
+                    // -----------------------------
+
                 }, (error) -> {
-                    Toast("API cannot reach", error.body());
+                    Toast("API BookATrip cannot reach", error.body());
                 }));
         });
 
@@ -220,7 +264,7 @@ public class GuestMapActivity extends BaseActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(key -> {
-                    Log.i("GuestMapActivity", "key: " + key);
+                    Log.i("GuestMapActivity Key: " + key);
                     GuestBingMapApi.instance.getDestinations(this, key,
                             fromLat, fromLng, (result) -> {
                         String[] itemArrays = result.split("@");
