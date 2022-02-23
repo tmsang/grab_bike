@@ -2,6 +2,7 @@ package com.intec.grab.bike.guest_map;
 
 import com.intec.grab.bike.shared.models.jwt;
 
+import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -12,6 +13,7 @@ import retrofit2.http.Header;
 import retrofit2.http.HeaderMap;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 public interface GuestMapApi
 {
@@ -39,18 +41,18 @@ public interface GuestMapApi
             @Field("ToAddress") String ToAddress
     );
 
-    @FormUrlEncoded
+    @FormUrlEncoded                                 // use for method: "POST"
     @POST("api/guest/push-position")
     Call<Void> PushPosition(
             @HeaderMap Map<String, String> headers,
-            @Field("lat") String Lat,
+            @Field("lat") String Lat,               // @Field: is for POST
             @Field("lng") String Lng
     );
 
     @GET("api/guest/order/driver-positions")
-    Call<String> GetDriverPositions(
+    Call<List<DriverPositionDto>> GetDriverPositions(
             @HeaderMap Map<String, String> headers,
-            @Field("lat") String Lat,
-            @Field("lng") String Lng
+            @Query("lat") String Lat,
+            @Query("lng") String Lng
     );
 }

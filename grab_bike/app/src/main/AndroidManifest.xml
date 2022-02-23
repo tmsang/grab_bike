@@ -63,7 +63,10 @@
             />
         <service
             android:name=".shared.SharedIntentService"
-            android:exported="false"></service>
+            android:exported="false"/>
+        <service
+            android:name=".shared.PushPositionService"
+            android:exported="false"/>
 
     </application>
 

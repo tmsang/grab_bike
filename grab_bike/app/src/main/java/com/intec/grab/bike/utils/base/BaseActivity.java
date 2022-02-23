@@ -3,6 +3,9 @@ package com.intec.grab.bike.utils.base;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,10 +23,16 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.intec.grab.bike.R;
+import com.intec.grab.bike.configs.Constants;
 import com.intec.grab.bike.login.LoginActivity;
+import com.intec.grab.bike.shared.SharedService;
+import com.intec.grab.bike.utils.api.Callback;
 import com.intec.grab.bike.utils.api.SSLSettings;
 import com.intec.grab.bike.utils.base.SETTING;
 import com.intec.grab.bike.utils.helper.CommonHelper;
@@ -32,6 +41,14 @@ import com.intec.grab.bike.utils.helper.MyEventCallback;
 import com.intec.grab.bike.utils.helper.MyStringCallback;
 import com.intec.grab.bike.utils.helper.StringHelper;
 import com.intec.grab.bike.utils.log.Log;
+import com.microsoft.maps.Geopoint;
+import com.microsoft.maps.MapElementLayer;
+import com.microsoft.maps.MapIcon;
+import com.microsoft.maps.MapImage;
+import com.microsoft.maps.MapView;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class BaseActivity extends AppCompatActivity {
     public SETTING settings;
@@ -52,19 +69,16 @@ public class BaseActivity extends AppCompatActivity {
     }
 
 
-
-
     // ============================================================
     // EditText
     // ============================================================
-    public void EnableEditText(int rId)
-    {
+    public void EnableEditText(int rId) {
         EditText editText = this.activity.findViewById(rId);
         editText.setBackgroundResource(R.drawable.tp_edittext_bg);
         editText.setEnabled(true);
     }
-    public void DisableEditText(int rId)
-    {
+
+    public void DisableEditText(int rId) {
         EditText editText = this.activity.findViewById(rId);
         editText.setBackgroundResource(R.drawable.tp_edittext_bg_disable);
         editText.setEnabled(false);
@@ -74,10 +88,12 @@ public class BaseActivity extends AppCompatActivity {
         EditText editText = this.activity.findViewById(rId);
         return editText.getText().toString();
     }
+
     public void EditText(int rId, String value) {
         EditText editText = this.activity.findViewById(rId);
         editText.setText(value);
     }
+
     public void EditTextOnKeyPress(int rId, MyEventCallback callback) {
         EditText txt = this.activity.findViewById(rId);
         txt.setOnKeyListener(new View.OnKeyListener() {
@@ -95,18 +111,18 @@ public class BaseActivity extends AppCompatActivity {
     // ============================================================
     // Button
     // ============================================================
-    public void EnableButton(int rId)
-    {
+    public void EnableButton(int rId) {
         Button button = this.activity.findViewById(rId);
         button.setBackgroundResource(R.drawable.tp_button_bg);
         button.setEnabled(true);
     }
-    public void DisableButton(int rId)
-    {
+
+    public void DisableButton(int rId) {
         Button button = this.activity.findViewById(rId);
         button.setBackgroundResource(R.drawable.tp_button_bg_disable);
         button.setEnabled(false);
     }
+
     public void ButtonClickEvent(int rId, MyEventCallback callback) {
         Button btn = this.activity.findViewById(rId);
         btn.setOnClickListener(new View.OnClickListener() {
@@ -133,21 +149,21 @@ public class BaseActivity extends AppCompatActivity {
     // ============================================================
     // TextView
     // ============================================================
-    public void SetTextView(int rId, int rString)
-    {
+    public void SetTextView(int rId, int rString) {
         TextView textView = this.activity.findViewById(rId);
         textView.setText(rString);
     }
-    public void SetTextView(int rId, String rString)
-    {
+
+    public void SetTextView(int rId, String rString) {
         TextView textView = this.activity.findViewById(rId);
         textView.setText(Html.fromHtml(rString));
     }
-    public String GetTextView(int rId)
-    {
+
+    public String GetTextView(int rId) {
         TextView textView = this.activity.findViewById(rId);
         return textView.getText().toString();
     }
+
     public void TextViewClickEvent(int rId, MyEventCallback callback) {
         TextView lbl = this.activity.findViewById(rId);
         lbl.setOnClickListener(new View.OnClickListener() {
@@ -189,19 +205,21 @@ public class BaseActivity extends AppCompatActivity {
         return false;
     }
 
+    // ============================================================
+    // Goecode & Location
+    // ============================================================
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void RequestPermissionLocation(MyStringCallback callback) {
         // Request location permission
         ActivityResultLauncher<String[]> locationPermissionRequest =
                 registerForActivityResult(new ActivityResultContracts
-                                .RequestMultiplePermissions(), result -> {
-                            Boolean fineLocationGranted = result.getOrDefault(
-                                    Manifest.permission.ACCESS_FINE_LOCATION, false);
-                            Boolean coarseLocationGranted = result.getOrDefault(
-                                    Manifest.permission.ACCESS_COARSE_LOCATION,false);
-                            if (fineLocationGranted != null && fineLocationGranted)
-                            {
+                        .RequestMultiplePermissions(), result -> {
+                    Boolean fineLocationGranted = result.getOrDefault(
+                            Manifest.permission.ACCESS_FINE_LOCATION, false);
+                    Boolean coarseLocationGranted = result.getOrDefault(
+                            Manifest.permission.ACCESS_COARSE_LOCATION, false);
+                            if (fineLocationGranted != null && fineLocationGranted) {
                                 // Precise location access granted.
                                 GPSTracker gps = new GPSTracker(this);
                                 if (gps.canGetLocation()) {
@@ -225,6 +243,29 @@ public class BaseActivity extends AppCompatActivity {
         locationPermissionRequest.launch(new String[] {
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION
+        });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void PushPosition() {
+        this.RequestPermissionLocation((result) -> {
+            String[] items = result.split("@");
+            String fromLat = items[0];
+            String fromLng = items[1];
+
+            // Push current guest position
+            Map<String, String> pushPositionParam = new HashMap<>();
+            pushPositionParam.put("Content-Type", "application/x-www-form-urlencoded");
+            pushPositionParam.put("Authorization", settings.jwtToken());
+
+            SharedService.GuestMapApi(Constants.API_NET, sslSettings)
+                    .PushPosition(pushPositionParam, fromLat, fromLng)
+                    .enqueue(Callback.call((res) -> {
+                        // TODO: nothing to do here
+                        Log.i("Guest position has been pushed - successfully");
+                    }, (error) -> {
+                        HandleException("Push Position", error.body());
+                    }));
         });
     }
 

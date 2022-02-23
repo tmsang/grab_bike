@@ -48,15 +48,22 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subscribers.DisposableSubscriber;
 
 public class GuestMapActivity extends BaseActivity {
+    private int POLL_INTERVAL = 10;
+    private int DELAY_TIME = 2;
+    private DisposableSubscriber<Long> subscriberDelayInterval;
+
     private MapView mMapView;
     private MapElementLayer mPinLayer;
     private MapUserLocation userLocation;
     private FusedLocationProviderClient fusedLocationClient;
+    private GuestMapGUI mapGUI;
 
     private String fromLat = "", fromLng = "", fromAddress = "";
     private String toLat = "", toLng = "", toAddress = "";
@@ -71,6 +78,11 @@ public class GuestMapActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guest_map);
         Initialization(this);
+
+        mapGUI = new GuestMapGUI(this);
+        if (subscriberDelayInterval != null && !subscriberDelayInterval.isDisposed()) {
+            subscriberDelayInterval.dispose();
+        }
 
         // Get the last known location of users
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -117,22 +129,13 @@ public class GuestMapActivity extends BaseActivity {
                         MapScene.createFromLocationAndZoomLevel(centerPoint, 16),
                         MapAnimationKind.NONE);
 
-                // attach PIN
-                Geopoint location = new Geopoint(
+                // attach PIN on Map
+                mapGUI.AttachPinOnMap(
+                        mMapView,
+                        "Me",
                         Double.valueOf(fromLat),
-                        Double.valueOf(fromLng));                           // your pin lat-long coordinates
-                String title = "Current";                                   // title to be shown next to the pin
-                Bitmap pinBitmap = BitmapFactory
-                        .decodeResource(this.getResources(),                // your pin graphic (optional)
-                                R.drawable.ic_current_position);
-                MapIcon pushpin = new MapIcon();
-                pushpin.setLocation(location);
-                pushpin.setTitle(title);
-                pushpin.setImage(new MapImage(pinBitmap));
-
-                mPinLayer = new MapElementLayer();
-                mPinLayer.getElements().add(pushpin);
-                mMapView.getLayers().add(mPinLayer);
+                        Double.valueOf(fromLng),
+                        R.drawable.ic_current_position);
             });
 
             // Push current guest position
@@ -148,6 +151,48 @@ public class GuestMapActivity extends BaseActivity {
                     }, (error) -> {
                         HandleException("Push Position", error.body());
                     }));
+
+            // Set subscriber
+            Map<String, String> getPositionMap = new HashMap<>();
+            getPositionMap.put("Content-Type", "application/x-www-form-urlencoded");
+            getPositionMap.put("Authorization", settings.jwtToken());
+
+            subscriberDelayInterval = new DisposableSubscriber<Long>() {
+                @Override
+                public void onNext(Long aLong) {
+                    Log.i("---");
+                    SharedService.GuestMapApi(Constants.API_NET, sslSettings)
+                        .GetDriverPositions(getPositionMap, fromLat, fromLng)
+                        .enqueue(Callback.callInUI(GuestMapActivity.this, (rs) -> {
+                            Log.i("Driver Position has been collected");
+
+                            // list of driver position
+                            for (DriverPositionDto obj: rs) {
+                                // attach PIN on Map
+                                mapGUI.AttachPinOnMap(
+                                        mMapView,
+                                        obj.Phone,
+                                        obj.Lat,
+                                        obj.Lng,
+                                        R.drawable.ic_automobile_32);
+                            }
+
+                            // show pin in it
+                        }, (err) -> {
+                            Toast("API DriverPositions cannot reach", err.body());
+                        }));
+                }
+
+                @Override
+                public void onError(Throwable t) {
+
+                }
+
+                @Override
+                public void onComplete() {
+                    Log.i("....");
+                }
+            };
         });
 
         // AutoSuggest
@@ -234,22 +279,10 @@ public class GuestMapActivity extends BaseActivity {
 
                     // -----------------------------
                     // view driver position
-                    new android.os.Handler(Looper.getMainLooper()).postDelayed(
-                        new Runnable() {
-                            public void run() {
-                                SharedService.GuestMapApi(Constants.API_NET, sslSettings)
-                                    .GetDriverPositions(map, fromLat, fromLng)
-                                    .enqueue(Callback.callInUI(GuestMapActivity.this, (rs) -> {
-                                        Log.i("Driver Position");
-
-                                        // list of driver position
-                                        // show pin in it
-                                    }, (err) -> {
-                                        Toast("API DriverPositions cannot reach", err.body());
-                                    }));
-                            }
-                        },
-                        1000);
+                    Flowable.interval(DELAY_TIME, POLL_INTERVAL, TimeUnit.SECONDS)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeOn(Schedulers.io())
+                            .subscribe(subscriberDelayInterval);
                     // -----------------------------
 
                 }, (error) -> {
@@ -341,6 +374,13 @@ public class GuestMapActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         mMapView.onDestroy();
+
+        // release: Map + Observable
+        mMapView = null;
+        if (subscriberDelayInterval != null && !subscriberDelayInterval.isDisposed()) {
+            subscriberDelayInterval.dispose();
+        }
+        subscriberDelayInterval = null;
     }
 
     @Override

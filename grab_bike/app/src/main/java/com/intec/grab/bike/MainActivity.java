@@ -1,12 +1,14 @@
 package com.intec.grab.bike;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -36,6 +38,7 @@ public class MainActivity extends BaseActivity
 
     String token;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +64,9 @@ public class MainActivity extends BaseActivity
         // Draw Listener
         // =============================================
         initDrawer();
+
+        // TODO: version
+        this.PushPosition();
     }
 
     private void initDrawer() {

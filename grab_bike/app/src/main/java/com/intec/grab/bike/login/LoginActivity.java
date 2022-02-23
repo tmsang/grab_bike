@@ -1,10 +1,13 @@
 package com.intec.grab.bike.login;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -13,13 +16,20 @@ import com.intec.grab.bike.MainActivity;
 import com.intec.grab.bike.R;
 import com.intec.grab.bike.configs.Constants;
 import com.intec.grab.bike.forgot_password.ForgotPasswordActivity;
+import com.intec.grab.bike.guest_map.GuestMapActivity;
 import com.intec.grab.bike.register.RegisterActivity;
+import com.intec.grab.bike.shared.PushPositionService;
 import com.intec.grab.bike.shared.SharedService;
 import com.intec.grab.bike.utils.api.Callback;
 import com.intec.grab.bike.utils.base.BaseActivity;
 import com.intec.grab.bike.utils.helper.MyEventCallback;
 import com.intec.grab.bike.utils.helper.MyStringCallback;
+import com.intec.grab.bike.utils.log.Log;
 
+import java.util.HashMap;
+import java.util.Map;
+
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class LoginActivity extends BaseActivity
 {
     @Override
