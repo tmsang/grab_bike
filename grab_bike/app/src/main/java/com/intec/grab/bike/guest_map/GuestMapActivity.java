@@ -65,8 +65,8 @@ public class GuestMapActivity extends BaseActivity {
     private FusedLocationProviderClient fusedLocationClient;
     private GuestMapGUI mapGUI;
 
-    private String fromLat = "", fromLng = "", fromAddress = "";
-    private String toLat = "", toLng = "", toAddress = "";
+    private String fromLat = "", fromLng = "", fromAddress = "", fromCoordinate = "";
+    private String toLat = "", toLng = "", toAddress = "", toCoordinate = "";
 
     private String[] destinations = {"Vietnam","England","Canada", "France","Australia"};
     private AutoCompleteTextView autoCompleteDestination;
@@ -123,6 +123,7 @@ public class GuestMapActivity extends BaseActivity {
             fromLng = items[1];
             GuestBingMapApi.instance.getAddressByLocation(this, fromLat + "", fromLng + "", (address) -> {
                 fromAddress = address;
+                fromCoordinate = fromLat + "," + fromLng;
 
                 Geopoint centerPoint = new Geopoint(Double.valueOf(fromLat), Double.valueOf(fromLng));
                 mMapView.setScene(
@@ -220,43 +221,45 @@ public class GuestMapActivity extends BaseActivity {
                 String address2 = destinations[position];
 
                 // analyze address (no need to synchonize)
-                GuestBingMapApi.instance.getLocationByAddress(GuestMapActivity.this, address2, (result) -> {
-                    String[] items = result.split("_");
+                GuestBingMapApi.instance.getLocationByAddress(GuestMapActivity.this, address2, (addressResult) -> {
+                    String[] items = addressResult.split("_");
                     toLat = items[0];
                     toLng = items[1];
                     toAddress = address2;
+                    toCoordinate = toLat + "," + toLng;
+
+                    GuestBingMapApi.instance.distanceCalculation(GuestMapActivity.this, address1, address2, (distanceResult) -> {
+                        String[] itms = distanceResult.split("@");
+
+                        double distance = Math.round(Double.valueOf(itms[0]));     // km
+                        double duration = Math.round(Double.valueOf(itms[1]));     // second
+
+                        Map<String, String> map = new HashMap<>();
+                        map.put("Content-Type", "application/x-www-form-urlencoded");
+                        map.put("Authorization", settings.jwtToken());
+
+                        SharedService.GuestMapApi(Constants.API_NET, sslSettings)
+                                .GetPrice(map)
+                                .enqueue(Callback.callInUI(GuestMapActivity.this, (price) -> {
+                                    if (IsNullOrEmpty(price, "Price")) return;
+
+                                    DecimalFormat F = new DecimalFormat("#,###,###,###");
+                                    Double amount = Double.valueOf(distance) * Double.valueOf(price);
+
+                                    // set distance & amount to UI
+                                    SetTextView(R.id.lblDistance, "<span style=\"color: #ffffff\"><b>Distance: </b></span><span style=\"color: #00ffff\"><b>" + F.format(Math.round(distance)) + " (km)</b></span>");
+                                    SetTextView(R.id.lblAmount, "<span style=\"color: #ffffff\"><b>Amount: </b></span><span style=\"color: #00ffff\"><b>" + F.format(Math.round(amount)) + " (vnd)</b></span>");
+
+                                    // set route path
+                                    //drawLineOnMap(mMapView, address1, address2);
+                                    drawLineOnMap(mMapView, fromCoordinate, toCoordinate);
+
+                                }, (error) -> {
+                                    HandleException("GetPrice", error.body());
+                                }));
+                    });
+                    // calculate Amount
                 });
-
-                GuestBingMapApi.instance.distanceCalculation(GuestMapActivity.this, address1, address2, (result) -> {
-                    String[] items = result.split("@");
-
-                    double distance = Math.round(Double.valueOf(items[0]));     // km
-                    double duration = Math.round(Double.valueOf(items[1]));     // second
-
-                    Map<String, String> map = new HashMap<>();
-                    map.put("Content-Type", "application/x-www-form-urlencoded");
-                    map.put("Authorization", settings.jwtToken());
-
-                    SharedService.GuestMapApi(Constants.API_NET, sslSettings)
-                            .GetPrice(map)
-                            .enqueue(Callback.callInUI(GuestMapActivity.this, (price) -> {
-                                if (IsNullOrEmpty(price, "Price")) return;
-
-                                DecimalFormat F = new DecimalFormat("#,###,###,###");
-                                Double amount = Double.valueOf(distance) * Double.valueOf(price);
-
-                                // set distance & amount to UI
-                                SetTextView(R.id.lblDistance, "<span style=\"color: #ffffff\"><b>Distance: </b></span><span style=\"color: #00ffff\"><b>" + F.format(Math.round(distance)) + " (km)</b></span>");
-                                SetTextView(R.id.lblAmount, "<span style=\"color: #ffffff\"><b>Amount: </b></span><span style=\"color: #00ffff\"><b>" + F.format(Math.round(amount)) + " (vnd)</b></span>");
-
-                                // set route path
-                                drawLineOnMap(mMapView, address1, address2);
-
-                            }, (error) -> {
-                                HandleException("GetPrice", error.body());
-                            }));
-                });
-                // calculate Amount
             }
         });
 

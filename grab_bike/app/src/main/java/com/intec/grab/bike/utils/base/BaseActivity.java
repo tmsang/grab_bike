@@ -279,7 +279,8 @@ public class BaseActivity extends AppCompatActivity {
         }
 
         String body = messages[0];
-        if (body.indexOf("user is null in JwtMiddleware") > 0)
+        if (body.indexOf("user is null in JwtMiddleware") > 0
+                || body.indexOf("Unauthorized") >= 0)
         {
             Toast("Session User is expired", body);
             this.Redirect(LoginActivity.class);

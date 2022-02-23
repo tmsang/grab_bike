@@ -55,18 +55,15 @@ public class MainActivity extends BaseActivity
         }
 
         // Start Background Service
-        Intent cbIntent =  new Intent();
-        cbIntent.setClass(this, SharedIntentService.class);
-        cbIntent.putExtra("param", "");
-        startService(cbIntent);
+        //Intent cbIntent =  new Intent();
+        //cbIntent.setClass(this, SharedIntentService.class);
+        //cbIntent.putExtra("param", "");
+        //startService(cbIntent);
 
         // =============================================
         // Draw Listener
         // =============================================
         initDrawer();
-
-        // TODO: version
-        this.PushPosition();
     }
 
     private void initDrawer() {
