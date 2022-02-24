@@ -54,7 +54,6 @@
 
                         android:layout_marginTop="50dp"
                         android:layout_marginEnd="50dp"
-                        android:onClick="onGoToMessages"
                         android:text="@string/list_screen"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

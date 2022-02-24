@@ -70,9 +70,11 @@ public class LoginActivity extends BaseActivity
                 if (this.IsNullOrEmpty(json.jwt, "JWT Token")) return;
 
                 FcmToken((token) -> {
-                    settings.email(email);
                     settings.jwtToken(json.jwt);
                     settings.fcmToken(token);
+                    settings.fullName(json.FullName);
+                    settings.phone(json.Phone);
+                    settings.email(email);
                     this.Redirect(MainActivity.class);
                 });
             }, (error) -> {
