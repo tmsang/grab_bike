@@ -1,6 +1,7 @@
 package com.intec.grab.bike.utils.base;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Location;
 
 import com.intec.grab.bike.utils.api.SSLSettings;
 

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.intec.grab.bike.configs.Constants;
 import com.intec.grab.bike.forgot_password.ForgotPasswordApi;
+import com.intec.grab.bike.guest_map.GuestMapApi;
 import com.intec.grab.bike.login.LoginApi;
 import com.intec.grab.bike.register.RegisterApi;
 import com.intec.grab.bike.reset_password.ResetPasswordApi;
@@ -70,6 +71,9 @@ public class SharedService {
     }
     public static ResetPasswordApi ResetPasswordApi(String baseUrl, SSLSettings sslSettings) {
         return ClientFactory.unauthorized(baseUrl, sslSettings).createService(ResetPasswordApi.class);
+    }
+    public static GuestMapApi GuestMapApi(String baseUrl, SSLSettings sslSettings) {
+        return ClientFactory.unauthorized(baseUrl, sslSettings).createService(GuestMapApi.class);
     }
 
 

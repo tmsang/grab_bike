@@ -7,7 +7,7 @@ import com.intec.grab.bike.R;
 import com.intec.grab.bike.configs.Constants;
 import com.intec.grab.bike.shared.SharedService;
 import com.intec.grab.bike.utils.api.Callback;
-import com.intec.grab.bike.utils.helper.BaseActivity;
+import com.intec.grab.bike.utils.base.BaseActivity;
 import com.intec.grab.bike.utils.helper.MyEventCallback;
 
 public class ResetPasswordActivity extends BaseActivity

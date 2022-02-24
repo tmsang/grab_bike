@@ -6,8 +6,8 @@
         <item
             android:orderInCategory="0"
             android:icon="@drawable/ic_dashboard"
-            android:id="@+id/nav_all_messages"
-            android:title="@string/all_messages" />
+            android:id="@+id/nav_bookings"
+            android:title="Booking" />
     </group>
     <group
         android:id="@+id/apps"
@@ -18,8 +18,8 @@
         <item
             android:orderInCategory="2"
             android:icon="@drawable/ic_send"
-            android:id="@+id/nav_push_message"
-            android:title="@string/push_message"
+            android:id="@+id/nav_histories"
+            android:title="Histories"
             />
         <item
             android:icon="@drawable/ic_settings"
@@ -29,13 +29,13 @@
         <item
             android:orderInCategory="2"
             android:icon="@drawable/ic_bug_report"
-            android:id="@+id/nav_logs"
-            android:title="@string/logs" />
+            android:id="@+id/nav_about"
+            android:title="About" />
         <item
             android:icon="@drawable/ic_power_setting"
             android:orderInCategory="2"
             android:id="@+id/nav_logout"
-            android:title="@string/logout" />
+            android:title="Logout" />
     </group>
 
 </menu>

@@ -8,6 +8,12 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+    <!-- Required only when requesting background location access on Android 10 (API level 29) and higher. -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -50,6 +56,17 @@
             android:label="Reset Password"
             android:windowSoftInputMode="adjustResize"
             />
+        <activity
+            android:name=".guest_map.GuestMapActivity"
+            android:label="Map for Guest"
+            android:windowSoftInputMode="adjustResize"
+            />
+        <service
+            android:name=".shared.SharedIntentService"
+            android:exported="false"/>
+        <service
+            android:name=".shared.PushPositionService"
+            android:exported="false"/>
 
     </application>
 
