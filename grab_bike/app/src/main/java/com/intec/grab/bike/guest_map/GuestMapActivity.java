@@ -31,6 +31,8 @@ import com.microsoft.maps.GPSMapLocationProvider;
 import com.microsoft.maps.Geopath;
 import com.microsoft.maps.Geoposition;
 import com.microsoft.maps.MapAnimationKind;
+import com.microsoft.maps.MapElement;
+import com.microsoft.maps.MapLayer;
 import com.microsoft.maps.MapPolyline;
 import com.microsoft.maps.MapRenderMode;
 import com.microsoft.maps.MapScene;
@@ -315,6 +317,16 @@ public class GuestMapActivity extends BaseActivity {
     private void drawLineOnMap(MapView mapView, String address1, String address2) {
 
         GuestBingMapApi.instance.drivingRoutePath(this, address1, address2, (result) -> {
+            // clear old line route
+            for (MapLayer layer: mapView.getLayers()) {
+                MapElementLayer _layer = (MapElementLayer)layer;
+                for (MapElement element: _layer.getElements()) {
+                    if (element instanceof MapPolyline) {
+                        _layer.getElements().remove(element);
+                    }
+                }
+            }
+
             ArrayList<Geoposition> geopoints = new ArrayList<>();
             String[] items;
             Double lat, lng;
