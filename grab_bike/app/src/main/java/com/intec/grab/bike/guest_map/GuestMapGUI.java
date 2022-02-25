@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.intec.grab.bike.R;
@@ -39,7 +38,6 @@ import com.microsoft.maps.MapView;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -52,6 +50,10 @@ public class GuestMapGUI {
     Context context;
     SETTING settings;
     SSLSettings sslSettings;
+
+    String[] suggestions;
+    public String[] getSuggestions() { return suggestions; }
+    public void setSuggestions(String[] suggestions) { this.suggestions = suggestions; }
 
     public GuestMapGUI(Context context, SETTING settings, SSLSettings sslSettings) {
         this.context = context;
@@ -222,14 +224,13 @@ public class GuestMapGUI {
 
     public void AutoComplete_OnItemClick(
             AutoCompleteTextView autoCompleteItem,
-            String[] data,
             MyStringCallback callback)
     {
         autoCompleteItem.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // calculate Distance
-                String address = data[position];
+                String address = getSuggestions()[position];
 
                 // analyze address (no need to synchonize)
                 GuestBingMapApi.instance.getLocationByAddress(context, address, (addressResult) -> {

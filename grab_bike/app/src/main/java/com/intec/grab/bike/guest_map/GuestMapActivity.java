@@ -2,11 +2,8 @@ package com.intec.grab.bike.guest_map;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -24,9 +21,7 @@ import com.microsoft.maps.MapRenderMode;
 import com.microsoft.maps.MapScene;
 import com.microsoft.maps.MapView;
 import com.microsoft.maps.Geopoint;
-import com.microsoft.maps.MapElementLayer;
 
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -90,12 +85,8 @@ public class GuestMapActivity extends BaseActivity {
         // prepare [FROM] position variable
         fromLat = settings.currentLat();
         fromLng = settings.currentLng();
+        fromAddress = settings.currentAddress();
         fromCoordinate = fromLat + "," + fromLng;
-
-        // request permission Bing Map
-        mapGUI.RequestGPSBingMap(mMapView, s -> {
-            Log.i("GPS Bing Map is granted");
-        });
 
         // 1. AutoSuggest
         final PublishSubject<String> publisher = PublishSubject.create();
@@ -110,6 +101,7 @@ public class GuestMapActivity extends BaseActivity {
         // subscribe
         mapGUI.AutoComplete_CreateSuggestionListener(publisher, result -> {
             destinations = result.split("@");
+            mapGUI.setSuggestions(destinations);
             destinationAdapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, destinations);
             autoCompleteDestination.setAdapter(destinationAdapter);
             destinationAdapter.notifyDataSetChanged();
@@ -120,13 +112,13 @@ public class GuestMapActivity extends BaseActivity {
         });
 
         // c. event click item
-        mapGUI.AutoComplete_OnItemClick(autoCompleteDestination, destinations, coordinates -> {
+        mapGUI.AutoComplete_OnItemClick(autoCompleteDestination, coordinates -> {
             String[] items = coordinates.split("_");
             toLat = items[0];
             toLng = items[1];
             toAddress = items[2];
-            toCoordinate = coordinates.replace("_", ",");
-            fromCoordinate = settings.currentLat() + "," + settings.currentLng();
+            toCoordinate = toLat + "," + toLng;
+            fromCoordinate = fromLat + "," + fromLng;
 
             mapGUI.GetDistanceAndAmount(header, fromCoordinate, toCoordinate, distanceAndAmount -> {
                 // display distance & amount
@@ -146,6 +138,11 @@ public class GuestMapActivity extends BaseActivity {
         mMapView.onCreate(savedInstanceState);
 
         //b. set Zoom from current position
+        // request permission Bing Map
+        mapGUI.RequestGPSBingMap(mMapView, s -> {
+            Log.i("GPS Bing Map is granted");
+        });
+
         Geopoint centerPoint = new Geopoint(Double.valueOf(fromLat), Double.valueOf(fromLng));
         mMapView.setScene(
                 MapScene.createFromLocationAndZoomLevel(centerPoint, 16),
