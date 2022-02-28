@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#009BE5"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ScrollView android:id="@+id/scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true" >
+
+        <LinearLayout android:id="@+id/scroll_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:padding="50dp"
+            android:orientation="vertical" >
+
+            <ImageButton
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginBottom="15dp"
+                android:background="@null"
+                android:src="@drawable/ic_profile_100" />
+
+            <EditText
+                android:id="@+id/fullName"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/tp_edittext_bg"
+                android:focusable="true"
+                android:hint="Full Name"
+                android:inputType="textCapWords"
+                android:padding="10dp"
+                android:singleLine="true" />
+
+            <EditText
+                android:id="@+id/email"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/tp_edittext_bg"
+                android:focusable="true"
+                android:hint="Email"
+                android:inputType="textCapWords"
+                android:padding="10dp"
+                android:singleLine="true" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:weightSum="10"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:layout_weight="9"
+                    android:id="@+id/phone"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/tp_edittext_bg"
+                    android:focusable="true"
+                    android:hint="Phone"
+                    android:inputType="textCapWords"
+                    android:padding="10dp"
+                    android:singleLine="true" />
+
+                <ProgressBar
+                    android:id="@+id/loading"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminate="true" />
+
+                <ImageButton
+                    android:layout_weight="1"
+                    android:id="@+id/btnSmsCode"
+                    android:src="@drawable/ic_authentication_sms_30"
+                    android:background="@drawable/tp_background_icon"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/tp_edittext_bg"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:padding="10dp"
+                android:singleLine="true" />
+
+            <EditText
+                android:id="@+id/smsCode"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/tp_edittext_bg_disable"
+                android:hint="SMS Code"
+                android:inputType="textCapWords"
+                android:padding="10dp"
+                android:singleLine="true" />
+
+            <TextView
+                android:id="@+id/lblMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@drawable/tp_message_inline"
+                android:textSize="18dp"></TextView>
+
+            <Button
+                android:id="@+id/btnRegister"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/tp_button_bg"
+                android:text="@string/btn_register"
+                android:textColor="#ffffff"
+                android:textSize="18dp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+</LinearLayout>

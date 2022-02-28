@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#009BE5"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ScrollView android:id="@+id/scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true" >
+
+        <LinearLayout android:id="@+id/scroll_layout"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <AutoCompleteTextView
+                    android:id="@+id/autoCompleteDestination"
+                    android:layout_marginTop="10dp"
+                    android:textColor="#000"
+                    android:textSize="11dp"
+                    android:tooltipText="Destination"
+                    android:background="@drawable/tp_edittext_bg"
+                    android:hint="Destination"
+                    android:paddingLeft="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"></AutoCompleteTextView>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:weightSum="6"
+                    android:layout_marginTop="7dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp">
+
+                    <TextView
+                        android:layout_weight="2"
+                        android:id="@+id/lblDistance"
+                        android:text="Distance:"
+                        android:gravity="center_vertical"
+                        android:textColor="#fff"
+                        android:textStyle="bold"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"></TextView>
+
+                    <TextView
+                        android:layout_weight="3"
+                        android:gravity="center_vertical"
+                        android:textColor="#fff"
+                        android:textStyle="bold"
+                        android:id="@+id/lblAmount"
+                        android:text="Amount:"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"></TextView>
+
+                    <Button
+                        android:id="@+id/btnBook"
+                        android:text="Book"
+                        android:textSize="11dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:layout_width="0dp"
+                        android:background="@drawable/tp_button_bg_small"
+                        android:layout_height="wrap_content"></Button>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/map_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
