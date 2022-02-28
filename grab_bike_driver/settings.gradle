@@ -9,5 +9,5 @@ dependencyResolutionManagement {
         }
     }
 }
-rootProject.name = "grab_bike"
+rootProject.name = "grab_bike_driver"
 include ':app'

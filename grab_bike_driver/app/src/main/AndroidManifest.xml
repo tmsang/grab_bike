@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.intec.grab.bike" android:installLocation="auto">
+    package="com.intec.grab.bike_driver" android:installLocation="auto">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -25,7 +25,7 @@
         android:theme="@style/AppTheme.NoActionBar">
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.intec.grab.bike_driver.MainActivity"
             android:label="Push Notification"
             android:windowSoftInputMode="adjustResize"
             android:exported="true">
@@ -37,35 +37,35 @@
         </activity>
 
         <activity
-            android:name=".login.LoginActivity"
+            android:name="com.intec.grab.bike_driver.login.LoginActivity"
             android:label="Login"
             android:windowSoftInputMode="adjustResize"
             />
         <activity
-            android:name=".register.RegisterActivity"
+            android:name="com.intec.grab.bike_driver.register.RegisterActivity"
             android:label="Register"
             android:windowSoftInputMode="adjustResize"
             />
         <activity
-            android:name=".forgot_password.ForgotPasswordActivity"
+            android:name="com.intec.grab.bike_driver.forgot_password.ForgotPasswordActivity"
             android:label="Forgot Password"
             android:windowSoftInputMode="adjustResize"
             />
         <activity
-            android:name=".reset_password.ResetPasswordActivity"
+            android:name="com.intec.grab.bike_driver.reset_password.ResetPasswordActivity"
             android:label="Reset Password"
             android:windowSoftInputMode="adjustResize"
             />
         <activity
-            android:name=".guest_map.GuestMapActivity"
+            android:name="com.intec.grab.bike_driver.guest_map.GuestMapActivity"
             android:label="Map for Guest"
             android:windowSoftInputMode="adjustResize"
             />
         <service
-            android:name=".shared.SharedIntentService"
+            android:name="com.intec.grab.bike_driver.shared.SharedIntentService"
             android:exported="false"/>
         <service
-            android:name=".shared.PushPositionService"
+            android:name="com.intec.grab.bike_driver.shared.PushPositionService"
             android:exported="false"/>
 
     </application>
