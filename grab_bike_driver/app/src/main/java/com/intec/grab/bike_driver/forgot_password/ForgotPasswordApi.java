@@ -8,7 +8,7 @@ import retrofit2.http.POST;
 
 public interface ForgotPasswordApi {
     @FormUrlEncoded
-    @POST("api/guest/forgot/")
+    @POST("api/driver/forgot/")
     Call<ResponseBody> ForgotPassword(
             @Field("Email") String Email
     );

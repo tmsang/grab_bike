@@ -10,6 +10,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -40,6 +41,7 @@ public class BaseActivity extends AppCompatActivity {
     public SETTING settings;
     public SSLSettings sslSettings = new SSLSettings(false, null);
     public Activity activity;
+    public FrameLayout loading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,11 +51,16 @@ public class BaseActivity extends AppCompatActivity {
     public void Initialization(Activity activity) {
         this.activity = activity;
 
-        // ButterKnife.bind(activity);
-        Log.init(this);
         settings = new SETTING(activity);
-    }
+        Log.init(this);
 
+        int loadingResId = getResources().getIdentifier("loading", "id", getPackageName());
+        if (loadingResId > 0) {
+            this.loading = this.activity.findViewById(loadingResId);
+        } else {
+            this.loading = null;
+        }
+    }
 
     // ============================================================
     // EditText
@@ -174,10 +181,16 @@ public class BaseActivity extends AppCompatActivity {
             Log.e(errors[0]);
         }
         Toast.makeText(this.activity, message, Toast.LENGTH_LONG).show();
+        this.Loading(false);
     }
 
     // INVISIBLE: This view is invisible, but it still takes up space for layout purposes.
     // GONE: This view is invisible, and it doesn't take any space for layout purposes.
+    public void Loading(boolean isShow) {
+        if (this.loading != null) {
+            this.loading.setVisibility(isShow ? View.VISIBLE : View.INVISIBLE);
+        }
+    }
     public void Loading(int rId, boolean isShow) {
         ProgressBar loading = this.activity.findViewById(rId);
         loading.setVisibility(isShow ? View.VISIBLE : View.GONE);
@@ -192,6 +205,8 @@ public class BaseActivity extends AppCompatActivity {
         if (StringHelper.isNullOrEmpty(value)) {
             String message = name.length > 0 ? name[0] : "Value Input";
             CommonHelper.showToast(this, message + " is null or empty");
+            this.Loading(false);
+
             return true;
         }
         return false;
@@ -252,7 +267,7 @@ public class BaseActivity extends AppCompatActivity {
             pushPositionParam.put("Content-Type", "application/x-www-form-urlencoded");
             pushPositionParam.put("Authorization", settings.jwtToken());
 
-            SharedService.GuestMapApi(Constants.API_NET, sslSettings)
+            SharedService.MapApi(Constants.API_NET, sslSettings)
                     .PushPosition(pushPositionParam, fromLat, fromLng)
                     .enqueue(Callback.call((res) -> {
                         // TODO: nothing to do here

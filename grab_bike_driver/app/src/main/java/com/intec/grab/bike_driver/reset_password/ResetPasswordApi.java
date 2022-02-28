@@ -9,7 +9,7 @@ import retrofit2.http.POST;
 
 public interface ResetPasswordApi {
     @FormUrlEncoded
-    @POST("api/guest/reset/")
+    @POST("api/driver/reset/")
     Call<jwt> ResetPassword(
             @Field("Email") String Email,
             @Field("OldPassword") String OldPassword,

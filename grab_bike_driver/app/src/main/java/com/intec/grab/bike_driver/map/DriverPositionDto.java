@@ -1,4 +1,4 @@
-package com.intec.grab.bike_driver.guest_map;
+package com.intec.grab.bike_driver.map;
 
 import com.google.gson.annotations.SerializedName;
 

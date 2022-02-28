@@ -33,6 +33,35 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:931492595946:android:f501f71664c860063fef93",
+        "android_client_info": {
+          "package_name": "com.intec.grab.bike_driver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "931492595946-n1dt9h7e8qdbehnb3ntvabu4mpmg2b6e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmzZrsdGchnszZOOVnqI_y7PMzF84_Ju8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "931492595946-n1dt9h7e8qdbehnb3ntvabu4mpmg2b6e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

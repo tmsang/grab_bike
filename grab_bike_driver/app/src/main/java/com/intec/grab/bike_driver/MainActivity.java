@@ -15,9 +15,10 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
 import com.intec.grab.bike_driver.configs.Constants;
-import com.intec.grab.bike_driver.guest_map.GuestBingMapApi;
-import com.intec.grab.bike_driver.guest_map.GuestMapActivity;
+import com.intec.grab.bike_driver.map.BingMapApi;
+import com.intec.grab.bike_driver.map.MapActivity;
 import com.intec.grab.bike_driver.login.LoginActivity;
+import com.intec.grab.bike_driver.messages.MessagesActivity;
 import com.intec.grab.bike_driver.shared.SharedService;
 import com.intec.grab.bike_driver.utils.api.Callback;
 import com.intec.grab.bike_driver.utils.base.BaseActivity;
@@ -83,19 +84,21 @@ public class MainActivity extends BaseActivity
             Log.i("Request permission is granted - current position is stored at Pref");
 
             // Convert coordinate -> address
-            GuestBingMapApi.instance.getAddressByLocation(this, settings.currentLat(), settings.currentLng(), (address) -> {
+            BingMapApi.instance.getAddressByLocation(this, settings.currentLat(), settings.currentLng(), (address) -> {
                 settings.currentAddress(address);
             });
 
-            // Push current guest position
-            Map<String, String> pushPositionParam = new HashMap<>();
-            pushPositionParam.put("Content-Type", "application/x-www-form-urlencoded");
-            pushPositionParam.put("Authorization", settings.jwtToken());
+            // Push current position
+            Map<String, String> header = new HashMap<>();
+            header.put("Content-Type", "application/x-www-form-urlencoded");
+            header.put("Authorization", settings.jwtToken());
 
-            SharedService.GuestMapApi(Constants.API_NET, sslSettings)
-                .PushPosition(pushPositionParam, settings.currentLat(), settings.currentLng())
+            SharedService.MapApi(Constants.API_NET, sslSettings)
+                .PushPosition(header, settings.currentLat(), settings.currentLng())
                 .enqueue(Callback.call((res) -> {
-                    Log.i("Guest position has been pushed - successfully");
+                    Log.i("Driver position has been pushed - successfully");
+
+                    Redirect(MessagesActivity.class);
                 }, (error) -> {
                     HandleException("Push Position", error.body());
                 }));
@@ -149,7 +152,7 @@ public class MainActivity extends BaseActivity
 
         if (id == R.id.nav_bookings)
         {
-            this.Redirect(GuestMapActivity.class);
+            this.Redirect(MapActivity.class);
         }
         else if (id == R.id.nav_histories)
         {

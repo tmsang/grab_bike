@@ -57,8 +57,13 @@
             android:windowSoftInputMode="adjustResize"
             />
         <activity
-            android:name="com.intec.grab.bike_driver.guest_map.GuestMapActivity"
+            android:name="com.intec.grab.bike_driver.map.MapActivity"
             android:label="Map for Guest"
+            android:windowSoftInputMode="adjustResize"
+            />
+        <activity
+            android:name="com.intec.grab.bike_driver.messages.MessagesActivity"
+            android:label="Message for Driver"
             android:windowSoftInputMode="adjustResize"
             />
         <service

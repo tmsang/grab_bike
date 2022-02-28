@@ -34,6 +34,12 @@
         <entry key="..\:/share/project_grab/sources/android/grab_bike/app/src/main/res/menu/nav_header_drawer.xml" value="0.1859375" />
         <entry key="..\:/share/project_grab/sources/android/grab_bike/app/src/main/res/xml/network_security_config.xml" value="0.1859375" />
         <entry key="..\:/share/project_grab/sources/android/grab_bike/app/src/main/res/xml/root_preferences.xml" value="0.1859375" />
+        <entry key="..\:/share/project_grab/sources/android/grab_bike_driver/app/src/main/res/drawable/tp_toolbar_bg.xml" value="0.20208333333333334" />
+        <entry key="..\:/share/project_grab/sources/android/grab_bike_driver/app/src/main/res/layout/activity_guest_map.xml" value="0.33" />
+        <entry key="..\:/share/project_grab/sources/android/grab_bike_driver/app/src/main/res/layout/activity_message.xml" value="0.33" />
+        <entry key="..\:/share/project_grab/sources/android/grab_bike_driver/app/src/main/res/layout/activity_message_loading.xml" value="0.18425925925925926" />
+        <entry key="..\:/share/project_grab/sources/android/grab_bike_driver/app/src/main/res/layout/activity_messages.xml" value="0.18307692307692308" />
+        <entry key="..\:/share/project_grab/sources/android/grab_bike_driver/app/src/main/res/menu/toolbar_settings.xml" value="0.18425925925925926" />
       </map>
     </option>
   </component>

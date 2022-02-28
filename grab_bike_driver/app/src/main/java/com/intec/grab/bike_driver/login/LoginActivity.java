@@ -71,7 +71,12 @@ public class LoginActivity extends BaseActivity
                     this.Redirect(MainActivity.class);
                 });
             }, (error) -> {
-                this.HandleException("Login", error.body());
+                String message = error.body();
+                if (message.indexOf("not exists") > 0) {
+                    Toast("This account is not exists", error.body());
+                    return;
+                }
+                Toast("API - Login cannot reach", error.body());
             }));
     };
 

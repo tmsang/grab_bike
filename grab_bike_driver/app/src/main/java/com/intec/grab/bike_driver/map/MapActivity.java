@@ -1,4 +1,4 @@
-package com.intec.grab.bike_driver.guest_map;
+package com.intec.grab.bike_driver.map;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -32,14 +32,14 @@ import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subscribers.DisposableSubscriber;
 
-public class GuestMapActivity extends BaseActivity {
+public class MapActivity extends BaseActivity {
     private int POLL_INTERVAL = 10;
     private int DELAY_TIME = 2;
     private DisposableSubscriber<Long> subscriberDelayInterval;
 
     private Map<String, String> header;
     private MapView mMapView;
-    private GuestMapGUI mapGUI;
+    private MapGUI mapGUI;
 
     private String fromLat = "", fromLng = "", fromAddress = "", fromCoordinate = "";
     private String toLat = "", toLng = "", toAddress = "", toCoordinate = "";
@@ -50,22 +50,14 @@ public class GuestMapActivity extends BaseActivity {
 
     /*===============================================
         All functions
-        1. AutoComplete
-            -> init data
-            -> create publish/subscribe - suggestion
-            -> event change text
-                load new data on Suggestion Autocomplete
-            -> event click item
-                calculate distance & amount
-                show line route on Map
-        2. Map
+        1. Map
             -> view map
                 show bing map
                 set zoom from current position
                 attach PIN on Map
-        3. Book action
-            -> push Booking to server
-            -> pull driver positions (interval)
+        2. Action
+            -> set "START" action
+            -> set "FINISH" action
     ================================================*/
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -75,7 +67,7 @@ public class GuestMapActivity extends BaseActivity {
         setContentView(R.layout.activity_guest_map);
         Initialization(this);
 
-        mapGUI = new GuestMapGUI(this, settings, sslSettings);
+        mapGUI = new MapGUI(this, settings, sslSettings);
 
         // set header http
         header = new HashMap<>();
@@ -88,49 +80,7 @@ public class GuestMapActivity extends BaseActivity {
         fromAddress = settings.currentAddress();
         fromCoordinate = fromLat + "," + fromLng;
 
-        // 1. AutoSuggest
-        final PublishSubject<String> publisher = PublishSubject.create();
-
-        // a. init data
-        autoCompleteDestination =(AutoCompleteTextView)findViewById(R.id.autoCompleteDestination);
-        destinationAdapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, destinations);
-        autoCompleteDestination.setAdapter(destinationAdapter);
-        autoCompleteDestination.setThreshold(1);
-
-        // b. create publish/subscribe - suggestion
-        // subscribe
-        mapGUI.AutoComplete_CreateSuggestionListener(publisher, result -> {
-            destinations = result.split("@");
-            mapGUI.setSuggestions(destinations);
-            destinationAdapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, destinations);
-            autoCompleteDestination.setAdapter(destinationAdapter);
-            destinationAdapter.notifyDataSetChanged();
-        });
-        // publish
-        mapGUI.AutoComplete_OnChangeText(autoCompleteDestination, str -> {
-            publisher.onNext(str);
-        });
-
-        // c. event click item
-        mapGUI.AutoComplete_OnItemClick(autoCompleteDestination, coordinates -> {
-            String[] items = coordinates.split("_");
-            toLat = items[0];
-            toLng = items[1];
-            toAddress = items[2];
-            toCoordinate = toLat + "," + toLng;
-            fromCoordinate = fromLat + "," + fromLng;
-
-            mapGUI.GetDistanceAndAmount(header, fromCoordinate, toCoordinate, distanceAndAmount -> {
-                // display distance & amount
-                TextView lblDistance = findViewById(R.id.lblDistance);
-                TextView lblAmount = findViewById(R.id.lblAmount);
-                mapGUI.DisplayDistanceAndAmount(distanceAndAmount, lblDistance, lblAmount);
-                // set route path
-                mapGUI.DrawLineOnMap(mMapView, fromCoordinate, toCoordinate);
-            });
-        });
-
-        //2. Show Bing-Map
+        //1. Show Bing-Map
         //a. show map
         mMapView = new MapView(this, MapRenderMode.VECTOR);  // or use MapRenderMode.RASTER for 2D map
         mMapView.setCredentialsKey(Constants.BING_MAP_KEY);         // BuildConfig.CREDENTIALS_KEY
@@ -148,7 +98,7 @@ public class GuestMapActivity extends BaseActivity {
                 MapScene.createFromLocationAndZoomLevel(centerPoint, 16),
                 MapAnimationKind.NONE);
 
-        //c. attach PIN on Map
+        //c. attach PIN (guest address) on Map
         mapGUI.AttachPinOnMap(
                 mMapView,
                 "Me",
@@ -156,9 +106,9 @@ public class GuestMapActivity extends BaseActivity {
                 Double.valueOf(fromLng),
                 R.drawable.ic_current_position);
 
-        //3. Book action
-        //a. push Booking to server
-        this.ButtonClickEvent(R.id.btnBook, (btn) -> {
+        //2. Action
+        //a. set "Start" to server
+        this.ButtonClickEvent(R.id.btnAction, (btn) -> {
             if (IsNullOrEmpty(fromLat, "From Latitude")) return;
             if (IsNullOrEmpty(fromLng, "From Longitude")) return;
             if (IsNullOrEmpty(fromAddress, "From Address")) return;
@@ -166,9 +116,9 @@ public class GuestMapActivity extends BaseActivity {
             if (IsNullOrEmpty(toLng, "To Longitude")) return;
             if (IsNullOrEmpty(toAddress, "To Address")) return;
 
-            SharedService.GuestMapApi(Constants.API_NET, sslSettings)
+            SharedService.MapApi(Constants.API_NET, sslSettings)
                 .BookATrip(header, fromLat, fromLng, fromAddress, toLat, toLng, toAddress)
-                .enqueue(Callback.callInUI(GuestMapActivity.this, (result) -> {
+                .enqueue(Callback.callInUI(MapActivity.this, (result) -> {
                     Toast("Your Book is success. Please wait Driver response");
 
                     // publish

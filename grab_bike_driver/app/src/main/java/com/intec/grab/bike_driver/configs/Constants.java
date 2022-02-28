@@ -12,12 +12,19 @@ public class Constants {
     // Common
     public static final String PUSH_TYPE_SERVICE = "2";          // 1: APNs, 2: FCM, 4: WebPush, 5: ADM
     public static final int DATABASE_VERSION = 1;
-    public static final String DATABASE_NAME = "PushNotificationDBManager";
+    public static final String DATABASE_NAME = "GrabBikeDBManager";
 
     /** =========================================================
      *  CONSTANT
      *  ========================================================== */
     public static final String ROW_KEY_TOKEN_JWT = "token_jwt";
+
+    public static final String MESSAGE_READ = "1";
+    public static final String MESSAGE_UNREAD = "0";
+    public static final String MESSAGE_KEY_URGENT = "【緊急】";
+    public static final int MESSAGE_KEY_URGENT_BACKGROUND = 0xFFFBDBDB;
+    public static final int MESSAGE_AMOUNT_IN_PAGE = 15;
+    public static final String MESSAGE_REDIRECT_LINK = "https://www.google.com/?gmid=AB021";             //"https://www.google.com/?hl=en-US";
 
     // Password must contain at least one digit [0-9].
     // Password must contain at least one lowercase Latin character [a-z].

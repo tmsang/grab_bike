@@ -1,4 +1,4 @@
-package com.intec.grab.bike_driver.guest_map;
+package com.intec.grab.bike_driver.map;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -46,7 +46,7 @@ import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subscribers.DisposableSubscriber;
 
-public class GuestMapGUI {
+public class MapGUI {
     Context context;
     SETTING settings;
     SSLSettings sslSettings;
@@ -55,7 +55,7 @@ public class GuestMapGUI {
     public String[] getSuggestions() { return suggestions; }
     public void setSuggestions(String[] suggestions) { this.suggestions = suggestions; }
 
-    public GuestMapGUI(Context context, SETTING settings, SSLSettings sslSettings) {
+    public MapGUI(Context context, SETTING settings, SSLSettings sslSettings) {
         this.context = context;
         this.settings = settings;
         this.sslSettings = sslSettings;
@@ -111,7 +111,7 @@ public class GuestMapGUI {
             @Override
             public void onNext(Long aLong) {
                 Log.i("------ Interval: Prepare (push notification) ------");
-                SharedService.GuestMapApi(Constants.API_NET, sslSettings)
+                SharedService.MapApi(Constants.API_NET, sslSettings)
                     .GetDriverPositions(header, settings.currentLat(), settings.currentLng())
                     .enqueue(Callback.call((rs) -> {
                         Log.i("Driver Position has been collected");
@@ -149,7 +149,7 @@ public class GuestMapGUI {
             String address1,
             String address2)
     {
-        GuestBingMapApi.instance.drivingRoutePath(context, address1, address2, (result) -> {
+        BingMapApi.instance.drivingRoutePath(context, address1, address2, (result) -> {
             // clear old line route
             for (MapLayer layer: mapView.getLayers()) {
                 MapElementLayer _layer = (MapElementLayer)layer;
@@ -233,7 +233,7 @@ public class GuestMapGUI {
                 String address = getSuggestions()[position];
 
                 // analyze address (no need to synchonize)
-                GuestBingMapApi.instance.getLocationByAddress(context, address, (addressResult) -> {
+                BingMapApi.instance.getLocationByAddress(context, address, (addressResult) -> {
                     callback.execute(addressResult + "_" + address);
                 });
             }
@@ -251,8 +251,8 @@ public class GuestMapGUI {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(key -> {
-                    Log.i("GuestMapActivity Key: " + key);
-                    GuestBingMapApi.instance.suggestions(
+                    Log.i("MapActivity Key: " + key);
+                    BingMapApi.instance.suggestions(
                             context, key, settings.currentLat(), settings.currentLng(), (result) -> {
                                 callback.execute(result);
                             });
@@ -287,12 +287,12 @@ public class GuestMapGUI {
             String toCoordinate,
             MyStringCallback callback)
     {
-        GuestBingMapApi.instance.distanceCalculation(context, fromCoordinate, toCoordinate, (distanceResult) -> {
+        BingMapApi.instance.distanceCalculation(context, fromCoordinate, toCoordinate, (distanceResult) -> {
             String[] itms = distanceResult.split("@");
             double distance = Math.round(Double.valueOf(itms[0]));     // km
             double duration = Math.round(Double.valueOf(itms[1]));     // second
 
-            SharedService.GuestMapApi(Constants.API_NET, sslSettings)
+            SharedService.MapApi(Constants.API_NET, sslSettings)
                 .GetPrice(header)
                 .enqueue(Callback.call(price -> {
                     if (StringHelper.isNullOrEmpty(price)) {

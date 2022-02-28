@@ -23,25 +23,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <AutoCompleteTextView
-                    android:id="@+id/autoCompleteDestination"
+                <TextView
+                    android:id="@+id/userInfo"
+                    android:text="User Info"
                     android:layout_marginTop="10dp"
-                    android:textColor="#000"
-                    android:textSize="11dp"
-                    android:tooltipText="Destination"
-                    android:background="@drawable/tp_edittext_bg"
-                    android:hint="Destination"
-                    android:paddingLeft="10dp"
+                    android:textColor="#fff"
+                    android:textStyle="bold"
+                    android:gravity="center_vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"></AutoCompleteTextView>
+                    android:layout_height="30dp"></TextView>
 
                 <LinearLayout
                     android:orientation="horizontal"
                     android:weightSum="6"
-                    android:layout_marginTop="7dp"
                     android:layout_marginBottom="5dp"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp">
+                    android:layout_height="30dp">
 
                     <TextView
                         android:layout_weight="2"
@@ -51,7 +48,7 @@
                         android:textColor="#fff"
                         android:textStyle="bold"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"></TextView>
+                        android:layout_height="30dp"></TextView>
 
                     <TextView
                         android:layout_weight="3"
@@ -61,11 +58,11 @@
                         android:id="@+id/lblAmount"
                         android:text="Amount:"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"></TextView>
+                        android:layout_height="30dp"></TextView>
 
                     <Button
-                        android:id="@+id/btnBook"
-                        android:text="Book"
+                        android:id="@+id/btnAction"
+                        android:text="Start"
                         android:textSize="11dp"
                         android:layout_weight="1"
                         android:gravity="center"

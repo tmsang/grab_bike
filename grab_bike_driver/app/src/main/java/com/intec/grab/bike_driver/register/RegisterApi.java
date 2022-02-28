@@ -17,7 +17,7 @@ public interface RegisterApi {
     */
 
     @FormUrlEncoded
-    @POST("api/guest/register/")
+    @POST("api/driver/register/")
     Call<ResponseBody> Register(
             @Field("FullName") String fullName,
             @Field("Email") String email,
@@ -27,7 +27,7 @@ public interface RegisterApi {
     );
 
     @FormUrlEncoded
-    @POST("api/guest/smscode/")
+    @POST("api/driver/smscode/")
     Call<ResponseBody> GetSmsCode(
             @Field("phone") String phone
     );

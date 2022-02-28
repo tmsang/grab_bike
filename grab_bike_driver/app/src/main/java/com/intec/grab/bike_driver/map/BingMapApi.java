@@ -1,4 +1,4 @@
-package com.intec.grab.bike_driver.guest_map;
+package com.intec.grab.bike_driver.map;
 
 import android.content.Context;
 import android.util.Log;
@@ -14,11 +14,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class GuestBingMapApi
+public class BingMapApi
 {
-    public static GuestBingMapApi instance = new GuestBingMapApi();
+    public static BingMapApi instance = new BingMapApi();
 
-    public GuestBingMapApi() {
+    public BingMapApi() {
     }
 
     public void suggestions(
@@ -72,7 +72,7 @@ public class GuestBingMapApi
 
                 },
                 error -> {
-                    Log.i("GuestMapActivity", error.getMessage());
+                    Log.i("MapActivity", error.getMessage());
                 }
         );
         queue.add(stringRequest);
@@ -114,12 +114,12 @@ public class GuestBingMapApi
                             }
                         }
                     } catch (JSONException e) {
-                        Log.i("GuestMapApi", "Cannot calculate distance - as cannot reach by driving");
+                        Log.i("MapApi", "Cannot calculate distance - as cannot reach by driving");
                         e.printStackTrace();
                     }
                 },
                 error -> {
-                    Log.i("GuestMapActivity", error.getMessage());
+                    Log.i("MapActivity", error.getMessage());
                 }
         );
         queue.add(stringRequest);
@@ -164,7 +164,7 @@ public class GuestBingMapApi
                     }
                 },
                 error -> {
-                    Log.i("GuestMapActivity", error.getMessage());
+                    Log.i("MapActivity", error.getMessage());
                 }
         );
         queue.add(stringRequest);
@@ -208,7 +208,7 @@ public class GuestBingMapApi
                     }
                 },
                 error -> {
-                    Log.i("GuestMapActivity", error.getMessage());
+                    Log.i("MapActivity", error.getMessage());
                 }
         );
         queue.add(stringRequest);
@@ -263,7 +263,7 @@ public class GuestBingMapApi
                     }
                 },
                 error -> {
-                    Log.i("GuestMapActivity", error.getMessage());
+                    Log.i("MapActivity", error.getMessage());
                 }
         );
         queue.add(stringRequest);
