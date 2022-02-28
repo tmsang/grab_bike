@@ -56,8 +56,6 @@
         </LinearLayout>
     </LinearLayout>
 
-
-
     <LinearLayout
         android:orientation="vertical"
         android:gravity="bottom"

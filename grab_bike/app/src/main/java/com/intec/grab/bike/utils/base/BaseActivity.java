@@ -175,6 +175,12 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     // ============================================================
+    // AutoCompleteTextView
+    // ============================================================
+
+
+
+    // ============================================================
     // Toast
     // ============================================================
     public void Toast(String message, String... errors) {
@@ -225,7 +231,9 @@ public class BaseActivity extends AppCompatActivity {
                                 if (gps.canGetLocation()) {
                                     double lat = gps.getLatitude();
                                     double lng = gps.getLongitude();
-                                    callback.execute(lat + "@" + lng);
+                                    settings.currentLat(lat + "");
+                                    settings.currentLng(lng + "");
+                                    callback.execute("");
                                 }
                             } else if (coarseLocationGranted != null && coarseLocationGranted) {
                                 // Only approximate location access granted.

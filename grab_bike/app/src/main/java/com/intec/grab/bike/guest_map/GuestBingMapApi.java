@@ -21,7 +21,7 @@ public class GuestBingMapApi
     public GuestBingMapApi() {
     }
 
-    public void getDestinations(
+    public void suggestions(
             Context context,
             String key,
             String currentLat,

@@ -4,14 +4,16 @@ import com.google.gson.annotations.SerializedName;
 
 public class LoginDto {
 
+    @SerializedName("jwt")
+    public String jwt = null;
+
+    @SerializedName("FullName")
+    public String FullName = null;
+
+    @SerializedName("Phone")
+    public String Phone = null;
+
     @SerializedName("Email")
-    private String Email = null;
+    public String Email = null;
 
-    @SerializedName("Password")
-    private String Password = null;
-
-    public LoginDto(String email, String password) {
-        this.Email = email;
-        this.Password = password;
-    }
 }

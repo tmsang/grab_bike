@@ -17,7 +17,7 @@ public interface LoginApi
     //@Headers({"Content-Type:application/json"})
     @FormUrlEncoded
     @POST("api/guest/login/")
-    Call<jwt> Login(
+    Call<LoginDto> Login(
             //@retrofit2.http.Body LoginDto body
             @Field("Email") String Email,
             @Field("Password") String Password
