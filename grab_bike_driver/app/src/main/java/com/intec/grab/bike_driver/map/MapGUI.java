@@ -51,10 +51,6 @@ public class MapGUI {
     SETTING settings;
     SSLSettings sslSettings;
 
-    String[] suggestions;
-    public String[] getSuggestions() { return suggestions; }
-    public void setSuggestions(String[] suggestions) { this.suggestions = suggestions; }
-
     public MapGUI(Context context, SETTING settings, SSLSettings sslSettings) {
         this.context = context;
         this.settings = settings;
@@ -102,7 +98,7 @@ public class MapGUI {
         mapView.getLayers().add(mPinLayer);
     }
 
-    public DisposableSubscriber<Long> CreateDriverPositionIntervalSubscriber(
+    public DisposableSubscriber<Long> CreatePushDriverPositionIntervalSubscriber(
             Map<String, String> header,
             MapView mapView)
     {
@@ -112,20 +108,9 @@ public class MapGUI {
             public void onNext(Long aLong) {
                 Log.i("------ Interval: Prepare (push notification) ------");
                 SharedService.MapApi(Constants.API_NET, sslSettings)
-                    .GetDriverPositions(header, settings.currentLat(), settings.currentLng())
+                    .PushPosition(header, settings.currentLat(), settings.currentLng())
                     .enqueue(Callback.call((rs) -> {
-                        Log.i("Driver Position has been collected");
-
-                        // list of driver position
-                        for (DriverPositionDto obj: rs) {
-                            // attach PIN on Map
-                            AttachPinOnMap(
-                                    mapView,
-                                    obj.Phone,
-                                    obj.Lat,
-                                    obj.Lng,
-                                    R.drawable.ic_automobile_32);
-                        }
+                        Log.i("Driver Position has been pushed");
                     }, (err) -> {
                         Log.i("API DriverPositions cannot reach");
                     }));
@@ -151,14 +136,7 @@ public class MapGUI {
     {
         BingMapApi.instance.drivingRoutePath(context, address1, address2, (result) -> {
             // clear old line route
-            for (MapLayer layer: mapView.getLayers()) {
-                MapElementLayer _layer = (MapElementLayer)layer;
-                for (MapElement element: _layer.getElements()) {
-                    if (element instanceof MapPolyline) {
-                        _layer.getElements().remove(element);
-                    }
-                }
-            }
+            ClearLineRoutePath(mapView);
 
             ArrayList<Geoposition> geopoints = new ArrayList<>();
             String[] items;
@@ -186,79 +164,17 @@ public class MapGUI {
         });
     }
 
-    public void AutoComplete_InitData (
-            AutoCompleteTextView autoCompleteItem,
-            ArrayAdapter adapter)
-    {
-        autoCompleteItem.setAdapter(adapter);
-        autoCompleteItem.setThreshold(1);
-    }
-
-    public void AutoComplete_ChangeData (
-            AutoCompleteTextView autoCompleteItem,
-            ArrayAdapter adapter)
-    {
-        autoCompleteItem.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-    }
-
-    public void AutoComplete_OnChangeText(
-            AutoCompleteTextView autoCompleteItem,
-            MyStringCallback callback)
-    {
-        autoCompleteItem.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    public void ClearLineRoutePath(MapView mapView) {
+        // clear old line route
+        for (MapLayer layer: mapView.getLayers()) {
+            MapElementLayer _layer = (MapElementLayer)layer;
+            for (MapElement element: _layer.getElements()) {
+                if (element instanceof MapPolyline) {
+                    _layer.getElements().remove(element);
+                }
             }
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                //retrieveData(s);
-            }
-            @Override
-            public void afterTextChanged(Editable s) {
-                //this will call your method every time the user stops typing, if you want to call it for each letter, call it in onTextChanged
-                callback.execute(s.toString());
-            }
-        });
+        }
     }
-
-    public void AutoComplete_OnItemClick(
-            AutoCompleteTextView autoCompleteItem,
-            MyStringCallback callback)
-    {
-        autoCompleteItem.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // calculate Distance
-                String address = getSuggestions()[position];
-
-                // analyze address (no need to synchonize)
-                BingMapApi.instance.getLocationByAddress(context, address, (addressResult) -> {
-                    callback.execute(addressResult + "_" + address);
-                });
-            }
-        });
-    }
-
-    public void AutoComplete_CreateSuggestionListener(
-            PublishSubject<String> publisher,
-            MyStringCallback callback)
-    {
-        publisher
-                .debounce(1000, TimeUnit.MILLISECONDS)
-                .filter(text -> !text.isEmpty())
-                .distinctUntilChanged()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(key -> {
-                    Log.i("MapActivity Key: " + key);
-                    BingMapApi.instance.suggestions(
-                            context, key, settings.currentLat(), settings.currentLng(), (result) -> {
-                                callback.execute(result);
-                            });
-                });
-    }
-
 
     public void RequestGPSBingMap(
             MapView mapView,
@@ -279,50 +195,5 @@ public class MapGUI {
         {
             // handle the case where all location providers were disabled
         }
-    }
-
-    public void GetDistanceAndAmount(
-            Map<String, String> header,
-            String fromCoordinate,
-            String toCoordinate,
-            MyStringCallback callback)
-    {
-        BingMapApi.instance.distanceCalculation(context, fromCoordinate, toCoordinate, (distanceResult) -> {
-            String[] itms = distanceResult.split("@");
-            double distance = Math.round(Double.valueOf(itms[0]));     // km
-            double duration = Math.round(Double.valueOf(itms[1]));     // second
-
-            SharedService.MapApi(Constants.API_NET, sslSettings)
-                .GetPrice(header)
-                .enqueue(Callback.call(price -> {
-                    if (StringHelper.isNullOrEmpty(price)) {
-                        Log.i("Price is null or empty");
-                        return;
-                    }
-                    Double amount = Double.valueOf(distance) * Double.valueOf(price);
-
-                    callback.execute(distance + "@" + amount);
-                }, (error) -> {
-                    Log.i("GetPrice: " + error.body());
-                }));
-        });
-    }
-
-    public void DisplayDistanceAndAmount(
-            String distanceAndAmount,
-            TextView lblDistance,
-            TextView lblAmount)
-    {
-        String[] itms = distanceAndAmount.split("@");
-        double distance = Double.valueOf(itms[0]);
-        double amount = Double.valueOf(itms[1]);
-
-        // set distance & amount to UI
-        DecimalFormat F = new DecimalFormat("#,###,###,###");
-        String _distance = "<span style=\"color: #ffffff\"><b>Distance: </b></span><span style=\"color: #00ffff\"><b>" + F.format(Math.round(distance)) + " (km)</b></span>";
-        String _amount = "<span style=\"color: #ffffff\"><b>Amount: </b></span><span style=\"color: #00ffff\"><b>" + F.format(Math.round(amount)) + " (vnd)</b></span>";
-
-        lblDistance.setText(Html.fromHtml(_distance));
-        lblAmount.setText(Html.fromHtml(_amount));
     }
 }

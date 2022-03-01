@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.intec.grab.bike_driver.R;
 import com.intec.grab.bike_driver.configs.Constants;
 import com.intec.grab.bike_driver.login.LoginActivity;
+import com.intec.grab.bike_driver.map.MapActivity;
 import com.intec.grab.bike_driver.shared.SharedService;
 import com.intec.grab.bike_driver.utils.api.Callback;
 import com.intec.grab.bike_driver.utils.api.SSLSettings;
@@ -50,11 +51,17 @@ public class MessagesActivity extends BaseActivity {
 
         recyclerView = findViewById(R.id.message_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        messageAdapter = new MessageAdapter(this, messageList, recyclerView);
+        messageAdapter = new MessageAdapter(this, messageList, recyclerView,
+                settings,
+                sslSettings,
+                MapActivity.class);
         recyclerView.setAdapter(messageAdapter);
 
         loadMessagesFromApi("ALL", v -> {
-            messageAdapter = new MessageAdapter(this, messageList, recyclerView);
+            messageAdapter = new MessageAdapter(this, messageList, recyclerView,
+                    settings,
+                    sslSettings,
+                    MapActivity.class);
             recyclerView.setAdapter(messageAdapter);
 
             loading.setVisibility(View.GONE);

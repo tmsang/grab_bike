@@ -24,14 +24,34 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/userInfo"
-                    android:text="User Info"
+                    android:id="@+id/lblTitle"
+                    android:text="Sang Thach (0919239081)"
                     android:layout_marginTop="10dp"
                     android:textColor="#fff"
                     android:textStyle="bold"
                     android:gravity="center_vertical"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"></TextView>
+
+                <TextView
+                    android:id="@+id/lblSubTitle1"
+                    android:text="From: 123 Ton Dan P12 Q4"
+                    android:textSize="10dp"
+                    android:textColor="#fff"
+                    android:textStyle="bold"
+                    android:gravity="center_vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"></TextView>
+
+                <TextView
+                    android:id="@+id/lblSubTitle2"
+                    android:text="To: 12/3 Ly Chinh Thang P1 Q3"
+                    android:textSize="10dp"
+                        android:textColor="#fff"
+                    android:textStyle="bold"
+                    android:gravity="center_vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"></TextView>
 
                 <LinearLayout
                     android:orientation="horizontal"
@@ -61,7 +81,7 @@
                         android:layout_height="30dp"></TextView>
 
                     <Button
-                        android:id="@+id/btnAction"
+                        android:id="@+id/btnStart"
                         android:text="Start"
                         android:textSize="11dp"
                         android:layout_weight="1"
@@ -69,6 +89,17 @@
                         android:layout_width="0dp"
                         android:background="@drawable/tp_button_bg_small"
                         android:layout_height="wrap_content"></Button>
+                    <Button
+                        android:id="@+id/btnEnd"
+                        android:text="End"
+                        android:visibility="gone"
+                        android:textSize="11dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:layout_width="0dp"
+                        android:background="@drawable/tp_button_bg_small"
+                        android:layout_height="wrap_content"></Button>
+
                 </LinearLayout>
 
             </LinearLayout>

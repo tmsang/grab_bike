@@ -11,10 +11,24 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.intec.grab.bike_driver.R;
+import com.intec.grab.bike_driver.configs.Constants;
+import com.intec.grab.bike_driver.map.MapActivity;
+import com.intec.grab.bike_driver.shared.SharedService;
+import com.intec.grab.bike_driver.utils.api.Callback;
+import com.intec.grab.bike_driver.utils.api.SSLSettings;
 import com.intec.grab.bike_driver.utils.base.SETTING;
 import com.intec.grab.bike_driver.utils.helper.StringHelper;
+import com.intec.grab.bike_driver.utils.log.Log;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 class MessageItemViewHolder extends RecyclerView.ViewHolder {
     public TextView title;
@@ -27,8 +41,11 @@ class MessageItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(MessageOut message) {
-        title.setText(Html.fromHtml("<b>" + message.GuestName + "</b>"));
-        publishDate.setText(Html.fromHtml("<span style=\"color:#0000ff;\">" + StringHelper.formatDateTime(message.RequestDateTime) + "</span>"));
+        String _title = message.GuestName + "(" + message.GuestPhone + ")";
+        String _publishDate = StringHelper.formatDateTime(message.RequestDateTime);
+
+        title.setText(Html.fromHtml("<b>" + _title + "</b>"));
+        publishDate.setText(Html.fromHtml("<span style=\"color:#0000ff;\">" + _publishDate + "</span>"));
     }
 }
 
@@ -38,11 +55,23 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private List<MessageOut> items;
     private RecyclerView recyclerView;
     private SETTING settings;
+    private SSLSettings sslSettings;
+    private Class destinationActivity;
 
-    public MessageAdapter(Activity activity, List<MessageOut> items, RecyclerView recyclerView) {
+    public MessageAdapter(
+            Activity activity,
+            List<MessageOut> items,
+            RecyclerView recyclerView,
+            SETTING settings,
+            SSLSettings sslSettings,
+            Class destinationActivity)
+    {
         this.activity = activity;
         this.items = items;
         this.recyclerView = recyclerView;
+        this.settings = settings;
+        this.sslSettings = sslSettings;
+        this.destinationActivity = destinationActivity;
     }
 
     @Override
@@ -66,9 +95,24 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         viewHolder.bind(item);
 
         holder.itemView.setOnClickListener(v -> {
-            // redirect to Bing Map
-            Intent intent = new Intent(this, MapActivity);
-            startActivity(intent);
+            // server: accept request
+            Map<String, String>  header = new HashMap<>();
+            header.put("Content-Type", "application/x-www-form-urlencoded");
+            header.put("Authorization", settings.jwtToken());
+
+            SharedService.MessageApi(Constants.API_NET, sslSettings)
+                .Accept(header, item.OrderId)
+                .enqueue(Callback.call((result) -> {
+                    Log.i("Start is success on orderId (" + item.OrderId + ")");
+
+                    // redirect to Bing Map
+                    Intent intent = new Intent(activity, destinationActivity);
+                    intent.putExtra("message", item);
+                    activity.startActivity(intent);
+
+                }, (error) -> {
+                    Log.i("API Accept Request cannot reach");
+                }));
         });
     }
 

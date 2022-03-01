@@ -2,7 +2,9 @@ package com.intec.grab.bike_driver.messages;
 
 import com.google.gson.annotations.SerializedName;
 
-public class MessageOut {
+import java.io.Serializable;
+
+public class MessageOut implements Serializable {
 
     @SerializedName("OrderId")
     public String OrderId = null;
@@ -12,6 +14,12 @@ public class MessageOut {
 
     @SerializedName("FromAddress")
     public String FromAddress = null;
+
+    @SerializedName("ToLat")
+    public String ToLat = null;
+
+    @SerializedName("ToLng")
+    public String ToLng = null;
 
     @SerializedName("ToAddress")
     public String ToAddress = null;
@@ -30,4 +38,10 @@ public class MessageOut {
 
     @SerializedName("GuestPhone")
     public String GuestPhone = null;
+
+    @SerializedName("GuestLat")
+    public String GuestLat = null;
+
+    @SerializedName("GuestLng")
+    public String GuestLng = null;
 }

@@ -1,9 +1,12 @@
 package com.intec.grab.bike_driver.map;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -11,6 +14,8 @@ import androidx.annotation.RequiresApi;
 
 import com.intec.grab.bike_driver.R;
 import com.intec.grab.bike_driver.configs.Constants;
+import com.intec.grab.bike_driver.messages.MessageOut;
+import com.intec.grab.bike_driver.messages.MessagesActivity;
 import com.intec.grab.bike_driver.shared.SharedService;
 import com.intec.grab.bike_driver.utils.api.Callback;
 import com.intec.grab.bike_driver.utils.base.BaseActivity;
@@ -37,6 +42,8 @@ public class MapActivity extends BaseActivity {
     private int DELAY_TIME = 2;
     private DisposableSubscriber<Long> subscriberDelayInterval;
 
+    private MessageOut message;
+
     private Map<String, String> header;
     private MapView mMapView;
     private MapGUI mapGUI;
@@ -44,20 +51,18 @@ public class MapActivity extends BaseActivity {
     private String fromLat = "", fromLng = "", fromAddress = "", fromCoordinate = "";
     private String toLat = "", toLng = "", toAddress = "", toCoordinate = "";
 
-    private String[] destinations = {""};
-    private AutoCompleteTextView autoCompleteDestination;
-    private ArrayAdapter destinationAdapter;
-
     /*===============================================
         All functions
         1. Map
             -> view map
-                show bing map
-                set zoom from current position
-                attach PIN on Map
+            -> show bing map
+            -> set zoom from current position
+            -> attach PIN on Map
+            -> set routh path (red line)
         2. Action
             -> set "START" action
             -> set "FINISH" action
+            -> push (driver) current positions (interval)
     ================================================*/
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -69,6 +74,15 @@ public class MapActivity extends BaseActivity {
 
         mapGUI = new MapGUI(this, settings, sslSettings);
 
+        // get intent parameter
+        Intent i = getIntent();
+        message = (MessageOut)i.getSerializableExtra("message");
+        SetTextView(R.id.lblTitle, message.GuestName + "(" + message.GuestPhone + ")");
+        SetTextView(R.id.lblSubTitle1, message.FromAddress);
+        SetTextView(R.id.lblSubTitle2, message.ToAddress);
+        SetTextView(R.id.lblDistance, message.Distance);
+        SetTextView(R.id.lblAmount, message.Cost);
+
         // set header http
         header = new HashMap<>();
         header.put("Content-Type", "application/x-www-form-urlencoded");
@@ -79,6 +93,10 @@ public class MapActivity extends BaseActivity {
         fromLng = settings.currentLng();
         fromAddress = settings.currentAddress();
         fromCoordinate = fromLat + "," + fromLng;
+        toLat = message.ToLat;
+        toLng = message.ToLng;
+        toAddress = message.ToAddress;
+        toCoordinate = toLat + "," + toLng;
 
         //1. Show Bing-Map
         //a. show map
@@ -93,6 +111,7 @@ public class MapActivity extends BaseActivity {
             Log.i("GPS Bing Map is granted");
         });
 
+        // set current location (Driver)
         Geopoint centerPoint = new Geopoint(Double.valueOf(fromLat), Double.valueOf(fromLng));
         mMapView.setScene(
                 MapScene.createFromLocationAndZoomLevel(centerPoint, 16),
@@ -102,39 +121,70 @@ public class MapActivity extends BaseActivity {
         mapGUI.AttachPinOnMap(
                 mMapView,
                 "Me",
-                Double.valueOf(fromLat),
-                Double.valueOf(fromLng),
-                R.drawable.ic_current_position);
+                Double.valueOf(message.GuestLat),
+                Double.valueOf(message.GuestLng),
+                R.drawable.ic_current_position_red);
+
+        //d. set routh path (red line)
+        String toGuestPosition = message.GuestLat + "," + message.GuestLng;
+        mapGUI.DrawLineOnMap(mMapView, fromCoordinate, toGuestPosition);
 
         //2. Action
         //a. set "Start" to server
-        this.ButtonClickEvent(R.id.btnAction, (btn) -> {
-            if (IsNullOrEmpty(fromLat, "From Latitude")) return;
-            if (IsNullOrEmpty(fromLng, "From Longitude")) return;
-            if (IsNullOrEmpty(fromAddress, "From Address")) return;
-            if (IsNullOrEmpty(toLat, "To Latitude")) return;
-            if (IsNullOrEmpty(toLng, "To Longitude")) return;
-            if (IsNullOrEmpty(toAddress, "To Address")) return;
+        this.ButtonClickEvent(R.id.btnStart, (btn) -> {
+            if (IsNullOrEmpty(message.OrderId, "Order Id")) return;
 
-            SharedService.MapApi(Constants.API_NET, sslSettings)
-                .BookATrip(header, fromLat, fromLng, fromAddress, toLat, toLng, toAddress)
+            SharedService.MessageApi(Constants.API_NET, sslSettings)
+                .Start(header, message.OrderId)
                 .enqueue(Callback.callInUI(MapActivity.this, (result) -> {
-                    Toast("Your Book is success. Please wait Driver response");
+                    Toast("Start is success on orderId (" + message.OrderId + "). Please wait Driver response");
 
-                    // publish
-                    Flowable.interval(DELAY_TIME, POLL_INTERVAL, TimeUnit.SECONDS)
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribeOn(Schedulers.io())
-                            .subscribe(subscriberDelayInterval);
+                    // set routh path -> destination
+                    mapGUI.DrawLineOnMap(mMapView, fromCoordinate, toCoordinate);
+                    // Change button
+                    btn.setVisibility(View.GONE);
+                    Button btnEnd = this.findViewById(R.id.btnEnd);
+                    btnEnd.setVisibility(View.VISIBLE);
 
                 }, (error) -> {
-                    Toast("API BookATrip cannot reach", error.body());
+                    Toast("API Start cannot reach", error.body());
                 }));
         });
 
-        //b. pull driver positions (interval)
-        // create subscribe
-        subscriberDelayInterval = mapGUI.CreateDriverPositionIntervalSubscriber(header, mMapView);
+        //b. set "End" to server
+        this.ButtonClickEvent(R.id.btnEnd, (btn) -> {
+            if (IsNullOrEmpty(message.OrderId, "Order Id")) return;
+
+            SharedService.MessageApi(Constants.API_NET, sslSettings)
+                    .End(header, message.OrderId)
+                    .enqueue(Callback.callInUI(MapActivity.this, (result) -> {
+                        Toast("Start is success on orderId (" + message.OrderId + "). Please wait Driver response");
+                        // clear routh path
+                        mapGUI.ClearLineRoutePath(mMapView);
+                        // redirect to Message
+                        Redirect(MessagesActivity.class);
+                    }, (error) -> {
+                        Toast("API End cannot reach", error.body());
+                    }));
+        });
+
+        //c. push (driver) current positions (interval)
+        // should use Service Background...
+    }
+
+    private void createIntervalSubscriber() {
+        subscriberDelayInterval = mapGUI.CreatePushDriverPositionIntervalSubscriber(header, mMapView);
+        Flowable.interval(DELAY_TIME, POLL_INTERVAL, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(subscriberDelayInterval);
+    }
+
+    private void DestroyIntervalSubscriber() {
+        if (subscriberDelayInterval != null && !subscriberDelayInterval.isDisposed()) {
+            subscriberDelayInterval.dispose();
+        }
+        subscriberDelayInterval = null;
     }
 
     @Override
@@ -174,10 +224,7 @@ public class MapActivity extends BaseActivity {
 
         // release: Map + Observable
         mMapView = null;
-        if (subscriberDelayInterval != null && !subscriberDelayInterval.isDisposed()) {
-            subscriberDelayInterval.dispose();
-        }
-        subscriberDelayInterval = null;
+        //DestroyIntervalSubscriber();
     }
 
     @Override
