@@ -165,9 +165,12 @@ public class GuestMapActivity extends BaseActivity {
             if (IsNullOrEmpty(toLat, "To Latitude")) return;
             if (IsNullOrEmpty(toLng, "To Longitude")) return;
             if (IsNullOrEmpty(toAddress, "To Address")) return;
+            if (mapGUI.getDistance() <= 0) { Toast("Distance is invalid"); return; }
+            if (mapGUI.getAmount() <= 0) { Toast("Amount is invalid"); return; }
 
             SharedService.GuestMapApi(Constants.API_NET, sslSettings)
-                .BookATrip(header, fromLat, fromLng, fromAddress, toLat, toLng, toAddress)
+                .BookATrip(header, fromLat, fromLng, fromAddress, toLat, toLng, toAddress,
+                        mapGUI.getDistance(), mapGUI.getAmount())
                 .enqueue(Callback.callInUI(GuestMapActivity.this, (result) -> {
                     Toast("Your Book is success. Please wait Driver response");
 

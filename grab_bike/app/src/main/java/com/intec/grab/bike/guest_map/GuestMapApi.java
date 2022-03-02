@@ -38,7 +38,10 @@ public interface GuestMapApi
 
             @Field("ToLatitude") String ToLatitude,
             @Field("ToLongtitude") String ToLongtitude,
-            @Field("ToAddress") String ToAddress
+            @Field("ToAddress") String ToAddress,
+
+            @Field("Distance") Double Distance,
+            @Field("Amount") Double Amount
     );
 
     @FormUrlEncoded                                 // use for method: "POST"

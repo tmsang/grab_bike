@@ -25,58 +25,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" >
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/no_messages"
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scrollbars="none"
-                    android:orientation="vertical">
+                    android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/imageView1"
-                        android:layout_width="0dp"
-                        android:layout_height="116dp"
-
-                        android:layout_marginStart="20dp"
-                        android:layout_marginTop="100dp"
-                        android:layout_marginEnd="20dp"
-                        android:contentDescription="@string/app_name"
+                        android:id="@+id/imgLogo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:src="@mipmap/ic_launcher"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:layout_weight="1"
+                        android:layout_gravity="center_horizontal"
+                        />
 
-                    <Button
-                        android:id="@+id/tolist"
-                        style="@style/CustomButton"
-                        android:layout_height="48dp"
-                        android:layout_marginStart="50dp"
-
-                        android:layout_marginTop="50dp"
-                        android:layout_marginEnd="50dp"
-                        android:text="@string/list_screen"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/imageView1" />
-
-                    <TextView
-                        android:id="@+id/txt"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="20dp"
-                        android:gravity="center"
-
-                        android:paddingTop="@dimen/activity_vertical_margin"
-                        android:paddingBottom="@dimen/activity_vertical_margin"
-                        android:text="@string/result"
-
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tolist" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
             </ViewFlipper>
         </LinearLayout>
 

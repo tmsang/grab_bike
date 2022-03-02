@@ -61,6 +61,11 @@
             android:label="Map for Guest"
             android:windowSoftInputMode="adjustResize"
             />
+        <activity
+            android:name=".about.AboutActivity"
+            android:label="Map for Guest"
+            android:windowSoftInputMode="adjustResize"
+            />
         <service
             android:name=".shared.SharedIntentService"
             android:exported="false"/>

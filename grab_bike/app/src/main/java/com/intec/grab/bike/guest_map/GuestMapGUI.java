@@ -51,9 +51,19 @@ public class GuestMapGUI {
     SETTING settings;
     SSLSettings sslSettings;
 
+    // property: suggestion
     String[] suggestions;
     public String[] getSuggestions() { return suggestions; }
     public void setSuggestions(String[] suggestions) { this.suggestions = suggestions; }
+
+    // property: distance & amount
+    double distance = 0.0;
+    public double getDistance() { return distance; }
+    public void setDistance(double distance) { this.distance = distance; }
+
+    double amount = 0.0;
+    public double getAmount() { return amount; }
+    public void setAmount(double amount) { this.amount = amount; }
 
     public GuestMapGUI(Context context, SETTING settings, SSLSettings sslSettings) {
         this.context = context;
@@ -316,6 +326,9 @@ public class GuestMapGUI {
         String[] itms = distanceAndAmount.split("@");
         double distance = Double.valueOf(itms[0]);
         double amount = Double.valueOf(itms[1]);
+
+        this.setDistance(distance);
+        this.setAmount(amount);
 
         // set distance & amount to UI
         DecimalFormat F = new DecimalFormat("#,###,###,###");

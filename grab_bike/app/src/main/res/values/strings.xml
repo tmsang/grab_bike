@@ -1,6 +1,7 @@
 
 <resources>
-    <string name="app_name">IRIS(通知結果)</string>
+    <string name="app_name">Bike Huu Nghi</string>
+
     <string name="btn_send_token">Send Token</string>
     <string name="btn_send_tokens">Send Tokens</string>
     <string name="btn_send_topic">Send Topic</string>
