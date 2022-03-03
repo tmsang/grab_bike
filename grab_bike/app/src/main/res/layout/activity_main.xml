@@ -30,14 +30,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <ImageView
-                        android:id="@+id/imgLogo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@mipmap/ic_launcher"
-                        android:layout_weight="1"
-                        android:layout_gravity="center_horizontal"
-                        />
+                    <!-- TODO: need something here... -->
 
                 </LinearLayout>
             </ViewFlipper>

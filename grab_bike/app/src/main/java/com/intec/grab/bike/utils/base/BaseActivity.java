@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,14 +23,21 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.navigation.NavigationView;
 import com.intec.grab.bike.R;
+import com.intec.grab.bike.about.AboutActivity;
 import com.intec.grab.bike.configs.Constants;
+import com.intec.grab.bike.guest_map.GuestMapActivity;
 import com.intec.grab.bike.login.LoginActivity;
 import com.intec.grab.bike.shared.SharedService;
 import com.intec.grab.bike.utils.api.Callback;
@@ -50,10 +58,12 @@ import com.microsoft.maps.MapView;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BaseActivity extends AppCompatActivity {
+public class BaseActivity extends AppCompatActivity
+{
     public SETTING settings;
     public SSLSettings sslSettings = new SSLSettings(false, null);
     public Activity activity;
+    public Map<String, String> header;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,11 +73,20 @@ public class BaseActivity extends AppCompatActivity {
     public void Initialization(Activity activity) {
         this.activity = activity;
 
-        // ButterKnife.bind(activity);
         Log.init(this);
         settings = new SETTING(activity);
-    }
 
+        // check session
+        if (StringHelper.isNullOrEmpty(settings.jwtToken())) {
+            this.Redirect(LoginActivity.class);
+            return;
+        }
+
+        // keep header
+        header = new HashMap<>();
+        header.put("Content-Type", "application/x-www-form-urlencoded");
+        header.put("Authorization", settings.jwtToken());
+    }
 
     // ============================================================
     // EditText

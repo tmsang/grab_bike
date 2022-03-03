@@ -63,7 +63,17 @@
             />
         <activity
             android:name=".about.AboutActivity"
-            android:label="Map for Guest"
+            android:label="About"
+            android:windowSoftInputMode="adjustResize"
+            />
+        <activity
+            android:name=".settings.SettingsActivity"
+            android:label="Settings"
+            android:windowSoftInputMode="adjustResize"
+            />
+        <activity
+            android:name=".histories.MessagesActivity"
+            android:label="Settings"
             android:windowSoftInputMode="adjustResize"
             />
         <service

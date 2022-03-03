@@ -18,22 +18,18 @@ import com.intec.grab.bike.about.AboutActivity;
 import com.intec.grab.bike.configs.Constants;
 import com.intec.grab.bike.guest_map.GuestBingMapApi;
 import com.intec.grab.bike.guest_map.GuestMapActivity;
+import com.intec.grab.bike.histories.MessagesActivity;
 import com.intec.grab.bike.login.LoginActivity;
+import com.intec.grab.bike.settings.SettingsActivity;
 import com.intec.grab.bike.shared.SharedService;
 import com.intec.grab.bike.utils.api.Callback;
 import com.intec.grab.bike.utils.base.BaseActivity;
-import com.intec.grab.bike.utils.helper.MyStringCallback;
-import com.intec.grab.bike.utils.helper.StringHelper;
 import com.intec.grab.bike.utils.log.Log;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener
@@ -70,10 +66,6 @@ public class MainActivity extends BaseActivity
         Initialization(this);
         ButterKnife.bind(this);
 
-        header = new HashMap<>();
-        header.put("Content-Type", "application/x-www-form-urlencoded");
-        header.put("Authorization", settings.jwtToken());
-
         //0. Check Token
         if (!settings.tokenExists()) {
             this.Redirect(LoginActivity.class);
@@ -84,10 +76,6 @@ public class MainActivity extends BaseActivity
         toggleMenu();
 
         //2. Request permission
-        header = new HashMap<>();
-        header.put("Content-Type", "application/x-www-form-urlencoded");
-        header.put("Authorization", settings.jwtToken());
-
         // TODO: consider Activity is destroyed (when User redirect!) - sure: Guest must pust position
         this.RequestPermissionLocation((result) -> {
             Log.i("Request permission is granted - current position is stored at Pref");
@@ -159,11 +147,11 @@ public class MainActivity extends BaseActivity
         }
         else if (id == R.id.nav_histories)
         {
-            Log.i("No action to Histories");
+            this.Redirect(MessagesActivity.class);
         }
         else if (id == R.id.nav_settings)
         {
-            Log.i("No action to settings");
+            this.Redirect(SettingsActivity.class);
         }
         else if (id == R.id.nav_about)
         {
