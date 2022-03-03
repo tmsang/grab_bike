@@ -56,6 +56,12 @@ public class MessagesActivity extends BaseActivity {
         recyclerView.setAdapter(messageAdapter);
 
         loadMessagesFromApi("ALL", v -> {
+            if (messageList != null && messageList.size() > 0) {
+                findViewById(R.id.lbl_error_message).setVisibility(View.GONE);
+            } else {
+                findViewById(R.id.lbl_error_message).setVisibility(View.VISIBLE);
+            }
+
             messageAdapter = new MessageAdapter(this, messageList, recyclerView,
                     settings,
                     sslSettings,

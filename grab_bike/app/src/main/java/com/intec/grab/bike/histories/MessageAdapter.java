@@ -93,10 +93,12 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         MessageItemViewHolder viewHolder = (MessageItemViewHolder) holder;
         viewHolder.bind(item);
 
-        // redirect to History Detail
-        Intent intent = new Intent(activity, destinationActivity);
-        intent.putExtra("message", item);
-        activity.startActivity(intent);
+        holder.itemView.setOnClickListener(v -> {
+            // redirect to History Detail
+            Intent intent = new Intent(activity, destinationActivity);
+            intent.putExtra("message", item);
+            activity.startActivity(intent);
+        });
     }
 
     @Override

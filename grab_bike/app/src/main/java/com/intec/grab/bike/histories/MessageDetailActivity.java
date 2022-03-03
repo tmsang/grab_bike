@@ -2,6 +2,7 @@ package com.intec.grab.bike.histories;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.RatingBar;
 
 import com.intec.grab.bike.R;
@@ -33,11 +34,18 @@ public class MessageDetailActivity extends BaseActivity
         SetTextView(R.id.lbl_distance, "<b>Distance: </b>" + message.Distance + " km");
         SetTextView(R.id.lbl_amount, "<b>Amount: </b>" + message.Cost + " vnd");
         SetTextView(R.id.lbl_datetime_value, StringHelper.formatDateTime(message.RequestDateTime));
-        SetTextView(R.id.lbl_driver_name_value, message.DriverName);
-        SetTextView(R.id.lbl_driver_phone_value, message.DriverPhone);
+        SetTextView(R.id.lbl_driver_name_value, message.DriverName + "");
+        SetTextView(R.id.lbl_driver_phone_value, message.DriverPhone + "");
 
         //2. Evaluate action
         ButtonClickEvent(R.id.btnEvaluate, v -> {
+            if (message.Status.equals("4")) {
+                findViewById(R.id.lbl_error_message).setVisibility(View.GONE);
+            } else {
+                findViewById(R.id.lbl_error_message).setVisibility(View.VISIBLE);
+                return;
+            }
+
             String remark = this.EditText(R.id.txtRemark).trim();
             float rating = ratingBar.getRating();
 

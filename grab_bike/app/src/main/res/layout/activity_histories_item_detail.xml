@@ -13,6 +13,8 @@
         android:orientation="horizontal"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -40,6 +42,8 @@
         android:orientation="horizontal"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -67,6 +71,8 @@
         android:orientation="horizontal"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -97,6 +103,8 @@
         android:orientation="horizontal"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -124,6 +132,8 @@
         android:orientation="horizontal"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -170,6 +180,8 @@
         android:orientation="horizontal"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -197,6 +209,8 @@
         android:orientation="horizontal"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -224,6 +238,8 @@
         android:orientation="vertical"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -232,7 +248,7 @@
             android:numStars="5"
             android:rating="1"
             android:stepSize="1"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             />
 
@@ -250,8 +266,19 @@
         <EditText
             android:id="@+id/txtRemark"
             android:background="@drawable/tp_edittext_bg"
+            android:textAlignment="textStart"
             android:layout_width="match_parent"
             android:layout_height="100dp"></EditText>
+
+        <TextView
+            android:id="@+id/lbl_error_message"
+            android:text="Your Booking has not finished yet, so cannot evaluate"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:visibility="gone"
+            android:background="@drawable/tp_textview_error_bg"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"></TextView>
 
         <Button
             android:id="@+id/btnEvaluate"

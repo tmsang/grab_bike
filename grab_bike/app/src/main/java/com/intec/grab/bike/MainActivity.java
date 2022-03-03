@@ -47,8 +47,6 @@ public class MainActivity extends BaseActivity
 
     ===========================================*/
 
-    private Map<String, String> header;
-
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 

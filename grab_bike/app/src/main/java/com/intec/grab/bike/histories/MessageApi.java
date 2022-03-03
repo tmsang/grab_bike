@@ -18,7 +18,7 @@ public interface MessageApi {
     );
 
     @FormUrlEncoded
-    @POST("api/guest/order/evaluate")
+    @POST("api/guest/order/evaluable")
     Call<Void> Evaluate(
             @HeaderMap Map<String, String> headers,
             @Field("OrderId") String OrderId,

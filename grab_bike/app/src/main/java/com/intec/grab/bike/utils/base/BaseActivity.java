@@ -76,12 +76,6 @@ public class BaseActivity extends AppCompatActivity
         Log.init(this);
         settings = new SETTING(activity);
 
-        // check session
-        if (StringHelper.isNullOrEmpty(settings.jwtToken())) {
-            this.Redirect(LoginActivity.class);
-            return;
-        }
-
         // keep header
         header = new HashMap<>();
         header.put("Content-Type", "application/x-www-form-urlencoded");

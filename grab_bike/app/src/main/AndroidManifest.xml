@@ -73,7 +73,12 @@
             />
         <activity
             android:name=".histories.MessagesActivity"
-            android:label="Settings"
+            android:label="Messages"
+            android:windowSoftInputMode="adjustResize"
+            />
+        <activity
+            android:name=".histories.MessageDetailActivity"
+            android:label="Message Detail"
             android:windowSoftInputMode="adjustResize"
             />
         <service
