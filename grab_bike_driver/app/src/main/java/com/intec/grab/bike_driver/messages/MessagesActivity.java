@@ -10,6 +10,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.intec.grab.bike_driver.MainActivity;
 import com.intec.grab.bike_driver.R;
 import com.intec.grab.bike_driver.configs.Constants;
 import com.intec.grab.bike_driver.login.LoginActivity;
@@ -80,7 +81,7 @@ public class MessagesActivity extends BaseActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.toolbar_menu:
-                this.Redirect(LoginActivity.class);
+                this.Redirect(MainActivity.class);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

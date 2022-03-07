@@ -74,19 +74,19 @@ public class MapActivity extends BaseActivity {
 
         mapGUI = new MapGUI(this, settings, sslSettings);
 
-        // get intent parameter
+        // set header http
+        header = new HashMap<>();
+        header.put("Content-Type", "application/x-www-form-urlencoded");
+        header.put("Authorization", settings.jwtToken());
+
+        // 0. get intent parameter
         Intent i = getIntent();
         message = (MessageOut)i.getSerializableExtra("message");
         SetTextView(R.id.lblTitle, message.GuestName + "(" + message.GuestPhone + ")");
         SetTextView(R.id.lblSubTitle1, message.FromAddress);
         SetTextView(R.id.lblSubTitle2, message.ToAddress);
-        SetTextView(R.id.lblDistance, message.Distance);
-        SetTextView(R.id.lblAmount, message.Cost);
-
-        // set header http
-        header = new HashMap<>();
-        header.put("Content-Type", "application/x-www-form-urlencoded");
-        header.put("Authorization", settings.jwtToken());
+        SetTextView(R.id.lblDistance, "<b>Distance: </b>" + message.Distance + " km");
+        SetTextView(R.id.lblAmount, "<b>Amount: </b>" + message.Cost + " vnd");
 
         // prepare [FROM] position variable
         fromLat = settings.currentLat();

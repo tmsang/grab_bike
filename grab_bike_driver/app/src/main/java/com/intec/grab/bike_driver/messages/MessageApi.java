@@ -1,5 +1,7 @@
 package com.intec.grab.bike_driver.messages;
 
+import com.intec.grab.bike_driver.histories.MessageHistoryOut;
+
 import java.util.List;
 import java.util.Map;
 
@@ -36,5 +38,10 @@ public interface MessageApi {
     Call<Void> End(
             @HeaderMap Map<String, String> headers,
             @Field("OrderId") String OrderId
+    );
+
+    @GET("api/driver/order/request-histories")
+    Call<List<MessageHistoryOut>> RequestHistories(
+            @HeaderMap Map<String, String> headers
     );
 }

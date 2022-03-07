@@ -1,6 +1,7 @@
 package com.intec.grab.bike.guest_map;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -11,10 +12,14 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.intec.grab.bike.R;
 import com.intec.grab.bike.configs.Constants;
+import com.intec.grab.bike.histories.MessageShared;
+import com.intec.grab.bike.histories.MessageStatus;
 import com.intec.grab.bike.shared.SharedService;
 import com.intec.grab.bike.utils.api.Callback;
 import com.intec.grab.bike.utils.api.SSLSettings;
@@ -65,6 +70,17 @@ public class GuestMapGUI {
     public double getAmount() { return amount; }
     public void setAmount(double amount) { this.amount = amount; }
 
+    // property: orderId & status
+    String orderId;
+    public String getOrderId() { return orderId; }
+    public void setOrderId(String orderId) { this.orderId = orderId; }
+
+    String status;
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+
+
     public GuestMapGUI(Context context, SETTING settings, SSLSettings sslSettings) {
         this.context = context;
         this.settings = settings;
@@ -112,9 +128,11 @@ public class GuestMapGUI {
         mapView.getLayers().add(mPinLayer);
     }
 
-    public DisposableSubscriber<Long> CreateDriverPositionIntervalSubscriber(
+    public DisposableSubscriber<Long> CreateIntervalSubscriber(
             Map<String, String> header,
-            MapView mapView)
+            MapView mapView,
+            Button btnBook,
+            Class destination)
     {
         // Set subscriber
         return new DisposableSubscriber<Long>() {
@@ -122,12 +140,21 @@ public class GuestMapGUI {
             public void onNext(Long aLong) {
                 Log.i("------ Interval: Prepare (push notification) ------");
                 SharedService.GuestMapApi(Constants.API_NET, sslSettings)
-                    .GetDriverPositions(header, settings.currentLat(), settings.currentLng())
+                    .IntervalGets(header, settings.currentLat(), settings.currentLng(), getOrderId())
                     .enqueue(Callback.call((rs) -> {
                         Log.i("Driver Position has been collected");
 
+                        // get status
+                        setStatus(rs.Status);
+                        String messageStatus = MessageShared.RenderEnumFromOrderStatus(rs.Status);
+                        btnBook.setText(Html.fromHtml(messageStatus));
+                        if (rs.Status.equals(MessageStatus.END)) {
+                            context.startActivity(new Intent(context, destination));
+                            return;
+                        }
+
                         // list of driver position
-                        for (DriverPositionDto obj: rs) {
+                        for (DriverPositionDto obj: rs.Positions) {
                             // attach PIN on Map
                             AttachPinOnMap(
                                     mapView,
@@ -137,7 +164,9 @@ public class GuestMapGUI {
                                     R.drawable.ic_automobile_32);
                         }
                     }, (err) -> {
-                        Log.i("API DriverPositions cannot reach");
+                        String msg = err.getCause().toString();
+                        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+                        Log.i(msg);
                     }));
             }
 

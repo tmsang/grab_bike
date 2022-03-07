@@ -2,8 +2,10 @@ package com.intec.grab.bike.guest_map;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -11,6 +13,7 @@ import androidx.annotation.RequiresApi;
 
 import com.intec.grab.bike.R;
 import com.intec.grab.bike.configs.Constants;
+import com.intec.grab.bike.histories.MessageDetailActivity;
 import com.intec.grab.bike.shared.SharedService;
 import com.intec.grab.bike.utils.api.Callback;
 import com.intec.grab.bike.utils.base.BaseActivity;
@@ -40,6 +43,7 @@ public class GuestMapActivity extends BaseActivity {
     private Map<String, String> header;
     private MapView mMapView;
     private GuestMapGUI mapGUI;
+    private Button btnBook;
 
     private String fromLat = "", fromLng = "", fromAddress = "", fromCoordinate = "";
     private String toLat = "", toLng = "", toAddress = "", toCoordinate = "";
@@ -76,6 +80,7 @@ public class GuestMapActivity extends BaseActivity {
         Initialization(this);
 
         mapGUI = new GuestMapGUI(this, settings, sslSettings);
+        btnBook = findViewById(R.id.btnBook);
 
         // set header http
         header = new HashMap<>();
@@ -174,6 +179,12 @@ public class GuestMapActivity extends BaseActivity {
                 .enqueue(Callback.callInUI(GuestMapActivity.this, (result) -> {
                     Toast("Your Book is success. Please wait Driver response");
 
+                    // change text button -> Waiting... + remove event on it
+                    btnBook.setText(Html.fromHtml("<span style='color: #ff0000'><b>Waiting...</b></span>"));
+                    btnBook.setOnClickListener(null);
+
+                    mapGUI.setOrderId(result.OrderId);
+
                     // publish
                     Flowable.interval(DELAY_TIME, POLL_INTERVAL, TimeUnit.SECONDS)
                             .observeOn(AndroidSchedulers.mainThread())
@@ -187,7 +198,11 @@ public class GuestMapActivity extends BaseActivity {
 
         //b. pull driver positions (interval)
         // create subscribe
-        subscriberDelayInterval = mapGUI.CreateDriverPositionIntervalSubscriber(header, mMapView);
+        subscriberDelayInterval = mapGUI.CreateIntervalSubscriber(
+                header,
+                mMapView,
+                btnBook,
+                MessageDetailActivity.class);
     }
 
     @Override

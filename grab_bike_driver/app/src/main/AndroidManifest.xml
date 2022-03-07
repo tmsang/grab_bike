@@ -66,6 +66,26 @@
             android:label="Message for Driver"
             android:windowSoftInputMode="adjustResize"
             />
+        <activity
+            android:name="com.intec.grab.bike_driver.about.AboutActivity"
+            android:label="About"
+            android:windowSoftInputMode="adjustResize"
+            />
+        <activity
+            android:name="com.intec.grab.bike_driver.histories.HistoriesActivity"
+            android:label="History"
+            android:windowSoftInputMode="adjustResize"
+            />
+        <activity
+            android:name="com.intec.grab.bike_driver.histories.MessageDetailActivity"
+            android:label="History Detail"
+            android:windowSoftInputMode="adjustResize"
+            />
+        <activity
+            android:name="com.intec.grab.bike_driver.settings.SettingsActivity"
+            android:label="Settings"
+            android:windowSoftInputMode="adjustResize"
+            />
         <service
             android:name="com.intec.grab.bike_driver.shared.SharedIntentService"
             android:exported="false"/>

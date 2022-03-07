@@ -6,8 +6,8 @@
         <item
             android:orderInCategory="0"
             android:icon="@drawable/ic_dashboard"
-            android:id="@+id/nav_bookings"
-            android:title="Booking" />
+            android:id="@+id/nav_messages"
+            android:title="Messages" />
     </group>
     <group
         android:id="@+id/apps"
@@ -25,7 +25,7 @@
             android:icon="@drawable/ic_settings"
             android:orderInCategory="2"
             android:id="@+id/nav_settings"
-            android:title="@string/title_activity_settings" />
+            android:title="Settings" />
         <item
             android:orderInCategory="2"
             android:icon="@drawable/ic_bug_report"

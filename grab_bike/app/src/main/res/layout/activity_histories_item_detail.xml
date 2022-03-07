@@ -80,7 +80,6 @@
             android:layout_weight="1"
             android:id="@+id/lbl_distance"
             android:text="Distance: 2 km"
-            android:textStyle="bold"
             android:textSize="16sp"
             android:gravity="left"
             android:paddingRight="20dp"
@@ -92,7 +91,6 @@
             android:layout_weight="1"
             android:id="@+id/lbl_amount"
             android:text="Amount: 48,000 vnd"
-            android:textStyle="bold"
             android:textSize="16sp"
             android:paddingRight="20dp"
             android:layout_width="wrap_content"
@@ -228,6 +226,35 @@
         <TextView
             android:id="@+id/lbl_driver_phone_value"
             android:text="091 902 1234"
+            android:textSize="12sp"
+            android:paddingRight="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/lbl_status"
+            android:text="Status"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:gravity="left"
+            android:paddingRight="20dp"
+            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/lbl_status_value"
+            android:text="PENDING"
             android:textSize="12sp"
             android:paddingRight="20dp"
             android:layout_width="wrap_content"

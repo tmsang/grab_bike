@@ -36,10 +36,11 @@ public class MessageDetailActivity extends BaseActivity
         SetTextView(R.id.lbl_datetime_value, StringHelper.formatDateTime(message.RequestDateTime));
         SetTextView(R.id.lbl_driver_name_value, message.DriverName + "");
         SetTextView(R.id.lbl_driver_phone_value, message.DriverPhone + "");
+        SetTextView(R.id.lbl_status_value,  MessageShared.RenderEnumFromOrderStatus(message.Status) + "");
 
         //2. Evaluate action
         ButtonClickEvent(R.id.btnEvaluate, v -> {
-            if (message.Status.equals("4")) {
+            if (message.Status.equals(MessageStatus.END)) {
                 findViewById(R.id.lbl_error_message).setVisibility(View.GONE);
             } else {
                 findViewById(R.id.lbl_error_message).setVisibility(View.VISIBLE);

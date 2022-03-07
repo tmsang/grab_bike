@@ -14,11 +14,14 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
+import com.intec.grab.bike_driver.about.AboutActivity;
 import com.intec.grab.bike_driver.configs.Constants;
+import com.intec.grab.bike_driver.histories.HistoriesActivity;
 import com.intec.grab.bike_driver.map.BingMapApi;
 import com.intec.grab.bike_driver.map.MapActivity;
 import com.intec.grab.bike_driver.login.LoginActivity;
 import com.intec.grab.bike_driver.messages.MessagesActivity;
+import com.intec.grab.bike_driver.settings.SettingsActivity;
 import com.intec.grab.bike_driver.shared.SharedService;
 import com.intec.grab.bike_driver.utils.api.Callback;
 import com.intec.grab.bike_driver.utils.base.BaseActivity;
@@ -46,8 +49,6 @@ public class MainActivity extends BaseActivity
 
     ===========================================*/
 
-    private Map<String, String> header;
-
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
@@ -64,10 +65,6 @@ public class MainActivity extends BaseActivity
         setContentView(R.layout.activity_main);
         Initialization(this);
         ButterKnife.bind(this);
-
-        header = new HashMap<>();
-        header.put("Content-Type", "application/x-www-form-urlencoded");
-        header.put("Authorization", settings.jwtToken());
 
         //0. Check Token
         if (!settings.tokenExists()) {
@@ -97,8 +94,6 @@ public class MainActivity extends BaseActivity
                 .PushPosition(header, settings.currentLat(), settings.currentLng())
                 .enqueue(Callback.call((res) -> {
                     Log.i("Driver position has been pushed - successfully");
-
-                    Redirect(MessagesActivity.class);
                 }, (error) -> {
                     HandleException("Push Position", error.body());
                 }));
@@ -150,21 +145,21 @@ public class MainActivity extends BaseActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_bookings)
+        if (id == R.id.nav_messages)
         {
-            this.Redirect(MapActivity.class);
+            this.Redirect(MessagesActivity.class);
         }
         else if (id == R.id.nav_histories)
         {
-            Log.i("No action to Histories");
+            this.Redirect(HistoriesActivity.class);
         }
         else if (id == R.id.nav_settings)
         {
-            Log.i("No action to settings");
+            this.Redirect(SettingsActivity.class);
         }
         else if (id == R.id.nav_about)
         {
-            Log.i("No action to About");
+            this.Redirect(AboutActivity.class);
         }
         else if (id == R.id.nav_logout)
         {

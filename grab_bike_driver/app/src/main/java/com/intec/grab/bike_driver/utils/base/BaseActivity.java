@@ -42,6 +42,7 @@ public class BaseActivity extends AppCompatActivity {
     public SSLSettings sslSettings = new SSLSettings(false, null);
     public Activity activity;
     public FrameLayout loading;
+    public Map<String, String> header;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,10 @@ public class BaseActivity extends AppCompatActivity {
 
         settings = new SETTING(activity);
         Log.init(this);
+
+        header = new HashMap<>();
+        header.put("Content-Type", "application/x-www-form-urlencoded");
+        header.put("Authorization", settings.jwtToken());
 
         int loadingResId = getResources().getIdentifier("loading", "id", getPackageName());
         if (loadingResId > 0) {

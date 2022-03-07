@@ -6,6 +6,7 @@ import android.util.Base64;
 
 import androidx.annotation.RequiresApi;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -131,6 +132,30 @@ public class StringHelper {
             parseException.printStackTrace();
         }
         return "";
+    }
+
+    public static String formatTime(String fullDate) {
+        try
+        {
+            // fullDate: 2022-01-19T13:47:25.586247
+            String _time = fullDate.substring(11, 16);
+            return _time;
+        }
+        catch (Exception parseException) {
+            parseException.printStackTrace();
+        }
+        return "UnKnown";
+    }
+
+    public static String formatNumber(String number, String format) {
+        DecimalFormat formatter = new DecimalFormat(format);
+        double amount = Double.parseDouble(number);
+        return formatter.format(amount);
+    }
+
+    public static String formatPhone(String number) {
+        String result = number.replaceFirst("(\\d{3})(\\d{3})(\\d+)", "($1)-$2-$3");
+        return result;
     }
 
     public static String encodeBase64(String str) {
