@@ -20,6 +20,7 @@ import com.intec.grab.bike_driver.shared.SharedService;
 import com.intec.grab.bike_driver.utils.api.Callback;
 import com.intec.grab.bike_driver.utils.base.BaseActivity;
 
+import com.intec.grab.bike_driver.utils.helper.StringHelper;
 import com.intec.grab.bike_driver.utils.log.Log;
 import com.microsoft.maps.MapAnimationKind;
 import com.microsoft.maps.MapRenderMode;
@@ -44,7 +45,6 @@ public class MapActivity extends BaseActivity {
 
     private MessageOut message;
 
-    private Map<String, String> header;
     private MapView mMapView;
     private MapGUI mapGUI;
 
@@ -74,19 +74,14 @@ public class MapActivity extends BaseActivity {
 
         mapGUI = new MapGUI(this, settings, sslSettings);
 
-        // set header http
-        header = new HashMap<>();
-        header.put("Content-Type", "application/x-www-form-urlencoded");
-        header.put("Authorization", settings.jwtToken());
-
         // 0. get intent parameter
         Intent i = getIntent();
         message = (MessageOut)i.getSerializableExtra("message");
         SetTextView(R.id.lblTitle, message.GuestName + "(" + message.GuestPhone + ")");
-        SetTextView(R.id.lblSubTitle1, message.FromAddress);
-        SetTextView(R.id.lblSubTitle2, message.ToAddress);
-        SetTextView(R.id.lblDistance, "<b>Distance: </b>" + message.Distance + " km");
-        SetTextView(R.id.lblAmount, "<b>Amount: </b>" + message.Cost + " vnd");
+        SetTextView(R.id.lblSubTitle1, "<b>From: </b>" + message.FromAddress);
+        SetTextView(R.id.lblSubTitle2, "<b>To: </b>" + message.ToAddress);
+        SetTextView(R.id.lblDistance, "<b>Distance: </b>" + StringHelper.formatNumber(message.Distance, "#,###") + " km");
+        SetTextView(R.id.lblAmount, "<b>Amount: </b>" + StringHelper.formatNumber(message.Cost, "#,###") + " vnd");
 
         // prepare [FROM] position variable
         fromLat = settings.currentLat();
@@ -161,6 +156,10 @@ public class MapActivity extends BaseActivity {
                         Toast("Start is success on orderId (" + message.OrderId + "). Please wait Driver response");
                         // clear routh path
                         mapGUI.ClearLineRoutePath(mMapView);
+
+                        // clear intent: item(MessageOut)
+                        settings.currentMessage(null);
+
                         // redirect to Message
                         Redirect(MessagesActivity.class);
                     }, (error) -> {

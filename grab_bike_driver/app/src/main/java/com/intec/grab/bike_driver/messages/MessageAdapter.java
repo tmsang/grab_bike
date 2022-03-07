@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -105,6 +106,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 .enqueue(Callback.call((result) -> {
                     Log.i("Start is success on orderId (" + item.OrderId + ")");
 
+                    // keep item -> SharePreference (set null when "END")
+                    item.AcceptDateTime = System.currentTimeMillis();
+                    settings.currentMessage(item);
+
                     // redirect to Bing Map
                     Intent intent = new Intent(activity, destinationActivity);
                     intent.putExtra("message", item);
@@ -112,6 +117,9 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                 }, (error) -> {
                     Log.i("API Accept Request cannot reach");
+                    if (error.body().indexOf("Your Booking is not PENDING yet") >= 0) {
+                        Toast.makeText(activity, "Your Booking is not PENDING yet", Toast.LENGTH_SHORT).show();
+                    }
                 }));
         });
     }

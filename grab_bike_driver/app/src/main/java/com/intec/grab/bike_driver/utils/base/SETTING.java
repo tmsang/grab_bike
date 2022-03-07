@@ -2,6 +2,8 @@ package com.intec.grab.bike_driver.utils.base;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.gson.Gson;
+import com.intec.grab.bike_driver.messages.MessageOut;
 import com.intec.grab.bike_driver.utils.api.SSLSettings;
 
 public class SETTING {
@@ -82,6 +84,18 @@ public class SETTING {
         sharedPreferences.edit().putString("currentAddress", address).apply();
     }
 
+    public MessageOut currentMessage()
+    {
+        Gson gson = new Gson();
+        String value = sharedPreferences.getString("currentMessage", null);
+        return gson.fromJson(value, MessageOut.class);
+    }
+    public void currentMessage(MessageOut message) {
+        Gson gson = new Gson();
+        String value = gson.toJson(message);
+        sharedPreferences.edit().putString("currentMessage", value).apply();
+    }
+
     public void clear() {
         jwtToken(null);
         fcmToken(null);
@@ -91,6 +105,7 @@ public class SETTING {
         currentLat(null);
         currentLng(null);
         currentAddress(null);
+        currentMessage(null);
 
         url(null);
         validateSSL(true);

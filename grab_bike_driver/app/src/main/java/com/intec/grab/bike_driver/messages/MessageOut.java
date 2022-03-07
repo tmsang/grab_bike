@@ -3,6 +3,7 @@ package com.intec.grab.bike_driver.messages;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 public class MessageOut implements Serializable {
 
@@ -44,4 +45,6 @@ public class MessageOut implements Serializable {
 
     @SerializedName("GuestLng")
     public String GuestLng = null;
+
+    public long AcceptDateTime;
 }

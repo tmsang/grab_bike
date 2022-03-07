@@ -1,5 +1,6 @@
 package com.intec.grab.bike_driver.messages;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,9 +40,30 @@ public class MessagesActivity extends BaseActivity {
         setContentView(R.layout.activity_messages);
         Initialization(this);
 
+        Load();
+    }
+
+    private void Load() {
         if (StringHelper.isNullOrEmpty(settings.jwtToken())) {
             this.Redirect(LoginActivity.class);
             return;
+        }
+        if (settings.currentMessage() != null) {
+            // if over >= 3 minutes -> lock app ...
+            MessageOut item = settings.currentMessage();
+            long current = System.currentTimeMillis();
+            long delta = (current - item.AcceptDateTime) / (60 * 1000);
+            if (delta > 3) {
+                // down level of user || lock app
+                Toast("You missed message of (" + item.GuestName + " - " + item.GuestPhone + ")");
+                settings.currentMessage(null);
+                // TODO: ...
+
+            } else {
+                Intent intent = new Intent(activity, MapActivity.class);
+                intent.putExtra("message", item);
+                activity.startActivity(intent);
+            }
         }
 
         FrameLayout loading = (FrameLayout) findViewById(R.id.loading);
@@ -67,6 +89,11 @@ public class MessagesActivity extends BaseActivity {
 
             loading.setVisibility(View.GONE);
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        Load();
     }
 
     @Override
