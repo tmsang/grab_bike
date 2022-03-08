@@ -39,7 +39,11 @@ public class MessagesActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messages);
         Initialization(this);
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
         Load();
     }
 
@@ -52,8 +56,8 @@ public class MessagesActivity extends BaseActivity {
             // if over >= 3 minutes -> lock app ...
             MessageOut item = settings.currentMessage();
             long current = System.currentTimeMillis();
-            long delta = (current - item.AcceptDateTime) / (60 * 1000);
-            if (delta > 3) {
+            double delta = (current - item.AcceptDateTime) / (60 * 1000);
+            if ((double)delta > (double)3) {
                 // down level of user || lock app
                 Toast("You missed message of (" + item.GuestName + " - " + item.GuestPhone + ")");
                 settings.currentMessage(null);
@@ -92,11 +96,6 @@ public class MessagesActivity extends BaseActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        Load();
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.toolbar_settings, menu);
@@ -118,11 +117,6 @@ public class MessagesActivity extends BaseActivity {
     private void loadMessagesFromApi(String option, MyStringCallback callback)
     {
         // Add Header into request (Retrofit)
-        Map<String, String> header = new HashMap<>();
-        header.put("Content-Type", "application/x-www-form-urlencoded");
-        header.put("Authorization", settings.jwtToken());
-
-        SSLSettings sslSettings = new SSLSettings(false, null);
         SharedService.MessageApi(Constants.API_NET, sslSettings)
                 .Requests(header)
                 .enqueue(Callback.callInUI(MessagesActivity.this, 

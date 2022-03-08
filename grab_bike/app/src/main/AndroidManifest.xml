@@ -81,13 +81,13 @@
             />
         <activity
             android:name=".histories.MessagesActivity"
-            android:label="Messages"
+            android:label="History"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             />
         <activity
             android:name=".histories.MessageDetailActivity"
-            android:label="Message Detail"
+            android:label="History Detail"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             />

@@ -10,6 +10,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.intec.grab.bike.MainActivity;
 import com.intec.grab.bike.R;
 import com.intec.grab.bike.configs.Constants;
 import com.intec.grab.bike.login.LoginActivity;
@@ -35,7 +36,16 @@ public class MessagesActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_histories);
         Initialization(this);
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        Load();
+    }
+
+    private void Load() {
         if (StringHelper.isNullOrEmpty(settings.jwtToken())) {
             this.Redirect(LoginActivity.class);
             return;
@@ -84,7 +94,7 @@ public class MessagesActivity extends BaseActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.toolbar_menu:
-                this.Redirect(LoginActivity.class);
+                this.Redirect(MainActivity.class);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -5,6 +5,7 @@ import android.util.Base64;
 
 import androidx.annotation.RequiresApi;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -127,6 +128,19 @@ public class StringHelper {
             parseException.printStackTrace();
         }
         return "";
+    }
+
+    public static String formatNow(String format) {
+        SimpleDateFormat formatter= new SimpleDateFormat(format);
+        Date date = new Date(System.currentTimeMillis());
+        return formatter.format(date);
+    }
+
+    public static String formatNumber(String number, String format) {
+        double amount = Double.parseDouble(number);
+        DecimalFormat formatter = new DecimalFormat(format);
+
+        return formatter.format(amount);
     }
 
     public static String encodeBase64(String str) {

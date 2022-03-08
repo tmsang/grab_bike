@@ -5,9 +5,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        app:titleTextColor="#ffffff"
+        app:titleTextAppearance="@style/Toolbar.TitleText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/tp_toolbar_bg"
+        app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+
     <TextView
         android:id="@+id/lbl_error_message"
         android:text="There is no row..."
+        android:layout_below="@id/toolbar"
         android:textSize="18dp"
         android:textStyle="bold"
         android:textColor="#ff0000"

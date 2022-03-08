@@ -24,6 +24,7 @@ import com.intec.grab.bike.settings.SettingsActivity;
 import com.intec.grab.bike.shared.SharedService;
 import com.intec.grab.bike.utils.api.Callback;
 import com.intec.grab.bike.utils.base.BaseActivity;
+import com.intec.grab.bike.utils.helper.StringHelper;
 import com.intec.grab.bike.utils.log.Log;
 
 import java.util.Map;
@@ -44,7 +45,7 @@ public class MainActivity extends BaseActivity
         2. Request permission (access location)
             -> convert coordinate -> address
             -> push current position
-
+        3. Load Statistic - Summary
     ===========================================*/
 
     @BindView(R.id.toolbar)
@@ -92,6 +93,37 @@ public class MainActivity extends BaseActivity
                         HandleException("Push Position", error.body());
                     }));
         });
+
+        //3. Load Statistic - Summary
+        String nowStr = StringHelper.formatNow("dd-MMM-yyyy");
+        String priceStr = StringHelper.formatNumber("6700", "#,###");
+        String cancelCountStr = StringHelper.formatNumber("3", "#,###");
+        String doneCountStr = StringHelper.formatNumber("3", "#,###");
+        String amountStr = StringHelper.formatNumber("234000", "#,###");
+
+        SetTextView(R.id.lbl_price, "<b>Price of 1 km on " + nowStr + ":</b> " + priceStr + " vnd");
+        SetTextView(R.id.lbl_count_cancel, "<b>Total CANCEL trip:</b> " + cancelCountStr);
+        SetTextView(R.id.lbl_count_done, "<b>Total DONE trip:</b> " + doneCountStr);
+        SetTextView(R.id.lbl_total_amount, "<b>Total Amount:</b> " + amountStr + " vnd");
+        SetTextView(R.id.lbl_book_a_trip, "<span style='color:#0000ff'><u>Let's go: Book A Trip!</u></span>");
+
+        TextViewClickEvent(R.id.lbl_book_a_trip, lbl -> {
+            Redirect(GuestMapActivity.class);
+        });
+
+        /*
+        SharedService.MessageApi(Constants.API_NET, sslSettings)
+                .Statistic(header)
+                .enqueue(Callback.call((res) -> {
+                    SetTextView(R.id.lbl_price, "Price of 1 km on 2022-03-08: 6,700 vnd");
+                    SetTextView(R.id.lbl_count_cancel, "Total CANCEL trip: 3");
+                    SetTextView(R.id.lbl_count_done, "Total DONE trip: 3");
+                    SetTextView(R.id.lbl_total_amount, "Total Amount: 234,000 vnd");
+                    SetTextView(R.id.lbl_book_a_trip, "Let's go: Book A Trip!");
+                }, (error) -> {
+                    HandleException("Statistic - Summary", error.body());
+                }));
+         */
     }
 
     private void toggleMenu() {

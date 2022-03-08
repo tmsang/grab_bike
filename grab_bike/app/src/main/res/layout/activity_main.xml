@@ -8,42 +8,72 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <LinearLayout
+        android:id="@+id/zoneCenter"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:id="@+id/zoneCenter"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="none"
-            android:orientation="vertical"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" >
-
-            <ViewFlipper
-                android:id="@+id/flipper"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
-
-                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <!-- TODO: need something here... -->
-
-                </LinearLayout>
-            </ViewFlipper>
-        </LinearLayout>
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" >
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
+            app:titleTextColor="#ffffff"
+            app:titleTextAppearance="@style/Toolbar.TitleText"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@drawable/tp_toolbar_bg"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- TODO: need something here... -->
+            <TextView
+                android:id="@+id/lbl_price"
+                android:text="Price of 1 km on 2022-03-08: 6,700 vnd"
+                android:padding="15dp"
+                android:textSize="18dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></TextView>
+
+            <TextView
+                android:id="@+id/lbl_count_cancel"
+                android:text="Total CANCEL trip: 3"
+                android:padding="15dp"
+                android:textSize="18dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></TextView>
+
+            <TextView
+                android:id="@+id/lbl_count_done"
+                android:text="Total DONE trip: 3"
+                android:padding="15dp"
+                android:textSize="18dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></TextView>
+
+            <TextView
+                android:id="@+id/lbl_total_amount"
+                android:text="Total Amount: 234,000 vnd"
+                android:padding="15dp"
+                android:textSize="18dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></TextView>
+
+            <TextView
+                android:id="@+id/lbl_book_a_trip"
+                android:text="Let's go: Book A Trip!"
+                android:padding="15dp"
+                android:textSize="18dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></TextView>
+
+        </LinearLayout>
+    </LinearLayout>
 
     <!-- Container for contents of drawer - use NavigationView to make configuration easier -->
     <com.google.android.material.navigation.NavigationView

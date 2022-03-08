@@ -30,19 +30,22 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 class MessageItemViewHolder extends RecyclerView.ViewHolder {
+    public TextView autoNumber;
     public TextView title;
     public TextView publishDate;
 
     public MessageItemViewHolder(View itemView) {
         super(itemView);
+        autoNumber = itemView.findViewById(R.id.lbl_autonumber);
         title = itemView.findViewById(R.id.title);
         publishDate = itemView.findViewById(R.id.publishDate);
     }
 
-    public void bind(MessageOut message) {
+    public void bind(MessageOut message, int position) {
         String _title = message.ToAddress;
         String _publishDate = StringHelper.formatDateTime(message.RequestDateTime);
 
+        autoNumber.setText(Html.fromHtml("<b>" + (position + 1) + "</b>"));
         title.setText(Html.fromHtml("<b>" + _title + "</b>"));
         publishDate.setText(Html.fromHtml("<span style=\"color:#0000ff;\">" + _publishDate + "</span>"));
     }
@@ -91,7 +94,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         MessageOut item = items.get(position);
         MessageItemViewHolder viewHolder = (MessageItemViewHolder) holder;
-        viewHolder.bind(item);
+        viewHolder.bind(item, position);
 
         holder.itemView.setOnClickListener(v -> {
             // redirect to History Detail

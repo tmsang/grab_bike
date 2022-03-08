@@ -2,9 +2,14 @@ package com.intec.grab.bike.histories;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.RatingBar;
 
+import androidx.appcompat.widget.Toolbar;
+
+import com.intec.grab.bike.MainActivity;
 import com.intec.grab.bike.R;
 import com.intec.grab.bike.configs.Constants;
 import com.intec.grab.bike.shared.SharedService;
@@ -22,6 +27,9 @@ public class MessageDetailActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_histories_item_detail);
         Initialization(this);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         ratingBar = findViewById(R.id.rating);
 
@@ -64,5 +72,24 @@ public class MessageDetailActivity extends BaseActivity
                         }
                 ));
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.toolbar_settings, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.toolbar_menu:
+                this.Redirect(MainActivity.class);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

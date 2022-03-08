@@ -19,19 +19,22 @@ import com.intec.grab.bike_driver.utils.helper.StringHelper;
 import java.util.List;
 
 class HistoryItemViewHolder extends RecyclerView.ViewHolder {
+    public TextView autoNumber;
     public TextView title;
     public TextView publishDate;
 
     public HistoryItemViewHolder(View itemView) {
         super(itemView);
+        autoNumber = itemView.findViewById(R.id.lbl_autonumber);
         title = itemView.findViewById(R.id.title);
         publishDate = itemView.findViewById(R.id.publishDate);
     }
 
-    public void bind(MessageHistoryOut message) {
+    public void bind(MessageHistoryOut message, int position) {
         String _title = message.ToAddress;
         String _publishDate = StringHelper.formatDateTime(message.RequestDateTime);
 
+        autoNumber.setText(Html.fromHtml("<b>" + (position + 1)  + "</b>"));
         title.setText(Html.fromHtml("<b>" + _title + "</b>"));
         publishDate.setText(Html.fromHtml("<span style=\"color:#0000ff;\">" + _publishDate + "</span>"));
     }
@@ -80,7 +83,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         MessageHistoryOut item = items.get(position);
         HistoryItemViewHolder viewHolder = (HistoryItemViewHolder) holder;
-        viewHolder.bind(item);
+        viewHolder.bind(item, position);
 
         holder.itemView.setOnClickListener(v -> {
             // redirect to History Detail
