@@ -36,6 +36,10 @@
 		<item name="android:textSize">20sp</item>
 		<item name="android:textStyle">bold</item>
 	</style>
+	
+	<style name="Toolbar.ColoredBackArrow" parent="AppTheme">
+		<item name="android:textColorSecondary">@color/colorNavPrimary</item>
+	</style>
 
 	<!-- Animation move activity -->
 	<style name="CustomActivityAnimation" parent="@android:style/Animation.Activity">

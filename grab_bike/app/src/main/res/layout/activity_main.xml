@@ -23,6 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@drawable/tp_toolbar_bg"
+            app:theme="@style/Toolbar.ColoredBackArrow"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
