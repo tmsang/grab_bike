@@ -4,6 +4,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -47,6 +48,7 @@ public class MainActivity extends BaseActivity
             -> push current position
         3. Load Statistic - Summary
     ===========================================*/
+    FrameLayout loading;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -64,6 +66,20 @@ public class MainActivity extends BaseActivity
         setContentView(R.layout.activity_main);
         Initialization(this);
         ButterKnife.bind(this);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        Load();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void Load() {
+        loading = (FrameLayout) findViewById(R.id.loading);
+        loading.setVisibility(View.VISIBLE);
 
         //0. Check Token
         if (!settings.tokenExists()) {
@@ -95,35 +111,33 @@ public class MainActivity extends BaseActivity
         });
 
         //3. Load Statistic - Summary
-        String nowStr = StringHelper.formatNow("dd-MMM-yyyy");
-        String priceStr = StringHelper.formatNumber("6700", "#,###");
-        String cancelCountStr = StringHelper.formatNumber("3", "#,###");
-        String doneCountStr = StringHelper.formatNumber("3", "#,###");
-        String amountStr = StringHelper.formatNumber("234000", "#,###");
-
-        SetTextView(R.id.lbl_price, "<b>Price of 1 km on " + nowStr + ":</b> " + priceStr + " vnd");
-        SetTextView(R.id.lbl_count_cancel, "<b>Total CANCEL trip:</b> " + cancelCountStr);
-        SetTextView(R.id.lbl_count_done, "<b>Total DONE trip:</b> " + doneCountStr);
-        SetTextView(R.id.lbl_total_amount, "<b>Total Amount:</b> " + amountStr + " vnd");
         SetTextView(R.id.lbl_book_a_trip, "<span style='color:#0000ff'><u>Let's go: Book A Trip!</u></span>");
-
         TextViewClickEvent(R.id.lbl_book_a_trip, lbl -> {
+            loading.setVisibility(View.VISIBLE);
+
             Redirect(GuestMapActivity.class);
         });
 
-        /*
         SharedService.MessageApi(Constants.API_NET, sslSettings)
                 .Statistic(header)
-                .enqueue(Callback.call((res) -> {
-                    SetTextView(R.id.lbl_price, "Price of 1 km on 2022-03-08: 6,700 vnd");
-                    SetTextView(R.id.lbl_count_cancel, "Total CANCEL trip: 3");
-                    SetTextView(R.id.lbl_count_done, "Total DONE trip: 3");
-                    SetTextView(R.id.lbl_total_amount, "Total Amount: 234,000 vnd");
-                    SetTextView(R.id.lbl_book_a_trip, "Let's go: Book A Trip!");
+                .enqueue(Callback.call((res) ->
+                {
+                    String nowStr = StringHelper.formatNow("dd-MMM-yyyy");
+                    String priceStr = StringHelper.formatNumber(res.Price, "#,###");
+                    String cancelCountStr = StringHelper.formatNumber(res.CancelCounter, "#,###");
+                    String doneCountStr = StringHelper.formatNumber(res.DoneCounter, "#,###");
+                    String amountStr = StringHelper.formatNumber(res.TotalAmount, "#,###");
+
+                    SetTextView(R.id.lbl_price, "<b>Price of 1 km on <span style='color:#0000ff'>" + nowStr + "</span>:</b> " + priceStr + " (vnd)");
+                    SetTextView(R.id.lbl_count_cancel, "<b>Total CANCEL trip:</b> " + cancelCountStr);
+                    SetTextView(R.id.lbl_count_done, "<b>Total DONE trip:</b> " + doneCountStr);
+                    SetTextView(R.id.lbl_total_amount, "<b>Total Amount:</b> " + amountStr + " (vnd)");
+
+                    loading.setVisibility(View.GONE);
+
                 }, (error) -> {
                     HandleException("Statistic - Summary", error.body());
                 }));
-         */
     }
 
     private void toggleMenu() {

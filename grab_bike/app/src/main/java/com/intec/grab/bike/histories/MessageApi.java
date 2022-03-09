@@ -12,7 +12,7 @@ import retrofit2.http.POST;
 
 public interface MessageApi {
 
-    @GET("api/guest/order/requests")
+    @GET("api/guest/order/request-histories")
     Call<List<MessageOut>> Requests(
             @HeaderMap Map<String, String> headers
     );
@@ -26,4 +26,8 @@ public interface MessageApi {
             @Field("Remark") String Remark
     );
 
+    @GET("api/guest/order/statistic")
+    Call<StatisticOut> Statistic(
+            @HeaderMap Map<String, String> headers
+    );
 }
