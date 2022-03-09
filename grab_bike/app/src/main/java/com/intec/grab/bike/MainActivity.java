@@ -187,22 +187,27 @@ public class MainActivity extends BaseActivity
 
         if (id == R.id.nav_bookings)
         {
+            loading.setVisibility(View.VISIBLE);
             this.Redirect(GuestMapActivity.class);
         }
         else if (id == R.id.nav_histories)
         {
+            loading.setVisibility(View.VISIBLE);
             this.Redirect(MessagesActivity.class);
         }
         else if (id == R.id.nav_settings)
         {
+            loading.setVisibility(View.VISIBLE);
             this.Redirect(SettingsActivity.class);
         }
         else if (id == R.id.nav_about)
         {
+            loading.setVisibility(View.VISIBLE);
             this.Redirect(AboutActivity.class);
         }
         else if (id == R.id.nav_logout)
         {
+            loading.setVisibility(View.VISIBLE);
             settings.clear();
             this.Redirect(LoginActivity.class);
         }

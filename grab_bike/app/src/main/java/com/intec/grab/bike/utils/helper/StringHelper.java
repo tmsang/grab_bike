@@ -137,10 +137,19 @@ public class StringHelper {
     }
 
     public static String formatNumber(String number, String format) {
+        if (isNullOrEmpty(number)) return "Unknown";
+
         double amount = Double.parseDouble(number);
         DecimalFormat formatter = new DecimalFormat(format);
 
         return formatter.format(amount);
+    }
+
+    public static String formatPhone(String number) {
+        if (isNullOrEmpty(number)) return "(000)-00-000";
+
+        String result = number.replaceFirst("(\\d{3})(\\d{3})(\\d+)", "($1)-$2-$3");
+        return result;
     }
 
     public static String encodeBase64(String str) {

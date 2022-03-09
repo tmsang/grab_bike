@@ -21,17 +21,23 @@ public class MessageOut implements Serializable {
     @SerializedName("RequestDateTime")
     public String RequestDateTime = null;
 
+    @SerializedName("Start")
+    public String Start = null;
+
+    @SerializedName("End")
+    public String End = null;
+
     @SerializedName("Distance")
     public String Distance = null;
 
     @SerializedName("Cost")
     public String Cost = null;
 
-    @SerializedName("Start")
-    public String Start = null;
+    @SerializedName("Rating")
+    public float Rating = 0;
 
-    @SerializedName("End")
-    public String End = null;
+    @SerializedName("Note")
+    public String Note = null;
 
     @SerializedName("DriverName")
     public String DriverName = null;

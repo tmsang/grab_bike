@@ -6,6 +6,7 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,12 +34,14 @@ class MessageItemViewHolder extends RecyclerView.ViewHolder {
     public TextView autoNumber;
     public TextView title;
     public TextView publishDate;
+    public ImageView imgRemarked;
 
     public MessageItemViewHolder(View itemView) {
         super(itemView);
         autoNumber = itemView.findViewById(R.id.lbl_autonumber);
         title = itemView.findViewById(R.id.title);
         publishDate = itemView.findViewById(R.id.publishDate);
+        imgRemarked = itemView.findViewById(R.id.img_remarked);
     }
 
     public void bind(MessageOut message, int position) {
@@ -48,6 +51,11 @@ class MessageItemViewHolder extends RecyclerView.ViewHolder {
         autoNumber.setText(Html.fromHtml("<b>" + (position + 1) + "</b>"));
         title.setText(Html.fromHtml("<b>" + _title + "</b>"));
         publishDate.setText(Html.fromHtml("<span style=\"color:#0000ff;\">" + _publishDate + "</span>"));
+        if (message.Status.equals(MessageStatus.EVALUATION)) {
+            imgRemarked.setVisibility(View.VISIBLE);
+        } else {
+            imgRemarked.setVisibility(View.GONE);
+        }
     }
 }
 
