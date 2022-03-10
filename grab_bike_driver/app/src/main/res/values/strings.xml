@@ -1,6 +1,6 @@
 
 <resources>
-    <string name="app_name">GRAB(HUU NGHI)</string>
+    <string name="app_name">GRAB DRIVER(HUU NGHI)</string>
 
     <string name="btn_send_token">Send Token</string>
     <string name="btn_login"><b>Login</b></string>

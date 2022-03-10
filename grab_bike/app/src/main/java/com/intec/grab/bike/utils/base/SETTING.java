@@ -3,6 +3,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
 
+import com.google.gson.Gson;
+import com.intec.grab.bike.guest_map.SessionMapDto;
 import com.intec.grab.bike.utils.api.SSLSettings;
 
 public class SETTING {
@@ -83,6 +85,48 @@ public class SETTING {
         sharedPreferences.edit().putString("currentAddress", address).apply();
     }
 
+    public SessionMapDto sessionMap() {
+        Gson gson = new Gson();
+        String value = sharedPreferences.getString("sessionMap", null);
+        SessionMapDto result = gson.fromJson(value, SessionMapDto.class);
+        return result;
+    }
+    public void sessionMap(SessionMapDto session) {
+        Gson gson = new Gson();
+        String result = gson.toJson(session);
+        sharedPreferences.edit().putString("sessionMap", result).apply();
+    }
+    public void sessionMap_SetToLat(String lat) {
+        SessionMapDto result = this.sessionMap();
+        if (result == null) result = new SessionMapDto();
+        result.ToLat = lat;
+        sessionMap(result);
+    }
+    public void sessionMap_SetToLng(String lng) {
+        SessionMapDto result = this.sessionMap();
+        if (result == null) result = new SessionMapDto();
+        result.ToLng = lng;
+        sessionMap(result);
+    }
+    public void sessionMap_SetToAddress(String address) {
+        SessionMapDto result = this.sessionMap();
+        if (result == null) result = new SessionMapDto();
+        result.ToAddress = address;
+        sessionMap(result);
+    }
+    public void sessionMap_SetOrderId(String orderId) {
+        SessionMapDto result = this.sessionMap();
+        if (result == null) result = new SessionMapDto();
+        result.OrderId = orderId;
+        sessionMap(result);
+    }
+    public void sessionMap_SetStatus(String status) {
+        SessionMapDto result = this.sessionMap();
+        if (result == null) result = new SessionMapDto();
+        result.Status = status;
+        sessionMap(result);
+    }
+
     public void clear() {
         jwtToken(null);
         fcmToken(null);
@@ -92,6 +136,7 @@ public class SETTING {
         currentLat(null);
         currentLng(null);
         currentAddress(null);
+        sessionMap(null);
 
         url(null);
         validateSSL(true);

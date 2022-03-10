@@ -44,4 +44,9 @@ public interface MessageApi {
     Call<List<MessageHistoryOut>> RequestHistories(
             @HeaderMap Map<String, String> headers
     );
+
+    @GET("api/driver/order/statistic")
+    Call<StatisticOut> Statistic(
+            @HeaderMap Map<String, String> headers
+    );
 }

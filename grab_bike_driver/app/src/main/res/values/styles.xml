@@ -37,6 +37,10 @@
 		<item name="android:textStyle">bold</item>
 	</style>
 
+	<style name="Toolbar.ColoredBackArrow" parent="AppTheme">
+		<item name="android:textColorSecondary">@color/colorNavPrimary</item>
+	</style>
+
 	<!-- Animation move activity -->
 	<style name="CustomActivityAnimation" parent="@android:style/Animation.Activity">
 		<item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>

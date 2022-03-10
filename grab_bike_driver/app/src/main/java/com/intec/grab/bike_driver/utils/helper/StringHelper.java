@@ -147,6 +147,12 @@ public class StringHelper {
         return "UnKnown";
     }
 
+    public static String formatNow(String format) {
+        SimpleDateFormat formatter= new SimpleDateFormat(format);
+        Date date = new Date(System.currentTimeMillis());
+        return formatter.format(date);
+    }
+
     public static String formatNumber(String number, String format) {
         DecimalFormat formatter = new DecimalFormat(format);
         double amount = Double.parseDouble(number);

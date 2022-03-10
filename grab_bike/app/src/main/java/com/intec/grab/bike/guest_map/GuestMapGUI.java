@@ -70,16 +70,6 @@ public class GuestMapGUI {
     public double getAmount() { return amount; }
     public void setAmount(double amount) { this.amount = amount; }
 
-    // property: orderId & status
-    String orderId;
-    public String getOrderId() { return orderId; }
-    public void setOrderId(String orderId) { this.orderId = orderId; }
-
-    String status;
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-
-
 
     public GuestMapGUI(Context context, SETTING settings, SSLSettings sslSettings) {
         this.context = context;
@@ -140,15 +130,22 @@ public class GuestMapGUI {
             public void onNext(Long aLong) {
                 Log.i("------ Interval: Prepare (push notification) ------");
                 SharedService.GuestMapApi(Constants.API_NET, sslSettings)
-                    .IntervalGets(header, settings.currentLat(), settings.currentLng(), getOrderId())
+                    .IntervalGets(header,
+                                    settings.currentLat(),
+                                    settings.currentLng(),
+                                    settings.sessionMap().OrderId)
                     .enqueue(Callback.call((rs) -> {
                         Log.i("Driver Position has been collected");
 
                         // get status
-                        setStatus(rs.Status);
+                        settings.sessionMap_SetStatus(rs.Status);
+
                         String messageStatus = MessageShared.RenderEnumFromOrderStatus(rs.Status);
                         btnBook.setText(Html.fromHtml(messageStatus));
                         if (rs.Status.equals(MessageStatus.END)) {
+                            // clear session when trip is ended
+                            settings.sessionMap(null);
+                            // redirect to History to evaluate
                             context.startActivity(new Intent(context, destination));
                             return;
                         }
@@ -164,7 +161,7 @@ public class GuestMapGUI {
                                     R.drawable.ic_automobile_32);
                         }
                     }, (err) -> {
-                        String msg = err.getCause().toString();
+                        String msg = err.getCause() != null ? err.getCause().toString() : err.body().toString();
                         Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
                         Log.i(msg);
                     }));

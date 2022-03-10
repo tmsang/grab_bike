@@ -18,6 +18,8 @@ import com.intec.grab.bike.shared.SharedService;
 import com.intec.grab.bike.utils.api.Callback;
 import com.intec.grab.bike.utils.base.BaseActivity;
 
+import com.intec.grab.bike.utils.helper.StringHelper;
+import com.intec.grab.bike.utils.helper.TimerHelper;
 import com.intec.grab.bike.utils.log.Log;
 import com.microsoft.maps.MapAnimationKind;
 import com.microsoft.maps.MapRenderMode;
@@ -70,6 +72,8 @@ public class GuestMapActivity extends BaseActivity {
         3. Book action
             -> push Booking to server
             -> pull driver positions (interval)
+
+        4. Restore session map
     ================================================*/
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -119,20 +123,15 @@ public class GuestMapActivity extends BaseActivity {
         // c. event click item
         mapGUI.AutoComplete_OnItemClick(autoCompleteDestination, coordinates -> {
             String[] items = coordinates.split("_");
-            toLat = items[0];
-            toLng = items[1];
-            toAddress = items[2];
-            toCoordinate = toLat + "," + toLng;
-            fromCoordinate = fromLat + "," + fromLng;
+            String _lat = items[0];
+            String _lng = items[1];
+            String _address = items[2];
 
-            mapGUI.GetDistanceAndAmount(header, fromCoordinate, toCoordinate, distanceAndAmount -> {
-                // display distance & amount
-                TextView lblDistance = findViewById(R.id.lblDistance);
-                TextView lblAmount = findViewById(R.id.lblAmount);
-                mapGUI.DisplayDistanceAndAmount(distanceAndAmount, lblDistance, lblAmount);
-                // set route path
-                mapGUI.DrawLineOnMap(mMapView, fromCoordinate, toCoordinate);
-            });
+            settings.sessionMap_SetToLat(_lat);
+            settings.sessionMap_SetToLng(_lng);
+            settings.sessionMap_SetToAddress(_address);
+
+            LoadMapWhenConfirmDestination(_lat, _lng, _address);
         });
 
         //2. Show Bing-Map
@@ -183,7 +182,7 @@ public class GuestMapActivity extends BaseActivity {
                     btnBook.setText(Html.fromHtml("<span style='color: #ff0000'><b>Waiting...</b></span>"));
                     btnBook.setOnClickListener(null);
 
-                    mapGUI.setOrderId(result.OrderId);
+                    settings.sessionMap_SetOrderId(result.OrderId);
 
                     // publish
                     Flowable.interval(DELAY_TIME, POLL_INTERVAL, TimeUnit.SECONDS)
@@ -203,6 +202,44 @@ public class GuestMapActivity extends BaseActivity {
                 mMapView,
                 btnBook,
                 MessageDetailActivity.class);
+
+        // 4. Restore session map
+        if (settings.sessionMap() != null)
+        {
+            SessionMapDto session = settings.sessionMap();
+            if (!StringHelper.isNullOrEmpty(session.ToLat)) {
+                // load text into AutoComplete
+                autoCompleteDestination.setText(session.ToAddress);
+                // load map
+                LoadMapWhenConfirmDestination(session.ToLat, session.ToLng, session.ToAddress);
+            }
+
+            // loop driver position when Guest booked
+            if (!StringHelper.isNullOrEmpty(session.OrderId))
+            {
+                Flowable.interval(DELAY_TIME, POLL_INTERVAL, TimeUnit.SECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(subscriberDelayInterval);
+            }
+        }
+    }
+
+    private void LoadMapWhenConfirmDestination(String _toLat, String _toLng, String _toAddress) {
+        toLat = _toLat;
+        toLng = _toLng;
+        toAddress = _toAddress;
+        toCoordinate = toLat + "," + toLng;
+        fromCoordinate = fromLat + "," + fromLng;
+
+        mapGUI.GetDistanceAndAmount(header, fromCoordinate, toCoordinate, distanceAndAmount -> {
+            // display distance & amount
+            TextView lblDistance = findViewById(R.id.lblDistance);
+            TextView lblAmount = findViewById(R.id.lblAmount);
+            mapGUI.DisplayDistanceAndAmount(distanceAndAmount, lblDistance, lblAmount);
+            // set route path
+            mapGUI.DrawLineOnMap(mMapView, fromCoordinate, toCoordinate);
+        });
     }
 
     @Override
@@ -246,6 +283,8 @@ public class GuestMapActivity extends BaseActivity {
             subscriberDelayInterval.dispose();
         }
         subscriberDelayInterval = null;
+
+        TimerHelper.Delay(3000, null);
     }
 
     @Override
