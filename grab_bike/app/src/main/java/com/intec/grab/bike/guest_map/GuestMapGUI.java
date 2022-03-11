@@ -122,13 +122,14 @@ public class GuestMapGUI {
             Map<String, String> header,
             MapView mapView,
             Button btnBook,
-            Class destination)
+            MyStringCallback callbackAfterEnd)
     {
         // Set subscriber
         return new DisposableSubscriber<Long>() {
             @Override
             public void onNext(Long aLong) {
                 Log.i("------ Interval: Prepare (push notification) ------");
+
                 SharedService.GuestMapApi(Constants.API_NET, sslSettings)
                     .IntervalGets(header,
                                     settings.currentLat(),
@@ -143,10 +144,7 @@ public class GuestMapGUI {
                         String messageStatus = MessageShared.RenderEnumFromOrderStatus(rs.Status);
                         btnBook.setText(Html.fromHtml(messageStatus));
                         if (rs.Status.equals(MessageStatus.END)) {
-                            // clear session when trip is ended
-                            settings.sessionMap(null);
-                            // redirect to History to evaluate
-                            context.startActivity(new Intent(context, destination));
+                            if (callbackAfterEnd != null) callbackAfterEnd.execute("");
                             return;
                         }
 

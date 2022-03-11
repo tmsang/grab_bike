@@ -14,6 +14,21 @@
         android:background="@drawable/tp_toolbar_bg"
         app:popupTheme="@style/AppTheme.PopupOverlay" />
 
+    <FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/loading"
+        android:clickable="true"
+        android:background="#000"
+        android:alpha="0.5"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ProgressBar
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </FrameLayout>
+
     <ScrollView android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -30,8 +45,6 @@
                 android:orientation="horizontal"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:layout_marginTop="6dp"
-                android:layout_marginBottom="4dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -41,8 +54,7 @@
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:gravity="left"
-                    android:paddingRight="20dp"
-                    android:layout_marginBottom="8dp"
+                    android:paddingRight="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -50,7 +62,7 @@
                     android:id="@+id/lbl_from_value"
                     android:text="123 Hoang Dieu P10 Q4"
                     android:textSize="12sp"
-                    android:paddingRight="20dp"
+                    android:padding="8dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>
@@ -59,8 +71,7 @@
                 android:orientation="horizontal"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="4dp"
+                android:layout_marginBottom="6dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -70,8 +81,7 @@
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:gravity="left"
-                    android:paddingRight="20dp"
-                    android:layout_marginBottom="8dp"
+                    android:paddingRight="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -79,7 +89,7 @@
                     android:id="@+id/lbl_to_value"
                     android:text="456 Ton Dan P9 Q4"
                     android:textSize="12sp"
-                    android:paddingRight="20dp"
+                    android:padding="8dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>
@@ -320,6 +330,7 @@
                     android:id="@+id/lbl_error_message"
                     android:text="Your Booking has not finished yet, so cannot evaluate"
                     android:layout_margin="10dp"
+                    android:padding="8dp"
                     android:gravity="center"
                     android:visibility="gone"
                     android:background="@drawable/tp_textview_error_bg"

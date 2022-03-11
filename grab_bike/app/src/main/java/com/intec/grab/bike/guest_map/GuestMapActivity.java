@@ -1,5 +1,6 @@
 package com.intec.grab.bike.guest_map;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
@@ -14,6 +15,7 @@ import androidx.annotation.RequiresApi;
 import com.intec.grab.bike.R;
 import com.intec.grab.bike.configs.Constants;
 import com.intec.grab.bike.histories.MessageDetailActivity;
+import com.intec.grab.bike.histories.MessagesActivity;
 import com.intec.grab.bike.shared.SharedService;
 import com.intec.grab.bike.utils.api.Callback;
 import com.intec.grab.bike.utils.base.BaseActivity;
@@ -196,12 +198,14 @@ public class GuestMapActivity extends BaseActivity {
         });
 
         //b. pull driver positions (interval)
-        // create subscribe
-        subscriberDelayInterval = mapGUI.CreateIntervalSubscriber(
-                header,
-                mMapView,
-                btnBook,
-                MessageDetailActivity.class);
+        subscriberDelayInterval = mapGUI.CreateIntervalSubscriber(header, mMapView, btnBook, s -> {
+            // clear session when trip is ended
+            settings.sessionMap(null);
+            // release interval
+            ClearMemory();
+            // redirect to History to evaluate
+            startActivity(new Intent(this, MessagesActivity.class));
+        });
 
         // 4. Restore session map
         if (settings.sessionMap() != null)
@@ -242,6 +246,14 @@ public class GuestMapActivity extends BaseActivity {
         });
     }
 
+    private void ClearMemory() {
+        mMapView = null;
+        if (subscriberDelayInterval != null && !subscriberDelayInterval.isDisposed()) {
+            subscriberDelayInterval.dispose();
+        }
+        subscriberDelayInterval = null;
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -278,13 +290,16 @@ public class GuestMapActivity extends BaseActivity {
         mMapView.onDestroy();
 
         // release: Map + Observable
-        mMapView = null;
-        if (subscriberDelayInterval != null && !subscriberDelayInterval.isDisposed()) {
-            subscriberDelayInterval.dispose();
-        }
-        subscriberDelayInterval = null;
+        ClearMemory();
 
         TimerHelper.Delay(3000, null);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        ClearMemory();
     }
 
     @Override
