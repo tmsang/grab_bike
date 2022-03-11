@@ -231,4 +231,10 @@ public class MapActivity extends BaseActivity {
         super.onLowMemory();
         mMapView.onLowMemory();
     }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        Toast("You back pressed");
+    }
 }
