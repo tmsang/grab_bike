@@ -40,8 +40,8 @@ public class MessageDetailActivity extends BaseActivity
 
         SetTextView(R.id.lbl_from_value, message.FromAddress);
         SetTextView(R.id.lbl_to_value, message.ToAddress);
-        SetTextView(R.id.lbl_distance, "<b>Distance: </b>" + StringHelper.formatNumber(message.Distance, "#,###") + " km");
-        SetTextView(R.id.lbl_amount, "<b>Amount: </b>" + StringHelper.formatNumber(message.Cost, "#,###") + " vnd");
+        SetTextView(R.id.lbl_distance, "<b>Distance: </b>" + StringHelper.formatNumber(message.Distance, "#,###") + " (km)");
+        SetTextView(R.id.lbl_amount, "<b>Amount: </b>" + StringHelper.formatNumber(message.Cost, "#,###") + " (vnd)");
         SetTextView(R.id.lbl_datetime_value, StringHelper.formatDateTime(message.RequestDateTime));
         SetTextView(R.id.lbl_start_value, StringHelper.formatTime(message.Start) + "");
         SetTextView(R.id.lbl_end_value, StringHelper.formatTime(message.End) + "");
@@ -49,6 +49,7 @@ public class MessageDetailActivity extends BaseActivity
         SetTextView(R.id.lbl_guest_phone_value, StringHelper.formatPhone(message.GuestPhone) + "");
         SetTextView(R.id.lbl_status_value,  MessageShared.RenderEnumFromOrderStatus(message.Status) + "");
         ratingBar.setRating(message.Rating);
+        SetTextView(R.id.lbl_remark_value,  message.Note);
     }
 
     @Override

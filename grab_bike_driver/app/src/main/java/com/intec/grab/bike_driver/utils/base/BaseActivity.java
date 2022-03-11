@@ -153,6 +153,8 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void SetTextView(int rId, String rString) {
+        if (StringHelper.isNullOrEmpty(rString)) rString = "";
+
         TextView textView = this.activity.findViewById(rId);
         textView.setText(Html.fromHtml(rString));
     }

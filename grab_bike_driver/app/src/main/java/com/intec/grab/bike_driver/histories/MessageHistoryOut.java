@@ -41,6 +41,9 @@ public class MessageHistoryOut implements Serializable {
     @SerializedName("Rating")
     public float Rating = 0;
 
+    @SerializedName("Note")
+    public String Note = null;
+
     @SerializedName("GuestName")
     public String GuestName = null;
 
