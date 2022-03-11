@@ -49,4 +49,11 @@ public interface MessageApi {
     Call<StatisticOut> Statistic(
             @HeaderMap Map<String, String> headers
     );
+
+
+
+    @GET("api/driver/order/interval-gets")
+    Call<IntervalResultOut> IntervalGets(
+            @HeaderMap Map<String, String> headers
+    );
 }

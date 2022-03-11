@@ -44,10 +44,10 @@ public class MapActivity extends BaseActivity {
     private DisposableSubscriber<Long> subscriberDelayInterval;
 
     private MessageOut message;
-
     private MapView mMapView;
     private MapGUI mapGUI;
 
+    private boolean isAllowBacked = false;
     private String fromLat = "", fromLng = "", fromAddress = "", fromCoordinate = "";
     private String toLat = "", toLng = "", toAddress = "", toCoordinate = "";
 
@@ -159,6 +159,7 @@ public class MapActivity extends BaseActivity {
 
                         // clear intent: item(MessageOut)
                         settings.currentMessage(null);
+                        isAllowBacked = true;
 
                         // redirect to Message
                         Redirect(MessagesActivity.class);
@@ -234,7 +235,9 @@ public class MapActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
-        Toast("You back pressed");
+        Toast("You must process this Message [Start, End]");
+        if (isAllowBacked) {
+            super.onBackPressed();
+        }
     }
 }

@@ -27,12 +27,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subscribers.DisposableSubscriber;
 
 public class MessagesActivity extends BaseActivity {
     
     private List<MessageOut> messageList = new ArrayList<>();
     private MessageAdapter messageAdapter;
     private RecyclerView recyclerView;
+    private MessageGUI messageGUI;
+
+    private int POLL_INTERVAL = 10;
+    private int DELAY_TIME = 2;
+    private DisposableSubscriber<Long> subscriberDelayInterval;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +58,30 @@ public class MessagesActivity extends BaseActivity {
         Load();
     }
 
+    /*====================================
+        1. Check Token
+        2. Check current message (pending -> just accept)
+            . if over 3 minute -> stop
+            . redirect to MapActivity
+        3. Set Adapter (initial -> API full load)
+        4. Real-time interval
+    ======================================*/
     private void Load() {
+        FrameLayout loading = (FrameLayout) findViewById(R.id.loading);
+        loading.setVisibility(View.VISIBLE);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        messageGUI = new MessageGUI(this, settings, sslSettings);
+
+        // 1. Check Token
         if (StringHelper.isNullOrEmpty(settings.jwtToken())) {
             this.Redirect(LoginActivity.class);
             return;
         }
+
+        // 2. Check current message (pending -> just accept)
         if (settings.currentMessage() != null) {
             // if over >= 3 minutes -> lock app ...
             MessageOut item = settings.currentMessage();
@@ -70,12 +100,7 @@ public class MessagesActivity extends BaseActivity {
             }
         }
 
-        FrameLayout loading = (FrameLayout) findViewById(R.id.loading);
-        loading.setVisibility(View.VISIBLE);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
+        // 3. Set Adapter (initial -> API full load)
         recyclerView = findViewById(R.id.message_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         messageAdapter = new MessageAdapter(this, messageList, recyclerView,
@@ -91,8 +116,42 @@ public class MessagesActivity extends BaseActivity {
                     MapActivity.class);
             recyclerView.setAdapter(messageAdapter);
 
+            // publish
+            Flowable.interval(DELAY_TIME, POLL_INTERVAL, TimeUnit.SECONDS)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(subscriberDelayInterval);
+
             loading.setVisibility(View.GONE);
         });
+
+        // 4. Real-time interval
+        subscriberDelayInterval = messageGUI.CreateIntervalSubscriber(header, str -> {
+            IntervalResultOut result = messageGUI.toJson(str);
+
+            messageAdapter = new MessageAdapter(this, result.Requests, recyclerView,
+                    settings,
+                    sslSettings,
+                    MapActivity.class);
+            recyclerView.setAdapter(messageAdapter);
+        });
+    }
+
+    private void loadMessagesFromApi(String option, MyStringCallback callback)
+    {
+        // Add Header into request (Retrofit)
+        SharedService.MessageApi(Constants.API_NET, sslSettings)
+                .Requests(header)
+                .enqueue(Callback.callInUI(MessagesActivity.this,
+                        (json) -> {
+                            // TODO: refactor 0
+                            messageList = json;
+                            callback.execute("");
+                        },
+                        (error) -> {
+                            Toast("API - GetRequest cannot reach", error.getMessage());
+                        }
+                ));
     }
 
     @Override
@@ -114,20 +173,23 @@ public class MessagesActivity extends BaseActivity {
         }
     }
 
-    private void loadMessagesFromApi(String option, MyStringCallback callback)
-    {
-        // Add Header into request (Retrofit)
-        SharedService.MessageApi(Constants.API_NET, sslSettings)
-                .Requests(header)
-                .enqueue(Callback.callInUI(MessagesActivity.this, 
-                    (json) -> {
-                        // TODO: refactor 0
-                        messageList = json;
-                        callback.execute("");
-                    },
-                    (error) -> {
-                        Toast("API - GetRequest cannot reach", error.getMessage());
-                    }
-                ));
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (subscriberDelayInterval != null && !subscriberDelayInterval.isDisposed()) {
+            subscriberDelayInterval.dispose();
+        }
+        subscriberDelayInterval = null;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        if (subscriberDelayInterval != null && !subscriberDelayInterval.isDisposed()) {
+            subscriberDelayInterval.dispose();
+        }
+        subscriberDelayInterval = null;
     }
 }

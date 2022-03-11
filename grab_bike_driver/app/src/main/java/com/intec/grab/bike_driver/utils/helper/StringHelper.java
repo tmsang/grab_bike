@@ -6,6 +6,10 @@ import android.util.Base64;
 
 import androidx.annotation.RequiresApi;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -163,6 +167,23 @@ public class StringHelper {
         String result = number.replaceFirst("(\\d{3})(\\d{3})(\\d+)", "($1)-$2-$3");
         return result;
     }
+
+    public static <T> String stringify(T obj) {
+        Gson gson = new Gson();
+        String result = gson.toJson(obj);
+
+        return result;
+    }
+
+    /*
+    public static <T> T toJson(String str) {
+        Gson gson = new Gson();
+        Type collectionType = new TypeToken<T>(){}.getType();
+        T result = gson.fromJson(str, collectionType);
+
+        return result;
+    }
+    */
 
     public static String encodeBase64(String str) {
         byte[] encode = android.util.Base64.encode(str.getBytes(), Base64.NO_WRAP + Base64.NO_PADDING);
