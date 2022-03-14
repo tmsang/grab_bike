@@ -227,12 +227,11 @@ public class BaseActivity extends AppCompatActivity {
     public void RequestPermissionLocation(MyStringCallback callback) {
         // Request location permission
         ActivityResultLauncher<String[]> locationPermissionRequest =
-                registerForActivityResult(new ActivityResultContracts
-                        .RequestMultiplePermissions(), result -> {
-                    Boolean fineLocationGranted = result.getOrDefault(
-                            Manifest.permission.ACCESS_FINE_LOCATION, false);
-                    Boolean coarseLocationGranted = result.getOrDefault(
-                            Manifest.permission.ACCESS_COARSE_LOCATION, false);
+                registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+
+                    Boolean fineLocationGranted = result.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false);
+                    Boolean coarseLocationGranted = result.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false);
+
                             if (fineLocationGranted != null && fineLocationGranted) {
                                 // Precise location access granted.
                                 GPSTracker gps = new GPSTracker(this);
