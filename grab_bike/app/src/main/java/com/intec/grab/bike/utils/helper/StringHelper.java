@@ -1,5 +1,11 @@
 package com.intec.grab.bike.utils.helper;
 
+import android.os.Build;
+import android.util.Base64;
+
+import androidx.annotation.RequiresApi;
+
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -63,6 +69,7 @@ public class StringHelper {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public static LocalDateTime convertToDateTime(String value)
     {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
@@ -71,6 +78,7 @@ public class StringHelper {
         return dateObj;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public static String convertToString(String value, String format)
     {
         // value = 2021-06-23T04:29:42+00:00
@@ -87,5 +95,72 @@ public class StringHelper {
         String result = dateObj.format(dateTimeFormatter);
 
         return result;
+    }
+
+    public static String formatDateTime(String fullDate) {
+        try
+        {
+            // fullDate: 2022-01-19T13:47:25+07:00[Asia/Bangkok]
+            String date = fullDate.substring(0, 10);
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            Date fromDate = formatter.parse(date);
+            Date current = formatter.parse(formatter.format(new Date()));
+
+            SimpleDateFormat _format = new SimpleDateFormat("dd-MMM-yyyy");
+            String _date = _format.format(fromDate);
+            String _time = fullDate.substring(11, 16);
+            return _date + " " + _time;
+
+            /*
+            if (current.compareTo(fromDate) == 0) {
+                // if is today -> show Time: hh:mm
+                String _t = fullDate.substring(11, 16);
+                return _t;
+            } else {
+                // if is the past -> show Date: dd-MMM-yyyy
+                SimpleDateFormat _f = new SimpleDateFormat("dd-MMM-yyyy");
+                String _d = _f.format(fromDate);
+                return _d;
+            }
+             */
+        }
+        catch (ParseException parseException) {
+            parseException.printStackTrace();
+        }
+        return "";
+    }
+
+    public static String formatNow(String format) {
+        SimpleDateFormat formatter= new SimpleDateFormat(format);
+        Date date = new Date(System.currentTimeMillis());
+        return formatter.format(date);
+    }
+
+    public static String formatNumber(String number, String format) {
+        if (isNullOrEmpty(number)) return "Unknown";
+
+        double amount = Double.parseDouble(number);
+        DecimalFormat formatter = new DecimalFormat(format);
+
+        return formatter.format(amount);
+    }
+
+    public static String formatPhone(String number) {
+        if (isNullOrEmpty(number)) return "(000)-00-000";
+
+        String result = number.replaceFirst("(\\d{3})(\\d{3})(\\d+)", "($1)-$2-$3");
+        return result;
+    }
+
+    public static String encodeBase64(String str) {
+        byte[] encode = android.util.Base64.encode(str.getBytes(), Base64.NO_WRAP + Base64.NO_PADDING);
+
+        return new String(encode);
+    }
+
+    public static String decodeBase64(String str) {
+        byte[] decode = android.util.Base64.decode(str, Base64.NO_WRAP + Base64.NO_PADDING);
+
+        return new String(decode);
     }
 }

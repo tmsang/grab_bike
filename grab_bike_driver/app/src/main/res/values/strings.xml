@@ -1,0 +1,30 @@
+
+<resources>
+    <string name="app_name">GRAB DRIVER(HUU NGHI)</string>
+
+    <string name="btn_send_token">Send Token</string>
+    <string name="btn_login"><b>Login</b></string>
+    <string name="btn_register">Register</string>
+    <string name="btn_forgot_password"><b>Submit</b></string>
+    <string name="notification_channel_id">default</string>
+    <string name="result">Log will write here&#8230;</string>
+    <string name="login_lbl_register"><u>Not a member yet? Register now...</u></string>
+    <string name="login_lbl_forgot_password"><u>Or Forgot password - Click here...</u></string>
+    <string name="register_msg_active_account">Registration is successful\n<b>Please login your email to active account</b></string>
+    <string name="list_screen">List of Messages</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="found_gotify_version">Found Gotify v%s</string>
+
+    <string name="settings_appearance">Appearance</string>
+    <string name="setting_theme">Theme</string>
+    <string name="setting_key_theme">theme</string>
+    <string name="setting_time_format">Time format</string>
+    <string name="setting_key_time_format">time_format</string>
+
+    <string name="refresh_all">Refresh all</string>
+    <string name="title_activity_settings">Settings</string>
+
+
+</resources>

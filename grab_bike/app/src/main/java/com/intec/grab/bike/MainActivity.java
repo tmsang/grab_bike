@@ -1,10 +1,10 @@
 package com.intec.grab.bike;
 
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -15,19 +15,19 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
+import com.intec.grab.bike.about.AboutActivity;
 import com.intec.grab.bike.configs.Constants;
 import com.intec.grab.bike.guest_map.GuestBingMapApi;
 import com.intec.grab.bike.guest_map.GuestMapActivity;
+import com.intec.grab.bike.histories.MessagesActivity;
 import com.intec.grab.bike.login.LoginActivity;
-import com.intec.grab.bike.shared.SharedIntentService;
+import com.intec.grab.bike.settings.SettingsActivity;
 import com.intec.grab.bike.shared.SharedService;
 import com.intec.grab.bike.utils.api.Callback;
 import com.intec.grab.bike.utils.base.BaseActivity;
 import com.intec.grab.bike.utils.helper.StringHelper;
 import com.intec.grab.bike.utils.log.Log;
 
-import java.text.DecimalFormat;
-import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -46,10 +46,9 @@ public class MainActivity extends BaseActivity
         2. Request permission (access location)
             -> convert coordinate -> address
             -> push current position
-
+        3. Load Statistic - Summary
     ===========================================*/
-
-    private Map<String, String> header;
+    FrameLayout loading;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -67,10 +66,20 @@ public class MainActivity extends BaseActivity
         setContentView(R.layout.activity_main);
         Initialization(this);
         ButterKnife.bind(this);
+    }
 
-        header = new HashMap<>();
-        header.put("Content-Type", "application/x-www-form-urlencoded");
-        header.put("Authorization", settings.jwtToken());
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        Load();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void Load() {
+        loading = (FrameLayout) findViewById(R.id.loading);
+        loading.setVisibility(View.VISIBLE);
 
         //0. Check Token
         if (!settings.tokenExists()) {
@@ -92,18 +101,43 @@ public class MainActivity extends BaseActivity
             });
 
             // Push current guest position
-            Map<String, String> pushPositionParam = new HashMap<>();
-            pushPositionParam.put("Content-Type", "application/x-www-form-urlencoded");
-            pushPositionParam.put("Authorization", settings.jwtToken());
-
             SharedService.GuestMapApi(Constants.API_NET, sslSettings)
-                .PushPosition(pushPositionParam, settings.currentLat(), settings.currentLng())
-                .enqueue(Callback.call((res) -> {
-                    Log.i("Guest position has been pushed - successfully");
-                }, (error) -> {
-                    HandleException("Push Position", error.body());
-                }));
+                    .PushPosition(header, settings.currentLat(), settings.currentLng())
+                    .enqueue(Callback.call((res) -> {
+                        Log.i("Guest position has been pushed - successfully");
+                    }, (error) -> {
+                        HandleException("Push Position", error.body());
+                    }));
         });
+
+        //3. Load Statistic - Summary
+        SetTextView(R.id.lbl_book_a_trip, "<span style='color:#0000ff'><u>Let's go: Book A Trip!</u></span>");
+        TextViewClickEvent(R.id.lbl_book_a_trip, lbl -> {
+            loading.setVisibility(View.VISIBLE);
+
+            Redirect(GuestMapActivity.class);
+        });
+
+        SharedService.MessageApi(Constants.API_NET, sslSettings)
+                .Statistic(header)
+                .enqueue(Callback.call((res) ->
+                {
+                    String nowStr = StringHelper.formatNow("dd-MMM-yyyy");
+                    String priceStr = StringHelper.formatNumber(res.Price, "#,###");
+                    String cancelCountStr = StringHelper.formatNumber(res.CancelCounter, "#,###");
+                    String doneCountStr = StringHelper.formatNumber(res.DoneCounter, "#,###");
+                    String amountStr = StringHelper.formatNumber(res.TotalAmount, "#,###");
+
+                    SetTextView(R.id.lbl_price, "<b>Price of 1 km on <span style='color:#0000ff'>" + nowStr + "</span>:</b> " + priceStr + " (vnd)");
+                    SetTextView(R.id.lbl_count_cancel, "<b>Total CANCEL trip:</b> " + cancelCountStr);
+                    SetTextView(R.id.lbl_count_done, "<b>Total DONE trip:</b> " + doneCountStr);
+                    SetTextView(R.id.lbl_total_amount, "<b>Total Amount:</b> " + amountStr + " (vnd)");
+
+                    loading.setVisibility(View.GONE);
+
+                }, (error) -> {
+                    HandleException("Statistic - Summary", error.body());
+                }));
     }
 
     private void toggleMenu() {
@@ -153,22 +187,27 @@ public class MainActivity extends BaseActivity
 
         if (id == R.id.nav_bookings)
         {
+            loading.setVisibility(View.VISIBLE);
             this.Redirect(GuestMapActivity.class);
         }
         else if (id == R.id.nav_histories)
         {
-            Log.i("No action to Histories");
+            loading.setVisibility(View.VISIBLE);
+            this.Redirect(MessagesActivity.class);
         }
         else if (id == R.id.nav_settings)
         {
-            Log.i("No action to settings");
+            loading.setVisibility(View.VISIBLE);
+            this.Redirect(SettingsActivity.class);
         }
         else if (id == R.id.nav_about)
         {
-            Log.i("No action to About");
+            loading.setVisibility(View.VISIBLE);
+            this.Redirect(AboutActivity.class);
         }
         else if (id == R.id.nav_logout)
         {
+            loading.setVisibility(View.VISIBLE);
             settings.clear();
             this.Redirect(LoginActivity.class);
         }

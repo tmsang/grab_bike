@@ -1,17 +1,12 @@
 package com.intec.grab.bike.guest_map;
 
-import com.intec.grab.bike.shared.models.jwt;
-
-import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
-import retrofit2.http.Header;
 import retrofit2.http.HeaderMap;
-import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
@@ -30,7 +25,7 @@ public interface GuestMapApi
 
     @FormUrlEncoded
     @POST("api/guest/order/book")
-    Call<Void> BookATrip(
+    Call<BookResultDto> BookATrip(
             @HeaderMap Map<String, String> headers,
             @Field("FromLatitude") String FromLatitude,
             @Field("FromLongtitude") String FromLongtitude,
@@ -38,7 +33,10 @@ public interface GuestMapApi
 
             @Field("ToLatitude") String ToLatitude,
             @Field("ToLongtitude") String ToLongtitude,
-            @Field("ToAddress") String ToAddress
+            @Field("ToAddress") String ToAddress,
+
+            @Field("Distance") Double Distance,
+            @Field("Amount") Double Amount
     );
 
     @FormUrlEncoded                                 // use for method: "POST"
@@ -49,10 +47,11 @@ public interface GuestMapApi
             @Field("lng") String Lng
     );
 
-    @GET("api/guest/order/driver-positions")
-    Call<List<DriverPositionDto>> GetDriverPositions(
+    @GET("api/guest/order/interval-gets")
+    Call<IntervalResultDto> IntervalGets(
             @HeaderMap Map<String, String> headers,
             @Query("lat") String Lat,
-            @Query("lng") String Lng
+            @Query("lng") String Lng,
+            @Query("orderId") String OrderId
     );
 }

@@ -32,7 +32,7 @@
                 android:focusableInTouchMode="true"
                 android:paddingTop="@dimen/nav_header_vertical_spacing"
                 android:scaleType="fitStart"
-                app:srcCompat="@drawable/delivery128" />
+                app:srcCompat="@drawable/ic_logo_96" />
 
         </LinearLayout>
 
@@ -47,8 +47,9 @@
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
                 android:layout_height="60dp"
+                android:visibility="gone"
                 android:adjustViewBounds="true"
-                android:contentDescription="@string/refresh_all"
+                android:contentDescription="Refresh All"
                 android:scaleType="fitCenter"
                 app:tint="@android:color/white"
                 app:srcCompat="@drawable/ic_refresh"

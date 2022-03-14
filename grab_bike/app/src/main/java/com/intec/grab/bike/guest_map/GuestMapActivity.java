@@ -1,9 +1,12 @@
 package com.intec.grab.bike.guest_map;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -11,10 +14,14 @@ import androidx.annotation.RequiresApi;
 
 import com.intec.grab.bike.R;
 import com.intec.grab.bike.configs.Constants;
+import com.intec.grab.bike.histories.MessageDetailActivity;
+import com.intec.grab.bike.histories.MessagesActivity;
 import com.intec.grab.bike.shared.SharedService;
 import com.intec.grab.bike.utils.api.Callback;
 import com.intec.grab.bike.utils.base.BaseActivity;
 
+import com.intec.grab.bike.utils.helper.StringHelper;
+import com.intec.grab.bike.utils.helper.TimerHelper;
 import com.intec.grab.bike.utils.log.Log;
 import com.microsoft.maps.MapAnimationKind;
 import com.microsoft.maps.MapRenderMode;
@@ -40,6 +47,7 @@ public class GuestMapActivity extends BaseActivity {
     private Map<String, String> header;
     private MapView mMapView;
     private GuestMapGUI mapGUI;
+    private Button btnBook;
 
     private String fromLat = "", fromLng = "", fromAddress = "", fromCoordinate = "";
     private String toLat = "", toLng = "", toAddress = "", toCoordinate = "";
@@ -66,6 +74,8 @@ public class GuestMapActivity extends BaseActivity {
         3. Book action
             -> push Booking to server
             -> pull driver positions (interval)
+
+        4. Restore session map
     ================================================*/
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -76,6 +86,7 @@ public class GuestMapActivity extends BaseActivity {
         Initialization(this);
 
         mapGUI = new GuestMapGUI(this, settings, sslSettings);
+        btnBook = findViewById(R.id.btnBook);
 
         // set header http
         header = new HashMap<>();
@@ -114,20 +125,15 @@ public class GuestMapActivity extends BaseActivity {
         // c. event click item
         mapGUI.AutoComplete_OnItemClick(autoCompleteDestination, coordinates -> {
             String[] items = coordinates.split("_");
-            toLat = items[0];
-            toLng = items[1];
-            toAddress = items[2];
-            toCoordinate = toLat + "," + toLng;
-            fromCoordinate = fromLat + "," + fromLng;
+            String _lat = items[0];
+            String _lng = items[1];
+            String _address = items[2];
 
-            mapGUI.GetDistanceAndAmount(header, fromCoordinate, toCoordinate, distanceAndAmount -> {
-                // display distance & amount
-                TextView lblDistance = findViewById(R.id.lblDistance);
-                TextView lblAmount = findViewById(R.id.lblAmount);
-                mapGUI.DisplayDistanceAndAmount(distanceAndAmount, lblDistance, lblAmount);
-                // set route path
-                mapGUI.DrawLineOnMap(mMapView, fromCoordinate, toCoordinate);
-            });
+            settings.sessionMap_SetToLat(_lat);
+            settings.sessionMap_SetToLng(_lng);
+            settings.sessionMap_SetToAddress(_address);
+
+            LoadMapWhenConfirmDestination(_lat, _lng, _address);
         });
 
         //2. Show Bing-Map
@@ -165,11 +171,20 @@ public class GuestMapActivity extends BaseActivity {
             if (IsNullOrEmpty(toLat, "To Latitude")) return;
             if (IsNullOrEmpty(toLng, "To Longitude")) return;
             if (IsNullOrEmpty(toAddress, "To Address")) return;
+            if (mapGUI.getDistance() <= 0) { Toast("Distance is invalid"); return; }
+            if (mapGUI.getAmount() <= 0) { Toast("Amount is invalid"); return; }
 
             SharedService.GuestMapApi(Constants.API_NET, sslSettings)
-                .BookATrip(header, fromLat, fromLng, fromAddress, toLat, toLng, toAddress)
+                .BookATrip(header, fromLat, fromLng, fromAddress, toLat, toLng, toAddress,
+                        mapGUI.getDistance(), mapGUI.getAmount())
                 .enqueue(Callback.callInUI(GuestMapActivity.this, (result) -> {
                     Toast("Your Book is success. Please wait Driver response");
+
+                    // change text button -> Waiting... + remove event on it
+                    btnBook.setText(Html.fromHtml("<span style='color: #ff0000'><b>Waiting...</b></span>"));
+                    btnBook.setOnClickListener(null);
+
+                    settings.sessionMap_SetOrderId(result.OrderId);
 
                     // publish
                     Flowable.interval(DELAY_TIME, POLL_INTERVAL, TimeUnit.SECONDS)
@@ -183,8 +198,60 @@ public class GuestMapActivity extends BaseActivity {
         });
 
         //b. pull driver positions (interval)
-        // create subscribe
-        subscriberDelayInterval = mapGUI.CreateDriverPositionIntervalSubscriber(header, mMapView);
+        subscriberDelayInterval = mapGUI.CreateIntervalSubscriber(header, mMapView, btnBook, s -> {
+            // clear session when trip is ended
+            settings.sessionMap(null);
+            // release interval
+            ClearMemory();
+            // redirect to History to evaluate
+            startActivity(new Intent(this, MessagesActivity.class));
+        });
+
+        // 4. Restore session map
+        if (settings.sessionMap() != null)
+        {
+            SessionMapDto session = settings.sessionMap();
+            if (!StringHelper.isNullOrEmpty(session.ToLat)) {
+                // load text into AutoComplete
+                autoCompleteDestination.setText(session.ToAddress);
+                // load map
+                LoadMapWhenConfirmDestination(session.ToLat, session.ToLng, session.ToAddress);
+            }
+
+            // loop driver position when Guest booked
+            if (!StringHelper.isNullOrEmpty(session.OrderId))
+            {
+                Flowable.interval(DELAY_TIME, POLL_INTERVAL, TimeUnit.SECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(subscriberDelayInterval);
+            }
+        }
+    }
+
+    private void LoadMapWhenConfirmDestination(String _toLat, String _toLng, String _toAddress) {
+        toLat = _toLat;
+        toLng = _toLng;
+        toAddress = _toAddress;
+        toCoordinate = toLat + "," + toLng;
+        fromCoordinate = fromLat + "," + fromLng;
+
+        mapGUI.GetDistanceAndAmount(header, fromCoordinate, toCoordinate, distanceAndAmount -> {
+            // display distance & amount
+            TextView lblDistance = findViewById(R.id.lblDistance);
+            TextView lblAmount = findViewById(R.id.lblAmount);
+            mapGUI.DisplayDistanceAndAmount(distanceAndAmount, lblDistance, lblAmount);
+            // set route path
+            mapGUI.DrawLineOnMap(mMapView, fromCoordinate, toCoordinate);
+        });
+    }
+
+    private void ClearMemory() {
+        mMapView = null;
+        if (subscriberDelayInterval != null && !subscriberDelayInterval.isDisposed()) {
+            subscriberDelayInterval.dispose();
+        }
+        subscriberDelayInterval = null;
     }
 
     @Override
@@ -223,11 +290,16 @@ public class GuestMapActivity extends BaseActivity {
         mMapView.onDestroy();
 
         // release: Map + Observable
-        mMapView = null;
-        if (subscriberDelayInterval != null && !subscriberDelayInterval.isDisposed()) {
-            subscriberDelayInterval.dispose();
-        }
-        subscriberDelayInterval = null;
+        ClearMemory();
+
+        TimerHelper.Delay(3000, null);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        ClearMemory();
     }
 
     @Override

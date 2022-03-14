@@ -1,6 +1,7 @@
 package com.intec.grab.bike.guest_map;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -11,10 +12,14 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.intec.grab.bike.R;
 import com.intec.grab.bike.configs.Constants;
+import com.intec.grab.bike.histories.MessageShared;
+import com.intec.grab.bike.histories.MessageStatus;
 import com.intec.grab.bike.shared.SharedService;
 import com.intec.grab.bike.utils.api.Callback;
 import com.intec.grab.bike.utils.api.SSLSettings;
@@ -51,9 +56,20 @@ public class GuestMapGUI {
     SETTING settings;
     SSLSettings sslSettings;
 
+    // property: suggestion
     String[] suggestions;
     public String[] getSuggestions() { return suggestions; }
     public void setSuggestions(String[] suggestions) { this.suggestions = suggestions; }
+
+    // property: distance & amount
+    double distance = 0.0;
+    public double getDistance() { return distance; }
+    public void setDistance(double distance) { this.distance = distance; }
+
+    double amount = 0.0;
+    public double getAmount() { return amount; }
+    public void setAmount(double amount) { this.amount = amount; }
+
 
     public GuestMapGUI(Context context, SETTING settings, SSLSettings sslSettings) {
         this.context = context;
@@ -102,22 +118,38 @@ public class GuestMapGUI {
         mapView.getLayers().add(mPinLayer);
     }
 
-    public DisposableSubscriber<Long> CreateDriverPositionIntervalSubscriber(
+    public DisposableSubscriber<Long> CreateIntervalSubscriber(
             Map<String, String> header,
-            MapView mapView)
+            MapView mapView,
+            Button btnBook,
+            MyStringCallback callbackAfterEnd)
     {
         // Set subscriber
         return new DisposableSubscriber<Long>() {
             @Override
             public void onNext(Long aLong) {
                 Log.i("------ Interval: Prepare (push notification) ------");
+
                 SharedService.GuestMapApi(Constants.API_NET, sslSettings)
-                    .GetDriverPositions(header, settings.currentLat(), settings.currentLng())
+                    .IntervalGets(header,
+                                    settings.currentLat(),
+                                    settings.currentLng(),
+                                    settings.sessionMap().OrderId)
                     .enqueue(Callback.call((rs) -> {
                         Log.i("Driver Position has been collected");
 
+                        // get status
+                        settings.sessionMap_SetStatus(rs.Status);
+
+                        String messageStatus = MessageShared.RenderEnumFromOrderStatus(rs.Status);
+                        btnBook.setText(Html.fromHtml(messageStatus));
+                        if (rs.Status.equals(MessageStatus.END)) {
+                            if (callbackAfterEnd != null) callbackAfterEnd.execute("");
+                            return;
+                        }
+
                         // list of driver position
-                        for (DriverPositionDto obj: rs) {
+                        for (DriverPositionDto obj: rs.Positions) {
                             // attach PIN on Map
                             AttachPinOnMap(
                                     mapView,
@@ -127,7 +159,9 @@ public class GuestMapGUI {
                                     R.drawable.ic_automobile_32);
                         }
                     }, (err) -> {
-                        Log.i("API DriverPositions cannot reach");
+                        String msg = err.getCause() != null ? err.getCause().toString() : err.body().toString();
+                        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+                        Log.i(msg);
                     }));
             }
 
@@ -316,6 +350,9 @@ public class GuestMapGUI {
         String[] itms = distanceAndAmount.split("@");
         double distance = Double.valueOf(itms[0]);
         double amount = Double.valueOf(itms[1]);
+
+        this.setDistance(distance);
+        this.setAmount(amount);
 
         // set distance & amount to UI
         DecimalFormat F = new DecimalFormat("#,###,###,###");
