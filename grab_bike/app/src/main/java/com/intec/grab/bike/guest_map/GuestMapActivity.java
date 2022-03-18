@@ -269,25 +269,25 @@ public class GuestMapActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        mMapView.onPause();
+        if(mMapView != null) mMapView.onPause();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        mMapView.onSaveInstanceState(outState);
+        if(mMapView != null) mMapView.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        mMapView.onStop();
+        if(mMapView != null) mMapView.onStop();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mMapView.onDestroy();
+        if(mMapView != null) mMapView.onDestroy();
 
         // release: Map + Observable
         ClearMemory();
@@ -305,6 +305,6 @@ public class GuestMapActivity extends BaseActivity {
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        mMapView.onLowMemory();
+        if(mMapView != null) mMapView.onLowMemory();
     }
 }
