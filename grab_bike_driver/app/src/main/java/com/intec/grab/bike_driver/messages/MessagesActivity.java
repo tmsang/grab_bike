@@ -200,6 +200,12 @@ public class MessagesActivity extends BaseActivity {
     }
 
     private void setAdapter(List<MessageOut> requests) {
+        if (requests != null && requests.size() > 0) {
+            findViewById(R.id.lbl_error_message).setVisibility(View.GONE);
+        } else {
+            findViewById(R.id.lbl_error_message).setVisibility(View.VISIBLE);
+        }
+
         messageAdapter = new MessageAdapter(this, requests, recyclerView,
                 settings,
                 sslSettings,
