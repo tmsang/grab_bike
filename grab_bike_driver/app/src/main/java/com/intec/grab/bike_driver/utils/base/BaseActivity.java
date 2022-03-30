@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -131,6 +132,10 @@ public class BaseActivity extends AppCompatActivity {
         });
     }
 
+    public void Button(int rId, boolean isEnable) {
+        Button btn = this.activity.findViewById(rId);
+        btn.setVisibility(isEnable ? View.VISIBLE : View.GONE);
+    }
     // ============================================================
     // Image Button
     // ============================================================
@@ -144,6 +149,10 @@ public class BaseActivity extends AppCompatActivity {
         });
     }
 
+    public void ImageButton(int rId, boolean isEnable) {
+        ImageButton imgButton = this.activity.findViewById(rId);
+        imgButton.setVisibility(isEnable ? View.VISIBLE : View.GONE);
+    }
     // ============================================================
     // TextView
     // ============================================================
@@ -175,6 +184,18 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     // ============================================================
+    // Switch
+    // ============================================================
+    public boolean SwitchItem(int rId) {
+        Switch switch1 = this.activity.findViewById(rId);
+        return switch1.isChecked();
+    }
+    public void SwitchItem(int rId, boolean checked) {
+        Switch switch1 = this.activity.findViewById(rId);
+        switch1.setEnabled(checked);
+    }
+
+    // ============================================================
     // AutoCompleteTextView
     // ============================================================
 
@@ -199,7 +220,7 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
     public void Loading(int rId, boolean isShow) {
-        ProgressBar loading = this.activity.findViewById(rId);
+        FrameLayout loading = this.activity.findViewById(rId);
         loading.setVisibility(isShow ? View.VISIBLE : View.GONE);
     }
 
@@ -218,7 +239,31 @@ public class BaseActivity extends AppCompatActivity {
         }
         return false;
     }
-
+    public Boolean IsDate(String value, String... name) {
+        boolean result = true;
+        if (StringHelper.isNullOrEmpty(value)) {
+            result = false;
+        } else if (value.length() != 10) {
+            result = false;
+        } else {
+            //2022-03-11
+            String year = value.substring(0, 4);
+            String month = value.substring(5, 7);
+            String day = value.substring(8, 10);
+            if (!isNumeric(year) || !isNumeric(month) || !isNumeric(day)) {
+                result = false;
+            }
+        }
+        if (result == false) {
+            String message = name.length > 0 ? name[0] : "Value Input";
+            CommonHelper.showToast(this, message + " is null or empty");
+            this.Loading(false);
+        }
+        return result;
+    }
+    private static boolean isNumeric(String str){
+        return str != null && str.matches("[0-9.]+");
+    }
     // ============================================================
     // Goecode & Location
     // ============================================================
@@ -303,6 +348,10 @@ public class BaseActivity extends AppCompatActivity {
         else if (body.indexOf("Password is invalid") > 0)
         {
             Toast("Password is invalid", body);
+        }
+        else if (body.indexOf("This account is not exists") > 0)
+        {
+            Toast("This account is not exists", body);
         }
         else {
             Toast("API (" + messageDefault + ") cannot reach.", body);
