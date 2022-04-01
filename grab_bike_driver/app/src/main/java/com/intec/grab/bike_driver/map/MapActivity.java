@@ -1,6 +1,9 @@
 package com.intec.grab.bike_driver.map;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +14,8 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.intec.grab.bike_driver.R;
 import com.intec.grab.bike_driver.configs.Constants;
@@ -60,9 +65,10 @@ public class MapActivity extends BaseActivity {
             -> attach PIN on Map
             -> set routh path (red line)
         2. Action
+            -> set "CALL..." action
             -> set "START" action
             -> set "FINISH" action
-            -> push (driver) current positions (interval)
+
     ================================================*/
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -78,10 +84,10 @@ public class MapActivity extends BaseActivity {
         Intent i = getIntent();
         message = (MessageOut)i.getSerializableExtra("message");
         SetTextView(R.id.lblTitle, message.GuestName + "(" + message.GuestPhone + ")");
-        SetTextView(R.id.lblSubTitle1, "<b>From: </b>" + message.FromAddress);
-        SetTextView(R.id.lblSubTitle2, "<b>To: </b>" + message.ToAddress);
-        SetTextView(R.id.lblDistance, "<b>Distance: </b>" + StringHelper.formatNumber(message.Distance, "#,###") + " km");
-        SetTextView(R.id.lblAmount, "<b>Amount: </b>" + StringHelper.formatNumber(message.Cost, "#,###") + " vnd");
+        SetTextView(R.id.lblSubTitle1, "<span style='color:#ffff00'><u>From</u></span>: " + message.FromAddress);
+        SetTextView(R.id.lblSubTitle2, "<span style='color:#ffff00'><u>To</u></span>: " + message.ToAddress);
+        SetTextView(R.id.lblDistance, "<span style='color:#ffff00'><u>Distance</u></span>: " + StringHelper.formatNumber(message.Distance, "#,###") + " km");
+        SetTextView(R.id.lblAmount, "<span style='color:#ffff00'><u>Amount</u></span>: " + StringHelper.formatNumber(message.Cost, "#,###") + " vnd");
 
         // prepare [FROM] position variable
         fromLat = settings.currentLat();
@@ -125,7 +131,20 @@ public class MapActivity extends BaseActivity {
         mapGUI.DrawLineOnMap(mMapView, fromCoordinate, toGuestPosition);
 
         //2. Action
-        //a. set "Start" to server
+        //a. set "Call" phone
+        // Request permission Phone
+        if (ContextCompat.checkSelfPermission(MapActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MapActivity.this, new String[]{Manifest.permission.CALL_PHONE}, 1);
+        }
+        this.ButtonClickEvent(R.id.btnCallPhone, (btn) -> {
+            // call Intent in Android
+            Intent intent = new Intent(Intent.ACTION_CALL);
+            intent.setData(Uri.parse("tel:" + message.GuestPhone));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        });
+
+        //b. set "Start" to server
         this.ButtonClickEvent(R.id.btnStart, (btn) -> {
             if (IsNullOrEmpty(message.OrderId, "Order Id")) return;
 
@@ -146,7 +165,7 @@ public class MapActivity extends BaseActivity {
                 }));
         });
 
-        //b. set "End" to server
+        //c. set "End" to server
         this.ButtonClickEvent(R.id.btnEnd, (btn) -> {
             if (IsNullOrEmpty(message.OrderId, "Order Id")) return;
 
@@ -167,9 +186,6 @@ public class MapActivity extends BaseActivity {
                         Toast("API End cannot reach", error.body());
                     }));
         });
-
-        //c. push (driver) current positions (interval)
-        // should use Service Background...
     }
 
     private void createIntervalSubscriber() {

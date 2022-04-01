@@ -6,6 +6,7 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,6 +61,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private RecyclerView recyclerView;
     private SETTING settings;
     private SSLSettings sslSettings;
+    private FrameLayout loading;
     private Class destinationActivity;
 
     public MessageAdapter(
@@ -68,6 +70,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             RecyclerView recyclerView,
             SETTING settings,
             SSLSettings sslSettings,
+            FrameLayout loading,
             Class destinationActivity)
     {
         this.activity = activity;
@@ -75,6 +78,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.recyclerView = recyclerView;
         this.settings = settings;
         this.sslSettings = sslSettings;
+        this.loading = loading;
         this.destinationActivity = destinationActivity;
     }
 
@@ -112,6 +116,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     // keep item -> SharePreference (set null when "END")
                     item.AcceptDateTime = System.currentTimeMillis();
                     settings.currentMessage(item);
+
+                    loading.setVisibility(View.VISIBLE);
 
                     // redirect to Bing Map
                     Intent intent = new Intent(activity, destinationActivity);

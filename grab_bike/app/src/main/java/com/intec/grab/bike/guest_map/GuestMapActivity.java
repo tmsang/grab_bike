@@ -183,6 +183,7 @@ public class GuestMapActivity extends BaseActivity {
                     // change text button -> Waiting... + remove event on it
                     btnBook.setText(Html.fromHtml("<span style='color: #ff0000'><b>Waiting...</b></span>"));
                     btnBook.setOnClickListener(null);
+                    btnBook.setOnTouchListener(null);
 
                     settings.sessionMap_SetOrderId(result.OrderId);
 

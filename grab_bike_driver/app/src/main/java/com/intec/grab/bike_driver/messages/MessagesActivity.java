@@ -80,6 +80,7 @@ public class MessagesActivity extends BaseActivity {
         3. Set Adapter (initial -> API full load)
         4. Real-time interval
             . separate "registerForActivityResult" out of interval
+            . automatically push position Driver (in Interval get)
     ======================================*/
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void Load() {
@@ -103,6 +104,12 @@ public class MessagesActivity extends BaseActivity {
             MessageOut item = settings.currentMessage();
             long current = System.currentTimeMillis();
             double delta = (current - item.AcceptDateTime) / (60 * 1000);
+
+            Intent intent = new Intent(activity, MapActivity.class);
+            intent.putExtra("message", item);
+            activity.startActivity(intent);
+
+            /*
             if ((double)delta > (double)3) {
                 // down level of user || lock app
                 Toast("You missed message of (" + item.GuestName + " - " + item.GuestPhone + ")");
@@ -113,7 +120,7 @@ public class MessagesActivity extends BaseActivity {
                 Intent intent = new Intent(activity, MapActivity.class);
                 intent.putExtra("message", item);
                 activity.startActivity(intent);
-            }
+            }*/
         }
 
         // 3. Set Adapter (initial -> API full load)
@@ -179,6 +186,9 @@ public class MessagesActivity extends BaseActivity {
             locationPermissions.launch(new String[] {
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION
+
+            // khi gap lenh launch nay -> he thong tu nhay vao onActivityResult thuc thi
+            // tu AnalyzeCurrentLocation, roi getInterval
             });
         });
     }
@@ -212,6 +222,7 @@ public class MessagesActivity extends BaseActivity {
         messageAdapter = new MessageAdapter(this, requests, recyclerView,
                 settings,
                 sslSettings,
+                loading,
                 MapActivity.class);
         recyclerView.setAdapter(messageAdapter);
     }
