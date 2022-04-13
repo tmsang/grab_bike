@@ -23,15 +23,36 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <TextView
-                    android:id="@+id/lblTitle"
-                    android:text="Sang Thach (0919239081)"
-                    android:layout_marginTop="10dp"
-                    android:textColor="#fff"
-                    android:textStyle="bold"
-                    android:gravity="center_vertical"
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:weightSum="6"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="5dp"
                     android:layout_width="match_parent"
-                    android:layout_height="30dp"></TextView>
+                    android:layout_height="30dp">
+
+                    <TextView
+                        android:layout_weight="5"
+                        android:id="@+id/lblTitle"
+                        android:text="Sang Thach (0919239081)"
+                        android:textColor="#fff"
+                        android:textStyle="bold"
+                        android:layout_marginRight="15dp"
+                        android:gravity="center_vertical"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"></TextView>
+
+                    <Button
+                        android:layout_weight="1"
+                        android:id="@+id/btnCallPhone"
+                        android:background="@drawable/tp_button_bg_small"
+                        android:text="Call..."
+                        android:textSize="11dp"
+                        android:gravity="center"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"></Button>
+
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/lblSubTitle1"
@@ -41,7 +62,7 @@
                     android:textStyle="bold"
                     android:gravity="center_vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="20dp"></TextView>
+                    android:layout_height="wrap_content"></TextView>
 
                 <TextView
                     android:id="@+id/lblSubTitle2"
@@ -51,7 +72,7 @@
                     android:textStyle="bold"
                     android:gravity="center_vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="20dp"></TextView>
+                    android:layout_height="wrap_content"></TextView>
 
                 <LinearLayout
                     android:orientation="horizontal"

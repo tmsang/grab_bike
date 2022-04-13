@@ -16,9 +16,6 @@ import butterknife.BindView;
 
 public class ForgotPasswordActivity extends BaseActivity
 {
-    @BindView(R.id.email) EditText txtEmail;
-    @BindView(R.id.btnForgot) Button btnForgot;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,12 +23,12 @@ public class ForgotPasswordActivity extends BaseActivity
         Initialization(this);
 
         this.ButtonClickEvent(R.id.btnForgot, Forgot);
-        this.EditTextOnKeyPress(R.id.email, Forgot);
+        this.EditTextOnKeyPress(R.id.txtEmail, Forgot);
     }
 
     MyEventCallback Forgot = (v ->
     {
-        String email = txtEmail.getText().toString();
+        String email = EditText(R.id.txtEmail);
         if (this.IsNullOrEmpty(email, "Email")) return;
 
         SharedService.ForgotPasswordApi(Constants.API_NET, sslSettings)

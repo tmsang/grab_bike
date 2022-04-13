@@ -1,5 +1,7 @@
 package com.intec.grab.bike_driver;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -11,6 +13,8 @@ import android.widget.TextView;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -140,6 +144,7 @@ public class MainActivity extends BaseActivity
                 }, (error) -> {
                     HandleException("Statistic - Summary", error.body());
                 }));
+        
     }
 
     private void toggleMenu() {

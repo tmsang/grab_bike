@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -146,6 +147,10 @@ public class BaseActivity extends AppCompatActivity
         });
     }
 
+    public void Button(int rId, boolean isEnable) {
+        Button btn = this.activity.findViewById(rId);
+        btn.setVisibility(isEnable ? View.VISIBLE : View.GONE);
+    }
     // ============================================================
     // Image Button
     // ============================================================
@@ -159,6 +164,10 @@ public class BaseActivity extends AppCompatActivity
         });
     }
 
+    public void ImageButton(int rId, boolean isEnable) {
+        ImageButton imgButton = this.activity.findViewById(rId);
+        imgButton.setVisibility(isEnable ? View.VISIBLE : View.GONE);
+    }
     // ============================================================
     // TextView
     // ============================================================
@@ -206,7 +215,7 @@ public class BaseActivity extends AppCompatActivity
     // INVISIBLE: This view is invisible, but it still takes up space for layout purposes.
     // GONE: This view is invisible, and it doesn't take any space for layout purposes.
     public void Loading(int rId, boolean isShow) {
-        ProgressBar loading = this.activity.findViewById(rId);
+        FrameLayout loading = this.activity.findViewById(rId);
         loading.setVisibility(isShow ? View.VISIBLE : View.GONE);
     }
 
@@ -309,6 +318,10 @@ public class BaseActivity extends AppCompatActivity
         else if (body.indexOf("Password is invalid") > 0)
         {
             Toast("Password is invalid", body);
+        }
+        else if (body.indexOf("This account is not exists") > 0)
+        {
+            Toast("This account is not exists", body);
         }
         else {
             Toast("API (" + messageDefault + ") cannot reach.", body);

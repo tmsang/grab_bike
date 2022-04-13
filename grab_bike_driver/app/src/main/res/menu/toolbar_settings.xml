@@ -2,6 +2,21 @@
 <menu
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/toolbar_menu"
+        android:id="@+id/toolbar_home"
         android:title="Home Page"></item>
+    <item
+        android:id="@+id/toolbar_messages"
+        android:title="Messages"></item>
+    <item
+        android:id="@+id/toolbar_histories"
+        android:title="Histories"></item>
+    <item
+        android:id="@+id/toolbar_settings"
+        android:title="Settings"></item>
+    <item
+        android:id="@+id/toolbar_about"
+        android:title="About"></item>
+    <item
+        android:id="@+id/toolbar_logout"
+        android:title="Logout"></item>
 </menu>

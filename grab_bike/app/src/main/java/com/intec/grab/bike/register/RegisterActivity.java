@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import com.intec.grab.bike.R;
 import com.intec.grab.bike.configs.Constants;
+import com.intec.grab.bike.login.LoginActivity;
 import com.intec.grab.bike.shared.SharedService;
 import com.intec.grab.bike.utils.api.Callback;
 import com.intec.grab.bike.utils.base.BaseActivity;
@@ -22,8 +23,9 @@ public class RegisterActivity extends BaseActivity
         this.DisableEditText(R.id.smsCode);
 
         // trigger event
-        this.ButtonClickEvent(R.id.smsCode, GetSmsCode);
+        this.ImageButtonClickEvent(R.id.btnSmsCode, GetSmsCode);
         this.ButtonClickEvent(R.id.btnRegister, Register);
+        this.ButtonClickEvent(R.id.btnBackLogin, BackLogin);
     }
 
     MyEventCallback GetSmsCode = (v ->
@@ -37,6 +39,9 @@ public class RegisterActivity extends BaseActivity
             .enqueue(Callback.callInUI(RegisterActivity.this, (json) -> {
                 this.EnableEditText(R.id.smsCode);
                 this.Loading(R.id.loading, false);
+
+                ImageButton(R.id.btnSmsCode, false);
+                ImageButton(R.id.btnSmsCodeX, true);
             }, (error) -> {
                 this.Toast(error.body(), error.body());
                 this.Loading(R.id.loading, false);
@@ -62,11 +67,17 @@ public class RegisterActivity extends BaseActivity
             .Register(fullName, email, phone, password, code)
             .enqueue(Callback.callInUI(RegisterActivity.this, (json) -> {
                 this.SetTextView(R.id.lblMessage, R.string.register_msg_active_account);
-                this.DisableButton(R.id.btnRegister);
                 this.Loading(R.id.loading, false);
+
+                Button(R.id.btnRegister, false);
+                Button(R.id.btnBackLogin, true);
             }, (error) -> {
                 this.Toast(error.body(), error.body());
                 this.Loading(R.id.loading, false);
             }));
+    });
+
+    MyEventCallback BackLogin = (v -> {
+        Redirect(LoginActivity.class);
     });
 }

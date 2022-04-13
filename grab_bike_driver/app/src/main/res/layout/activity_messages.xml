@@ -14,11 +14,23 @@
         android:background="@drawable/tp_toolbar_bg"
         app:popupTheme="@style/AppTheme.PopupOverlay" />
 
+    <TextView
+        android:id="@+id/lbl_error_message"
+        android:text="There is no row..."
+        android:textSize="18dp"
+        android:textStyle="bold"
+        android:textColor="#ff0000"
+        android:padding="10dp"
+        android:visibility="gone"
+        android:layout_below="@id/toolbar"
+        android:background="@drawable/tp_textview_norow_bg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></TextView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbar"
+        android:layout_below="@id/lbl_error_message"
         android:background="@drawable/comment_background"
         android:id="@+id/message_list"></androidx.recyclerview.widget.RecyclerView>
 

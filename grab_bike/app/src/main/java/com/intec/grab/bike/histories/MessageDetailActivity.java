@@ -12,7 +12,11 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.intec.grab.bike.MainActivity;
 import com.intec.grab.bike.R;
+import com.intec.grab.bike.about.AboutActivity;
 import com.intec.grab.bike.configs.Constants;
+import com.intec.grab.bike.guest_map.GuestMapActivity;
+import com.intec.grab.bike.login.LoginActivity;
+import com.intec.grab.bike.settings.SettingsActivity;
 import com.intec.grab.bike.shared.SharedService;
 import com.intec.grab.bike.utils.api.Callback;
 import com.intec.grab.bike.utils.base.BaseActivity;
@@ -100,8 +104,24 @@ public class MessageDetailActivity extends BaseActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.toolbar_menu:
+            case R.id.toolbar_home:
                 this.Redirect(MainActivity.class);
+                return true;
+            case R.id.toolbar_booking:
+                this.Redirect(GuestMapActivity.class);
+                return true;
+            case R.id.toolbar_histories:
+                this.Redirect(MessagesActivity.class);
+                return true;
+            case R.id.toolbar_settings:
+                this.Redirect(SettingsActivity.class);
+                return true;
+            case R.id.toolbar_about:
+                this.Redirect(AboutActivity.class);
+                return true;
+            case R.id.toolbar_logout:
+                settings.clear();
+                this.Redirect(LoginActivity.class);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -22,7 +22,6 @@ import com.intec.grab.bike_driver.utils.base.BaseActivity;
 import com.intec.grab.bike_driver.utils.helper.MyEventCallback;
 import com.intec.grab.bike_driver.utils.helper.MyStringCallback;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class LoginActivity extends BaseActivity
 {
     @Override

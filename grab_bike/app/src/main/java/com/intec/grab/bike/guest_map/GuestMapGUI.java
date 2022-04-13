@@ -143,7 +143,16 @@ public class GuestMapGUI {
 
                         String messageStatus = MessageShared.RenderEnumFromOrderStatus(rs.Status);
                         btnBook.setText(Html.fromHtml(messageStatus));
-                        if (rs.Status.equals(MessageStatus.END)) {
+                        btnBook.setOnClickListener(null);
+                        btnBook.setOnTouchListener(null);
+
+                        if (rs.Status.equals(MessageStatus.END) ||
+                                rs.Status.equals(MessageStatus.CANCEL_BY_ADMIN) ||
+                                rs.Status.equals(MessageStatus.CANCEL_BY_SYSTEM) ||
+                                rs.Status.equals(MessageStatus.CANCEL_BY_USER) ||
+                                rs.Status.equals(MessageStatus.CANCEL_BY_DRIVER)
+                        )
+                        {
                             if (callbackAfterEnd != null) callbackAfterEnd.execute("");
                             return;
                         }

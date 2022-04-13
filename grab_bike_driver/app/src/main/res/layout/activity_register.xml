@@ -2,8 +2,24 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="#009BE5"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
+
+    <FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/loading"
+        android:clickable="true"
+        android:background="#000"
+        android:alpha="0.5"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ProgressBar
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </FrameLayout>
 
     <ScrollView android:id="@+id/scroll_view"
         android:layout_width="match_parent"
@@ -14,102 +30,242 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            android:padding="50dp"
+            android:padding="40dp"
             android:orientation="vertical" >
 
             <ImageButton
+                android:id="@+id/avatar"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_marginBottom="15dp"
                 android:background="@null"
                 android:src="@drawable/ic_profile_100" />
 
-            <EditText
-                android:id="@+id/fullName"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:background="@drawable/tp_edittext_bg"
-                android:focusable="true"
-                android:hint="Full Name"
-                android:inputType="textCapWords"
-                android:padding="10dp"
-                android:singleLine="true" />
-
-            <EditText
-                android:id="@+id/email"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:background="@drawable/tp_edittext_bg"
-                android:focusable="true"
-                android:hint="Email"
-                android:inputType="textCapWords"
-                android:padding="10dp"
-                android:singleLine="true" />
-
             <LinearLayout
-                android:orientation="horizontal"
-                android:weightSum="10"
+                android:orientation="vertical"
+                android:background="@drawable/tp_linear_bg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:layout_weight="9"
-                    android:id="@+id/phone"
-                    android:layout_width="0dp"
+                    android:id="@+id/fullName"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="15dp"
                     android:background="@drawable/tp_edittext_bg"
                     android:focusable="true"
-                    android:hint="Phone"
+                    android:hint="Full Name (Driver)"
+                    android:inputType="textCapCharacters"
+                    android:padding="10dp"
+                    android:textAllCaps="true"
+                    android:singleLine="true" />
+
+                <EditText
+                    android:id="@+id/email"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/tp_edittext_bg"
+                    android:focusable="true"
+                    android:hint="Email (Driver)"
+                    android:inputType="textEmailAddress"
+                    android:padding="10dp"
+                    android:singleLine="true" />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:weightSum="10"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:layout_weight="9"
+                        android:id="@+id/phone"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="15dp"
+                        android:background="@drawable/tp_edittext_bg"
+                        android:focusable="true"
+                        android:hint="Phone (Driver)"
+                        android:inputType="textPhonetic"
+                        android:padding="10dp"
+                        android:singleLine="true" />
+
+                    <ImageButton
+                        android:layout_weight="1"
+                        android:id="@+id/btnSmsCode"
+                        android:src="@drawable/ic_authentication_sms_30"
+                        android:background="@drawable/tp_background_icon"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <ImageButton
+                        android:layout_weight="1"
+                        android:id="@+id/btnSmsCodeX"
+                        android:src="@drawable/ic_authentication_sms_30_x"
+                        android:background="@drawable/tp_background_icon"
+                        android:paddingTop="8dp"
+                        android:visibility="gone"
+                        android:paddingBottom="8dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/password"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/tp_edittext_bg"
+                    android:hint="Password"
+                    android:inputType="textPassword"
+                    android:padding="10dp"
+                    android:singleLine="true" />
+
+                <EditText
+                    android:id="@+id/smsCode"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/tp_edittext_bg_disable"
+                    android:hint="SMS Code"
+                    android:inputType="textCapWords"
+                    android:padding="10dp"
+                    android:singleLine="true" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/tp_linear_bg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/birthday"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/tp_edittext_bg"
+                    android:hint="Birthday (EX: yyyy-MM-dd)"
                     android:inputType="textCapWords"
                     android:padding="10dp"
                     android:singleLine="true" />
 
-                <ProgressBar
-                    android:id="@+id/loading"
-                    android:visibility="gone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:indeterminate="true" />
+                <Switch
+                    android:id="@+id/male"
+                    android:text="Female"
+                    android:padding="10dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/tp_edittext_bg"
+                    android:layout_width="150dp"
+                    android:layout_height="40dp">
+                </Switch>
 
-                <ImageButton
-                    android:layout_weight="1"
-                    android:id="@+id/btnSmsCode"
-                    android:src="@drawable/ic_authentication_sms_30"
-                    android:background="@drawable/tp_background_icon"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                <EditText
+                    android:id="@+id/personalId"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/tp_edittext_bg"
+                    android:hint="PersonalId"
+                    android:inputType="textCapWords"
+                    android:minHeight="48dp"
+                    android:padding="10dp"
+                    android:singleLine="true" />
+
+                <EditText
+                    android:id="@+id/address"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/tp_edittext_bg"
+                    android:hint="Address"
+                    android:inputType="textCapWords"
+                    android:padding="10dp"
+                    android:singleLine="true" />
 
             </LinearLayout>
 
-            <EditText
-                android:id="@+id/password"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:background="@drawable/tp_edittext_bg"
-                android:hint="Password"
-                android:inputType="textPassword"
-                android:padding="10dp"
-                android:singleLine="true" />
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/tp_linear_bg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <EditText
-                android:id="@+id/smsCode"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:background="@drawable/tp_edittext_bg_disable"
-                android:hint="SMS Code"
-                android:inputType="textCapWords"
-                android:padding="10dp"
-                android:singleLine="true" />
+                <EditText
+                    android:id="@+id/plateNo"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/tp_edittext_bg"
+                    android:hint="Plate No (EX: 59C1-22983)"
+                    android:inputType="textCapCharacters"
+                    android:padding="10dp"
+                    android:singleLine="true" />
+
+                <EditText
+                    android:id="@+id/bikeOwner"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/tp_edittext_bg"
+                    android:hint="Bike Owner (EX: THACH MINH SANG)"
+                    android:inputType="textCapCharacters"
+                    android:padding="10dp"
+                    android:singleLine="true" />
+
+                <EditText
+                    android:id="@+id/engineNo"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/tp_edittext_bg"
+                    android:hint="EngineNo (EX: 2324890)"
+                    android:inputType="textCapCharacters"
+                    android:padding="10dp"
+                    android:singleLine="true" />
+
+                <EditText
+                    android:id="@+id/chassisNo"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/tp_edittext_bg"
+                    android:hint="ChassisNo (EX: 435-2134)"
+                    android:inputType="textCapCharacters"
+                    android:padding="10dp"
+                    android:singleLine="true" />
+
+                <EditText
+                    android:id="@+id/bikeType"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/tp_edittext_bg"
+                    android:hint="BikeType (EX: VISION)"
+                    android:inputType="textCapCharacters"
+                    android:padding="10dp"
+                    android:singleLine="true" />
+
+                <EditText
+                    android:id="@+id/brand"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/tp_edittext_bg"
+                    android:hint="Brand (EX: HONDA)"
+                    android:inputType="textCapCharacters"
+                    android:padding="10dp"
+                    android:singleLine="true" />
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/lblMessage"
@@ -126,6 +282,17 @@
                 android:layout_marginTop="15dp"
                 android:background="@drawable/tp_button_bg"
                 android:text="@string/btn_register"
+                android:textColor="#ffffff"
+                android:textSize="18dp" />
+
+            <Button
+                android:id="@+id/btnBackLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:visibility="gone"
+                android:background="@drawable/tp_button_bg"
+                android:text="Back Login"
                 android:textColor="#ffffff"
                 android:textSize="18dp" />
 
