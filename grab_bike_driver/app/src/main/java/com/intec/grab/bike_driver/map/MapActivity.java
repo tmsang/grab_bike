@@ -83,7 +83,7 @@ public class MapActivity extends BaseActivity {
         // 0. get intent parameter
         Intent i = getIntent();
         message = (MessageOut)i.getSerializableExtra("message");
-        SetTextView(R.id.lblTitle, message.GuestName + "(" + message.GuestPhone + ")");
+        SetTextView(R.id.lblTitle, message.GuestName + " (" + message.GuestPhone + ")");
         SetTextView(R.id.lblSubTitle1, "<span style='color:#ffff00'><u>From</u></span>: " + message.FromAddress);
         SetTextView(R.id.lblSubTitle2, "<span style='color:#ffff00'><u>To</u></span>: " + message.ToAddress);
         SetTextView(R.id.lblDistance, "<span style='color:#ffff00'><u>Distance</u></span>: " + StringHelper.formatNumber(message.Distance, "#,###") + " km");
