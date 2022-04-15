@@ -194,7 +194,10 @@ public class GuestMapActivity extends BaseActivity {
                             .subscribe(subscriberDelayInterval);
 
                 }, (error) -> {
-                    String message = error.getCause() == null ? null : error.getCause().toString();
+                    String message = error.body();
+                    if (StringHelper.isNullOrEmpty(message)) {
+                        message = error.getCause() == null ? null : error.getCause().toString();
+                    }
                     Toast("API BookATrip raise error: " + message);
                 }));
         });

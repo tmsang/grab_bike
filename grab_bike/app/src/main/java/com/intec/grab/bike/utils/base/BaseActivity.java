@@ -294,7 +294,10 @@ public class BaseActivity extends AppCompatActivity
                         // TODO: nothing to do here
                         Log.i("Guest position has been pushed - successfully");
                     }, (error) -> {
-                        String message = error.getCause() == null ? null : error.getCause().toString();
+                        String message = error.body();
+                        if (StringHelper.isNullOrEmpty(message)) {
+                            message = error.getCause() == null ? null : error.getCause().toString();
+                        }
                         HandleException("Push Position", message);
                     }));
         });
@@ -311,6 +314,7 @@ public class BaseActivity extends AppCompatActivity
 
         String body = messages[0];
         if (body.indexOf("user is null in JwtMiddleware") > 0
+                || body.indexOf("Your token is invalid") >= 0
                 || body.indexOf("Unauthorized") >= 0)
         {
             Toast("Session User is expired", body);

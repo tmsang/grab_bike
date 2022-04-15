@@ -11,6 +11,7 @@ import com.intec.grab.bike.shared.SharedService;
 import com.intec.grab.bike.utils.api.Callback;
 import com.intec.grab.bike.utils.base.BaseActivity;
 import com.intec.grab.bike.utils.helper.MyEventCallback;
+import com.intec.grab.bike.utils.helper.StringHelper;
 
 import butterknife.BindView;
 
@@ -40,7 +41,10 @@ public class ForgotPasswordActivity extends BaseActivity
                     // redirect to Reset Password
                     this.Redirect(ResetPasswordActivity.class);
                 }, (error) -> {
-                    String message = error.getCause() == null ? null : error.getCause().toString();
+                    String message = error.body();
+                    if (StringHelper.isNullOrEmpty(message)) {
+                        message = error.getCause() == null ? null : error.getCause().toString();
+                    }
                     this.Toast(message);
                 }));
     });
