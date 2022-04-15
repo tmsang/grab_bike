@@ -208,7 +208,8 @@ public class MessagesActivity extends BaseActivity {
                     setAdapter(res.Requests);
 
                 }, (error) -> {
-                    HandleException("Driver Position", error.body());
+                    String message = error.getCause().toString();
+                    HandleException("Driver Position", message);
                 }));
     }
 
@@ -239,7 +240,8 @@ public class MessagesActivity extends BaseActivity {
                             callback.execute("");
                         },
                         (error) -> {
-                            Toast("API - GetRequest cannot reach", error.getMessage());
+                            String message = error.getCause().toString();
+                            Toast("API - GetRequest cannot reach: " + message, error.getMessage());
                         }
                 ));
     }

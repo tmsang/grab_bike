@@ -135,7 +135,8 @@ public class MessagesActivity extends BaseActivity {
                             callback.execute("");
                         },
                         (error) -> {
-                            HandleException("Histories", error.body());
+                            String message = error.getCause() == null ? null : error.getCause().toString();
+                            HandleException("Histories", message);
                         }
                 ));
     }

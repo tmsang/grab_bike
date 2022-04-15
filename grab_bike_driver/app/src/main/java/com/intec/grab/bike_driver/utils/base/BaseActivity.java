@@ -324,7 +324,8 @@ public class BaseActivity extends AppCompatActivity {
                         // TODO: nothing to do here
                         Log.i("Guest position has been pushed - successfully");
                     }, (error) -> {
-                        HandleException("Push Position", error.body());
+                        String message = error.getCause().toString();
+                        HandleException("Push Position", message);
                     }));
         });
     }

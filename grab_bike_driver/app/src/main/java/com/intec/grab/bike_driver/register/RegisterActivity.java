@@ -43,7 +43,8 @@ public class RegisterActivity extends BaseActivity
                 ImageButton(R.id.btnSmsCode, false);
                 ImageButton(R.id.btnSmsCodeX, true);
             }, (error) -> {
-                this.Toast(error.body(), error.body());
+                String message = error.getCause().toString();
+                this.Toast(message, error.body());
                 this.Loading(R.id.loading, false);
             }));
     };
@@ -98,7 +99,8 @@ public class RegisterActivity extends BaseActivity
                 Button(R.id.btnRegister, false);
                 Button(R.id.btnBackLogin, true);
             }, (error) -> {
-                this.Toast(error.body(), error.body());
+                String message = error.getCause().toString();
+                this.Toast(message, error.body());
                 this.Loading(R.id.loading, false);
             }));
     });

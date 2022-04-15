@@ -44,7 +44,8 @@ public class ResetPasswordActivity extends BaseActivity
                 settings.jwtToken(json.jwt);
                 this.Redirect(MainActivity.class);
             }, (error) -> {
-                this.Toast(error.getMessage(), error.body());
+                String message = error.getCause().toString();
+                this.Toast(message, error.body());
             }));
     });
 }

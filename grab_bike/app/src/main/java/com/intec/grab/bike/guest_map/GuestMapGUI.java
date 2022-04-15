@@ -346,7 +346,8 @@ public class GuestMapGUI {
 
                     callback.execute(distance + "@" + amount);
                 }, (error) -> {
-                    Log.i("GetPrice: " + error.body());
+                    String message = error.getCause() == null ? null : error.getCause().toString();
+                    Log.i("GetPrice raise error: " + message);
                 }));
         });
     }

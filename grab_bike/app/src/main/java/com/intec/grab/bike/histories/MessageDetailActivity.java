@@ -87,7 +87,8 @@ public class MessageDetailActivity extends BaseActivity
                             Redirect(MessagesActivity.class);
                         },
                         (error) -> {
-                            Toast("API - Evaluate (histories) cannot reach", error.body());
+                            String message = error.getCause() == null ? null : error.getCause().toString();
+                            Toast("API - Evaluate (histories) raise error: " + message);
                         }
                 ));
         });

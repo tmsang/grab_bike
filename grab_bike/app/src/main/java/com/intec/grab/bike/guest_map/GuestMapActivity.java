@@ -194,7 +194,8 @@ public class GuestMapActivity extends BaseActivity {
                             .subscribe(subscriberDelayInterval);
 
                 }, (error) -> {
-                    Toast("API BookATrip cannot reach", error.body());
+                    String message = error.getCause() == null ? null : error.getCause().toString();
+                    Toast("API BookATrip raise error: " + message);
                 }));
         });
 

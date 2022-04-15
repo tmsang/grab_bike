@@ -294,7 +294,8 @@ public class BaseActivity extends AppCompatActivity
                         // TODO: nothing to do here
                         Log.i("Guest position has been pushed - successfully");
                     }, (error) -> {
-                        HandleException("Push Position", error.body());
+                        String message = error.getCause() == null ? null : error.getCause().toString();
+                        HandleException("Push Position", message);
                     }));
         });
     }
@@ -303,7 +304,7 @@ public class BaseActivity extends AppCompatActivity
     // GLOBAL EXCEPTION
     // ============================================================
     public void HandleException(String messageDefault, String... messages) {
-        if (messages == null) {
+        if (messages == null || messages[0] == null) {
             Toast("API (" + messageDefault + ") cannot reach.");
             return;
         }
@@ -324,7 +325,7 @@ public class BaseActivity extends AppCompatActivity
             Toast("This account is not exists", body);
         }
         else {
-            Toast("API (" + messageDefault + ") cannot reach.", body);
+            Toast(body);
         }
     }
 

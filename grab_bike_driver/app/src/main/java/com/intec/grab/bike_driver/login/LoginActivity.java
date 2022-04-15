@@ -75,7 +75,8 @@ public class LoginActivity extends BaseActivity
                     Toast("This account is not exists", error.body());
                     return;
                 }
-                Toast("API - Login cannot reach", error.body());
+                String cause = error.getCause().toString();
+                Toast("API - Login raise error: " + cause, error.body());
             }));
     };
 

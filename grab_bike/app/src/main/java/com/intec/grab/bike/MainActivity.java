@@ -106,7 +106,8 @@ public class MainActivity extends BaseActivity
                     .enqueue(Callback.call((res) -> {
                         Log.i("Guest position has been pushed - successfully");
                     }, (error) -> {
-                        HandleException("Push Position", error.body());
+                        String message = error.getCause() == null ? null : error.getCause().toString();
+                        HandleException("Push Position", message);
                     }));
         });
 
@@ -136,7 +137,8 @@ public class MainActivity extends BaseActivity
                     loading.setVisibility(View.GONE);
 
                 }, (error) -> {
-                    HandleException("Statistic - Summary", error.body());
+                    String message = error.getCause() == null ? null : error.getCause().toString();
+                    HandleException("Statistic - Summary", message);
                 }));
     }
 

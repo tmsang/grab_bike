@@ -112,7 +112,8 @@ public class MainActivity extends BaseActivity
                     .enqueue(Callback.call((res) -> {
                         Log.i("Driver position has been pushed - successfully");
                     }, (error) -> {
-                        HandleException("Driver Position", error.body());
+                        String message = error.getCause().toString();
+                        HandleException("Driver Position", message);
                     }));
         });
 
@@ -142,7 +143,8 @@ public class MainActivity extends BaseActivity
                     loading.setVisibility(View.GONE);
 
                 }, (error) -> {
-                    HandleException("Statistic - Summary", error.body());
+                    String message = error.getCause().toString();
+                    HandleException("Statistic - Summary", message);
                 }));
         
     }

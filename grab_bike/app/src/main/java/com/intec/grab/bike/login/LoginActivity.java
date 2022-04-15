@@ -78,7 +78,8 @@ public class LoginActivity extends BaseActivity
                     this.Redirect(MainActivity.class);
                 });
             }, (error) -> {
-                this.HandleException("Login", error.body());
+                String message = error.getCause() == null ? null : error.getCause().toString();
+                this.HandleException("Login", message);
             }));
     };
 
