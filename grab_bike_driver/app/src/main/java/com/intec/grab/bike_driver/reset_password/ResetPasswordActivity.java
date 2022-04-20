@@ -9,6 +9,7 @@ import com.intec.grab.bike_driver.shared.SharedService;
 import com.intec.grab.bike_driver.utils.api.Callback;
 import com.intec.grab.bike_driver.utils.base.BaseActivity;
 import com.intec.grab.bike_driver.utils.helper.MyEventCallback;
+import com.intec.grab.bike_driver.utils.helper.StringHelper;
 
 public class ResetPasswordActivity extends BaseActivity
 {
@@ -44,7 +45,10 @@ public class ResetPasswordActivity extends BaseActivity
                 settings.jwtToken(json.jwt);
                 this.Redirect(MainActivity.class);
             }, (error) -> {
-                String message = error.getCause().toString();
+                String message = error.body();
+                if (StringHelper.isNullOrEmpty(message)) {
+                    message = error.getCause() == null ? null : error.getCause().toString();
+                }
                 this.Toast(message, error.body());
             }));
     });

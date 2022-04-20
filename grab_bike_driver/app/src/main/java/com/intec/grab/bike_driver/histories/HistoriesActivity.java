@@ -126,7 +126,10 @@ public class HistoriesActivity extends BaseActivity {
                             callback.execute("");
                         },
                         (error) -> {
-                            String message = error.getCause().toString();
+                            String message = error.body();
+                            if (StringHelper.isNullOrEmpty(message)) {
+                                message = error.getCause() == null ? null : error.getCause().toString();
+                            }
                             HandleException("Histories", message);
                         }
                 ));

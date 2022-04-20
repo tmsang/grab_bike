@@ -161,7 +161,10 @@ public class MapActivity extends BaseActivity {
                     btnEnd.setVisibility(View.VISIBLE);
 
                 }, (error) -> {
-                    String message = error.getCause().toString();
+                    String message = error.body();
+                    if (StringHelper.isNullOrEmpty(message)) {
+                        message = error.getCause() == null ? null : error.getCause().toString();
+                    }
                     Toast("API Start raise error: " + message, error.body());
                 }));
         });
@@ -184,7 +187,10 @@ public class MapActivity extends BaseActivity {
                         // redirect to Message
                         Redirect(MessagesActivity.class);
                     }, (error) -> {
-                        String message = error.getCause().toString();
+                        String message = error.body();
+                        if (StringHelper.isNullOrEmpty(message)) {
+                            message = error.getCause() == null ? null : error.getCause().toString();
+                        }
                         Toast("API End cannot reach: " + message, error.body());
                     }));
         });

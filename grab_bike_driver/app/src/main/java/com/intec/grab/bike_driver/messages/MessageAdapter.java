@@ -125,7 +125,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     activity.startActivity(intent);
 
                 }, (error) -> {
-                    String message = error.getCause().toString();
+                    String message = error.body();
+                    if (StringHelper.isNullOrEmpty(message)) {
+                        message = error.getCause() == null ? null : error.getCause().toString();
+                    }
                     Log.i("API Accept Request cannot reach");
                     if (error.body().indexOf("Your Booking is not PENDING yet") >= 0) {
                         Toast.makeText(activity, "Your Booking is not PENDING yet or cause: " + message, Toast.LENGTH_SHORT).show();
