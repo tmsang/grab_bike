@@ -37,41 +37,62 @@
 
                 <LinearLayout
                     android:orientation="horizontal"
-                    android:weightSum="6"
                     android:layout_marginTop="7dp"
                     android:layout_marginBottom="5dp"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp">
+                    android:layout_height="wrap_content">
 
-                    <TextView
-                        android:layout_weight="2"
-                        android:id="@+id/lblDistance"
-                        android:text="Distance:"
-                        android:gravity="center_vertical"
-                        android:textColor="#fff"
-                        android:textStyle="bold"
-                        android:layout_width="0dp"
-                        android:layout_height="40dp"></TextView>
+                    <LinearLayout
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
 
-                    <TextView
-                        android:layout_weight="3"
-                        android:gravity="center_vertical"
-                        android:textColor="#fff"
-                        android:textStyle="bold"
-                        android:id="@+id/lblAmount"
-                        android:text="Amount:"
-                        android:layout_width="0dp"
-                        android:layout_height="40dp"></TextView>
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:layout_weight="1"
+                                android:id="@+id/lblDistance"
+                                android:text="Distance:"
+                                android:gravity="center_vertical"
+                                android:textColor="#fff"
+                                android:textStyle="bold"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"></TextView>
+
+                            <TextView
+                                android:layout_weight="1"
+                                android:gravity="center_vertical"
+                                android:textColor="#fff"
+                                android:textStyle="bold"
+                                android:id="@+id/lblAmount"
+                                android:text="Amount:"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"></TextView>
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/lbl_cancel_book"
+                            android:text="@string/book_lbl_cancel"
+                            android:textColor="#ff0000"
+                            android:textStyle="bold"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+
+                    </LinearLayout>
 
                     <Button
                         android:id="@+id/btnBook"
                         android:text="Book"
                         android:textSize="11dp"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:layout_width="0dp"
+                        android:layout_gravity="center"
                         android:background="@drawable/tp_button_bg_small"
-                        android:layout_height="wrap_content"></Button>
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"></Button>
                 </LinearLayout>
 
             </LinearLayout>

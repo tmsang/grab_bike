@@ -5,6 +5,8 @@ import android.util.Base64;
 
 import androidx.annotation.RequiresApi;
 
+import com.intec.grab.bike.utils.api.ApiException;
+
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -162,5 +164,13 @@ public class StringHelper {
         byte[] decode = android.util.Base64.decode(str, Base64.NO_WRAP + Base64.NO_PADDING);
 
         return new String(decode);
+    }
+
+    public static String getErrorMessage(ApiException error) {
+        String message = error.body();
+        if (StringHelper.isNullOrEmpty(message)) {
+            message = error.getCause() == null ? null : error.getCause().toString();
+        }
+        return message;
     }
 }

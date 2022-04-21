@@ -1,6 +1,7 @@
 package com.intec.grab.bike.guest_map;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
@@ -16,6 +17,7 @@ import com.intec.grab.bike.R;
 import com.intec.grab.bike.configs.Constants;
 import com.intec.grab.bike.histories.MessageDetailActivity;
 import com.intec.grab.bike.histories.MessagesActivity;
+import com.intec.grab.bike.register.RegisterActivity;
 import com.intec.grab.bike.shared.SharedService;
 import com.intec.grab.bike.utils.api.Callback;
 import com.intec.grab.bike.utils.base.BaseActivity;
@@ -72,7 +74,7 @@ public class GuestMapActivity extends BaseActivity {
                 set zoom from current position
                 attach PIN on Map
         3. Book action
-            -> push Booking to server
+            -> set event to Booking + Cancel link
             -> pull driver positions (interval)
 
         4. Restore session map
@@ -163,7 +165,7 @@ public class GuestMapActivity extends BaseActivity {
                 R.drawable.ic_current_position);
 
         //3. Book action
-        //a. push Booking to server
+        //a. set event to Booking + Cancel link
         this.ButtonClickEvent(R.id.btnBook, (btn) -> {
             if (IsNullOrEmpty(fromLat, "From Latitude")) return;
             if (IsNullOrEmpty(fromLng, "From Longitude")) return;
@@ -194,16 +196,40 @@ public class GuestMapActivity extends BaseActivity {
                             .subscribe(subscriberDelayInterval);
 
                 }, (error) -> {
-                    String message = error.body();
-                    if (StringHelper.isNullOrEmpty(message)) {
-                        message = error.getCause() == null ? null : error.getCause().toString();
-                    }
-                    Toast("API BookATrip raise error: " + message);
+                    HandleException("Booking BookATrip", error);
                 }));
+        });
+
+        this.TextViewClickEvent(R.id.lbl_cancel_book, (v) -> {
+            TextView lbl = (TextView)v;
+            lbl.setTextColor(Color.BLUE);
+
+            SessionMapDto session = settings.sessionMap();
+            if (session == null || StringHelper.isNullOrEmpty(session.OrderId)) return;
+
+
+            SharedService.GuestMapApi(Constants.API_NET, sslSettings)
+                    .CancelBooking(header, session.OrderId)
+                    .enqueue(Callback.callInUI(GuestMapActivity.this, (result) -> {
+                        Toast("Your Booking is cancelled");
+
+                        // ----- this is cancel (only call it after end trip) -----
+                        // clear session when trip is ended
+                        settings.sessionMap(null);
+                        // release interval
+                        ClearMemory();
+                        // redirect to itself
+                        finish();
+                        startActivity(getIntent());
+
+                    }, (error) -> {
+                        HandleException("Cancel BookATrip", error);
+                    }));
         });
 
         //b. pull driver positions (interval)
         subscriberDelayInterval = mapGUI.CreateIntervalSubscriber(header, mMapView, btnBook, s -> {
+            // ----- this is callbackAfterEnd (only call it after end trip) -----
             // clear session when trip is ended
             settings.sessionMap(null);
             // release interval

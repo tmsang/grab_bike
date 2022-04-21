@@ -47,6 +47,13 @@ public interface GuestMapApi
             @Field("lng") String Lng
     );
 
+    @FormUrlEncoded                                 // use for method: "POST"
+    @POST("api/guest/order/cancel-by-client")
+    Call<Void> CancelBooking(
+            @HeaderMap Map<String, String> headers,
+            @Field("orderId") String OrderId
+    );
+
     @GET("api/guest/order/interval-gets")
     Call<IntervalResultDto> IntervalGets(
             @HeaderMap Map<String, String> headers,

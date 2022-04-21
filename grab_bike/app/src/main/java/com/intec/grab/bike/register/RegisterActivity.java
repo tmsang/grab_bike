@@ -44,10 +44,7 @@ public class RegisterActivity extends BaseActivity
                 ImageButton(R.id.btnSmsCode, false);
                 ImageButton(R.id.btnSmsCodeX, true);
             }, (error) -> {
-                String message = error.body();
-                if (StringHelper.isNullOrEmpty(message)) {
-                    message = error.getCause() == null ? null : error.getCause().toString();
-                }
+                String message = StringHelper.getErrorMessage(error);
                 this.Toast(message, error.body());
                 this.Loading(R.id.loading, false);
             }));
@@ -77,10 +74,7 @@ public class RegisterActivity extends BaseActivity
                 Button(R.id.btnRegister, false);
                 Button(R.id.btnBackLogin, true);
             }, (error) -> {
-                String message = error.body();
-                if (StringHelper.isNullOrEmpty(message)) {
-                    message = error.getCause() == null ? null : error.getCause().toString();
-                }
+                String message = StringHelper.getErrorMessage(error);
                 this.Toast(message, error.body());
                 this.Loading(R.id.loading, false);
             }));

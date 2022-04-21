@@ -5,8 +5,8 @@ public class Constants {
      *  CONFIGURATION
      *  ========================================================== */
     //  Configuration: LOCAL
-    //public static final String API_NET = "https://172.25.129.73:44331";                         // For Real Device: device-login (For Emulator: http://10.0.2.2:1234/)
-    public static final String API_NET = "https://3.228.124.204:44331";                         // For Real Device: device-login (For Emulator: http://10.0.2.2:1234/)
+    public static final String API_NET = "https://172.25.129.73:44331";                         // For Real Device: device-login (For Emulator: http://10.0.2.2:1234/)
+    //public static final String API_NET = "https://3.228.124.204:44331";                         // For Real Device: device-login (For Emulator: http://10.0.2.2:1234/)
 
     public static final String BING_MAP_KEY = "AuZD1lfJajlhr_Cx6GVG9uR4jzS5Y-PF3EWWGrM0SgdGBUh_8D3fvER4D-Xxco2r";
 
@@ -32,7 +32,7 @@ public class Constants {
     /** =========================================================
      *  OTHER
      *  ========================================================= */
-    public static final String BASE_URL = "https://3.228.124.204:44331";
-    //public static final String BASE_URL = "https://172.25.129.73:44331";
+    //public static final String BASE_URL = "https://3.228.124.204:44331";
+    public static final String BASE_URL = "https://172.25.129.73:44331";
     //public static final String BASE_URL = "http://163.43.108.188";            // IRIS
 }

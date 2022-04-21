@@ -87,11 +87,7 @@ public class MessageDetailActivity extends BaseActivity
                             Redirect(MessagesActivity.class);
                         },
                         (error) -> {
-                            String message = error.body();
-                            if (StringHelper.isNullOrEmpty(message)) {
-                                message = error.getCause() == null ? null : error.getCause().toString();
-                            }
-                            Toast("API - Evaluate (histories) raise error: " + message);
+                            Toast("API - Evaluate (histories) raise error: " + StringHelper.getErrorMessage(error));
                         }
                 ));
         });

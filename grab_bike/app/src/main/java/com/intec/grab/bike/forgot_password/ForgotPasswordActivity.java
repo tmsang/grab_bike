@@ -41,11 +41,7 @@ public class ForgotPasswordActivity extends BaseActivity
                     // redirect to Reset Password
                     this.Redirect(ResetPasswordActivity.class);
                 }, (error) -> {
-                    String message = error.body();
-                    if (StringHelper.isNullOrEmpty(message)) {
-                        message = error.getCause() == null ? null : error.getCause().toString();
-                    }
-                    this.Toast(message);
+                    this.Toast(StringHelper.getErrorMessage(error));
                 }));
     });
 }

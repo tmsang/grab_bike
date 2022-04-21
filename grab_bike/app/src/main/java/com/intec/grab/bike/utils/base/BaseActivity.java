@@ -41,6 +41,7 @@ import com.intec.grab.bike.configs.Constants;
 import com.intec.grab.bike.guest_map.GuestMapActivity;
 import com.intec.grab.bike.login.LoginActivity;
 import com.intec.grab.bike.shared.SharedService;
+import com.intec.grab.bike.utils.api.ApiException;
 import com.intec.grab.bike.utils.api.Callback;
 import com.intec.grab.bike.utils.api.SSLSettings;
 import com.intec.grab.bike.utils.base.SETTING;
@@ -294,11 +295,7 @@ public class BaseActivity extends AppCompatActivity
                         // TODO: nothing to do here
                         Log.i("Guest position has been pushed - successfully");
                     }, (error) -> {
-                        String message = error.body();
-                        if (StringHelper.isNullOrEmpty(message)) {
-                            message = error.getCause() == null ? null : error.getCause().toString();
-                        }
-                        HandleException("Push Position", message);
+                        HandleException("Push Position", error);
                     }));
         });
     }
@@ -306,13 +303,15 @@ public class BaseActivity extends AppCompatActivity
     // ============================================================
     // GLOBAL EXCEPTION
     // ============================================================
-    public void HandleException(String messageDefault, String... messages) {
-        if (messages == null || messages[0] == null) {
+    public void HandleException(String messageDefault, ApiException error) {
+        String message = StringHelper.getErrorMessage(error);
+
+        if (StringHelper.isNullOrEmpty(message)) {
             Toast("API (" + messageDefault + ") cannot reach.");
             return;
         }
 
-        String body = messages[0];
+        String body = message;
         if (body.indexOf("user is null in JwtMiddleware") > 0
                 || body.indexOf("Your token is invalid") >= 0
                 || body.indexOf("Unauthorized") >= 0)
